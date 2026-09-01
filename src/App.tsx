@@ -805,6 +805,7 @@ export default function App() {
                 onNavigateToTheory={handleNavigateToTheory}
                 onNavigateToQuest={handleNavigateToQuest}
                 onNavigateToProgress={() => setActiveTab('PROGRESS')}
+                onNavigateToHome={() => setActiveTab('HOME')}
               />
             )}
 

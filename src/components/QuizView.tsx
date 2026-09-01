@@ -17,6 +17,7 @@ import {
   ChevronRight,
   ListOrdered,
   Trophy,
+  Home,
 } from 'lucide-react';
 import { progressManager } from '../utils/progressManager';
 import { soundManager } from '../utils/audio';
@@ -26,6 +27,7 @@ export interface QuizViewProps {
   onNavigateToTheory: (chapterId?: string) => void;
   onNavigateToQuest: (levelId?: number) => void;
   onNavigateToProgress: () => void;
+  onNavigateToHome?: () => void;
 }
 
 export interface QuizQuestion {
@@ -223,6 +225,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
   onNavigateToTheory,
   onNavigateToQuest,
   onNavigateToProgress,
+  onNavigateToHome,
 }) => {
   useScrollReveal();
 
@@ -650,6 +653,36 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 {percentage}%
               </span>
             </div>
+          </div>
+
+          {/* 7. Action Buttons (Retake Quiz & Back to Home) */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 mt-8 w-full max-w-md mx-auto">
+            {/* 1. Retake Quiz (Primary Action) */}
+            <button
+              id="btn-quiz-retake"
+              type="button"
+              onClick={handleResetQuiz}
+              className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-2xl bg-[#4F46E5] hover:bg-[#4338CA] dark:bg-purple-600 dark:hover:bg-purple-500 text-white font-sans text-sm font-semibold shadow-md shadow-indigo-500/20 dark:shadow-[0_4px_16px_rgba(124,58,237,0.35)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4 stroke-[2.2]" />
+              <span>Retake Quiz</span>
+            </button>
+
+            {/* 2. Back to Home (Secondary Action) */}
+            <button
+              id="btn-quiz-back-to-home"
+              type="button"
+              onClick={() => {
+                soundManager.playNav();
+                if (onNavigateToHome) {
+                  onNavigateToHome();
+                }
+              }}
+              className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-2xl bg-white hover:bg-slate-50 dark:bg-[#070B18] dark:hover:bg-[#0F1733] text-slate-800 dark:text-slate-200 border border-slate-200/90 dark:border-purple-500/30 font-sans text-sm font-semibold shadow-xs transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Home className="w-4 h-4 stroke-[2.2] text-[#4F46E5] dark:text-purple-300" />
+              <span>Back to Home</span>
+            </button>
           </div>
         </div>
       )}
