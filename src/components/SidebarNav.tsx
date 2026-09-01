@@ -109,11 +109,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       className="w-64 h-full flex flex-col bg-white dark:bg-[#070B18] border-r border-[#E5E7EB] dark:border-purple-500/20 select-none shadow-xs transition-colors duration-300"
     >
       {/* Top Sidebar Header with Close Button (No duplicate branding) */}
-      <div className="p-4 sm:p-5 border-b border-[#E5E7EB] dark:border-purple-500/15 flex items-center justify-between gap-2">
-        <span className="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">
-          Menu
-        </span>
-
+      <div className="p-4 sm:p-5 border-b border-[#E5E7EB] dark:border-purple-500/15 flex items-center justify-end">
         {/* Close Button in Top-Right Corner of Navigation */}
         <button
           id="btn-sidebar-close"
@@ -132,8 +128,9 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
         onMouseEnter={() => setIsProgressHovered(true)}
         onMouseLeave={() => setIsProgressHovered(false)}
       >
+        {/* SINGLE NAVIGATION MENU HEADING */}
         <div className="px-3 pb-2 text-[11px] font-bold tracking-wider text-slate-400 dark:text-slate-500 uppercase font-mono">
-          Navigation Menu
+          NAVIGATION MENU
         </div>
 
         {navItems.map((item) => {

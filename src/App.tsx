@@ -571,6 +571,7 @@ export default function App() {
           onResetAllProgress={() => setShowResetModal(true)}
           onToggleMobileSidebar={handleToggleSidebar}
           isDesktopSidebarOpen={desktopSidebarOpen}
+          isMobileSidebarOpen={mobileSidebarOpen}
         />
 
         {/* Page Main Content Container */}
