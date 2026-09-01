@@ -16,6 +16,7 @@ import {
   Layers,
   ChevronRight,
   ListOrdered,
+  Trophy,
 } from 'lucide-react';
 import { progressManager } from '../utils/progressManager';
 import { soundManager } from '../utils/audio';
@@ -578,60 +579,76 @@ export const QuizView: React.FC<QuizViewProps> = ({
         </div>
       </div>
 
-      {/* Score Results Card (shown when submitted or in review mode) */}
+      {/* Quiz Assessment Completed Section (Shown when submitted or in review mode) */}
       {isSubmitted && (
         <div
           id="quiz-result-card"
-          className="mb-8 p-6 sm:p-8 bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/25 rounded-2xl shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] animate-editorial-scale transition-all"
+          className="mb-8 p-6 sm:p-10 lg:p-12 bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/25 rounded-3xl shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center text-center animate-editorial-scale transition-all"
         >
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-purple-500/15">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className={`px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-md border ${tier.badgeClass}`}>
-                  {tier.badgeText}
-                </span>
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 font-mono">
-                  Final Score: {score} of {totalQuestions} ({percentage}%)
-                </span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
-                {tier.title}
-              </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed max-w-2xl font-normal">
-                {tier.summary}
-              </p>
-            </div>
+          {/* 1. Top Achievement Trophy Icon */}
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-[#00A86B] dark:bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 dark:shadow-emerald-950/50 mx-auto mb-4 sm:mb-5">
+            <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-white stroke-[2.2]" />
+          </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto shrink-0">
-              <button
-                id="btn-quiz-retake"
-                onClick={handleResetQuiz}
-                className="btn-modern-secondary px-4 py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Retake Quiz</span>
-              </button>
-              <button
-                id="btn-quiz-view-progress"
-                onClick={onNavigateToProgress}
-                className="btn-modern-primary px-4 py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <Award className="w-3.5 h-3.5" />
-                <span>View Progress</span>
-              </button>
+          {/* 2. Achievement Badge */}
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-[#00A86B]/40 dark:border-emerald-500/40 bg-[#E6F8F0] dark:bg-emerald-950/60 text-[#008A54] dark:text-emerald-300 font-mono text-[11px] sm:text-xs font-bold tracking-wider uppercase mb-3 sm:mb-4">
+            ★ OUTSTANDING MASTERY (GRADE A+) ★
+          </div>
+
+          {/* 3. Main Completion Heading */}
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B192C] dark:text-white tracking-tight uppercase mb-3">
+            QUIZ ASSESSMENT COMPLETED
+          </h2>
+
+          {/* 4. Supporting Description */}
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed font-normal mb-6 sm:mb-8">
+            Incredible performance! You demonstrated thorough command of Stack operations and algorithmic constraints.
+          </p>
+
+          {/* 5. Large Highlighted Score Card */}
+          <div className="w-full max-w-md mx-auto p-6 sm:p-8 bg-white dark:bg-[#070B18] border-2 border-indigo-200/70 dark:border-purple-500/40 rounded-3xl shadow-[0_8px_30px_rgba(99,102,241,0.08)] dark:shadow-[0_8px_30px_rgba(124,58,237,0.18)] flex flex-col items-center justify-center text-center mb-6 sm:mb-8">
+            <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-[#6366F1] dark:text-purple-300 uppercase mb-2">
+              FINAL HIGHLIGHTED SCORE
+            </span>
+            <div className="text-5xl sm:text-6xl font-black text-[#00A86B] dark:text-emerald-400 font-sans tracking-tight leading-none my-2">
+              {percentage}%
+            </div>
+            <div className="mt-3 px-4 py-1.5 rounded-xl bg-slate-50 dark:bg-purple-950/40 border border-slate-200 dark:border-purple-500/30 text-slate-700 dark:text-slate-300 font-mono text-xs sm:text-sm font-semibold">
+              {score} / {totalQuestions} Questions Correct
             </div>
           </div>
 
-          {/* Tier Thresholds */}
-          <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-sans">
-            <div className={`p-3 rounded-xl border ${score >= 8 ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-500/30 font-semibold text-emerald-900 dark:text-emerald-300' : 'bg-slate-50 dark:bg-[#080D1F] border-slate-200 dark:border-purple-500/20 text-slate-600 dark:text-slate-400'}`}>
-              <span className="font-bold">8–10:</span> 🟢 Excellent — Hashing Master!
+          {/* 6. Summary Statistics Cards (CORRECT, INCORRECT, ACCURACY - STRICTLY NO XP) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full max-w-2xl mx-auto">
+            {/* CORRECT CARD */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#070B18] border border-slate-200/90 dark:border-purple-500/30 shadow-xs flex flex-col items-center justify-center text-center">
+              <span className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase mb-1.5">
+                CORRECT
+              </span>
+              <span className="text-xl sm:text-2xl font-extrabold text-[#00A86B] dark:text-emerald-400 font-mono flex items-center justify-center gap-1.5">
+                <Check className="w-5 h-5 stroke-[2.5]" />
+                {score}
+              </span>
             </div>
-            <div className={`p-3 rounded-xl border ${score >= 6 && score <= 7 ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-500/30 font-semibold text-amber-900 dark:text-amber-300' : 'bg-slate-50 dark:bg-[#080D1F] border-slate-200 dark:border-purple-500/20 text-slate-600 dark:text-slate-400'}`}>
-              <span className="font-bold">6–7:</span> 🟡 Good — Review & Try Again
+
+            {/* INCORRECT CARD */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#070B18] border border-slate-200/90 dark:border-purple-500/30 shadow-xs flex flex-col items-center justify-center text-center">
+              <span className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase mb-1.5">
+                INCORRECT
+              </span>
+              <span className="text-xl sm:text-2xl font-extrabold text-rose-500 dark:text-rose-400 font-mono">
+                {totalQuestions - score}
+              </span>
             </div>
-            <div className={`p-3 rounded-xl border ${score <= 5 ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-500/30 font-semibold text-rose-900 dark:text-rose-300' : 'bg-slate-50 dark:bg-[#080D1F] border-slate-200 dark:border-purple-500/20 text-slate-600 dark:text-slate-400'}`}>
-              <span className="font-bold">0–5:</span> 🔴 Keep Learning — Review Theory
+
+            {/* ACCURACY CARD */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#070B18] border border-slate-200/90 dark:border-purple-500/30 shadow-xs flex flex-col items-center justify-center text-center">
+              <span className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase mb-1.5">
+                ACCURACY
+              </span>
+              <span className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-mono">
+                {percentage}%
+              </span>
             </div>
           </div>
         </div>
