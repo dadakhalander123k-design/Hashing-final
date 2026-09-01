@@ -374,7 +374,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
     setPendingSelection(optionIndex);
   };
 
-  // Handle confirming answer for current question
+  // Handle confirming answer for current question (Records answer without revealing final result screen)
   const handleConfirmAnswer = () => {
     if (pendingSelection === null || isCurrentQuestionAnswered) return;
 
@@ -404,45 +404,21 @@ export const QuizView: React.FC<QuizViewProps> = ({
     } else {
       soundManager.playQuizWrong();
     }
-
-    // Check if all questions are now answered
-    const totalAnswered = Object.keys(updatedAnswers).length;
-    if (totalAnswered === QUIZ_QUESTIONS.length) {
-      // Calculate final score
-      let finalCorrect = 0;
-      QUIZ_QUESTIONS.forEach((quest) => {
-        if (updatedAnswers[quest.id]?.isCorrect) {
-          finalCorrect++;
-        }
-      });
-
-      setIsSubmitted(true);
-      try {
-        localStorage.setItem(QUIZ_STORAGE_SUBMITTED_KEY, 'true');
-      } catch {
-        // Ignore
-      }
-
-      // Synchronize with ProgressManager
-      const rawScoresMap: Record<number, number> = {};
-      (Object.values(updatedAnswers) as StudentAnswerRecord[]).forEach((rec) => {
-        rawScoresMap[rec.questionId] = rec.selectedOptionIndex;
-      });
-
-      progressManager.recordQuizCompletion(rawScoresMap, finalCorrect, QUIZ_QUESTIONS.length);
-    }
   };
 
-  // Handle submitting the entire examination
+  // Handle submitting the entire examination ONLY when user clicks "Complete & Review"
   const handleSubmitExamination = () => {
     const totalAnswered = Object.keys(studentAnswers).length;
     if (totalAnswered < QUIZ_QUESTIONS.length) {
       soundManager.playError();
+      const firstUnansweredIndex = QUIZ_QUESTIONS.findIndex((quest) => studentAnswers[quest.id] === undefined);
+      if (firstUnansweredIndex >= 0) {
+        setCurrentQuestionIndex(firstUnansweredIndex);
+      }
       return;
     }
 
     setIsSubmitted(true);
-    setViewMode('FULL_REVIEW');
     try {
       localStorage.setItem(QUIZ_STORAGE_SUBMITTED_KEY, 'true');
     } catch {
