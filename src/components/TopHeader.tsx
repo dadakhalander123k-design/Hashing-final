@@ -107,9 +107,9 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* 2. ALGOLEARN LOGO (LIGHT & DARK THEME AUTO-SWITCHING) */}
+          {/* 2. ALGOLEARN LOGO (EXACT IMAGE) */}
           <div className="flex items-center shrink-0">
-            <AlgoLearnLogo theme={theme} className="h-7.5 sm:h-8.5 w-auto" />
+            <AlgoLearnLogo theme={theme} className="h-8 sm:h-9 w-auto" />
           </div>
 
           {/* 3. CURRENT PAGE / SECTION (SECONDARY) */}
