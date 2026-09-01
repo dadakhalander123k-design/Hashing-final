@@ -7,7 +7,7 @@ export const FIELD_NOTES_MODULES: Omit<ModuleRecord, 'status' | 'progressPercent
     id: 'fn-01-basics',
     number: '01',
     code: 'FN-01',
-    title: 'HASHING BASICS & O(1) TIME',
+    title: 'WHAT IS HASHING? & O(1) ACCESS',
     category: 'FOUNDATION',
     description: 'Understand direct addressing, hash tables, and why hash lookups operate in average O(1) constant time.',
     criteriaDescription: 'Read the foundation theory and complete the interactive O(1) vs O(n) lookup speed race.',
@@ -18,7 +18,7 @@ export const FIELD_NOTES_MODULES: Omit<ModuleRecord, 'status' | 'progressPercent
     id: 'fn-02-modulo',
     number: '02',
     code: 'FN-02',
-    title: 'HASH FUNCTION & MODULO ARITHMETIC',
+    title: 'THE HASH FUNCTION & MODULO',
     category: 'FOUNDATION',
     description: 'Master the core modulus formula: h(key) = key mod table size to map numbers into array bounds.',
     criteriaDescription: 'Use the interactive modulo arithmetic calculator with at least 2 distinct keys and table sizes.',
@@ -26,92 +26,114 @@ export const FIELD_NOTES_MODULES: Omit<ModuleRecord, 'status' | 'progressPercent
     targetChapterId: 'theory-02',
   },
   {
-    id: 'fn-03-level1-basic',
+    id: 'fn-03-table',
     number: '03',
     code: 'FN-03',
-    title: 'DIRECT HASH TABLE (LEVEL 1)',
-    category: 'TECHNIQUE',
-    description: 'Compute remainders, place keys into array slots, and encounter the natural collision phenomenon.',
-    criteriaDescription: 'Calculate and place all 4 keys in Level 1 and trigger the collision event with Key 33.',
-    targetTab: 'GAME',
-    targetLevelId: 1,
+    title: 'THE HASH TABLE ARCHITECTURE',
+    category: 'FOUNDATION',
+    description: 'Associative data structures mapping keys to values using contiguous array storage and direct addressing.',
+    criteriaDescription: 'Study the hash table architecture, key-value storage, and direct memory translation.',
+    targetTab: 'THEORY',
+    targetChapterId: 'theory-03',
   },
   {
-    id: 'fn-04-level2-chaining',
+    id: 'fn-04-lifecycle',
     number: '04',
     code: 'FN-04',
-    title: 'SEPARATE CHAINING (LEVEL 2)',
-    category: 'TECHNIQUE',
-    description: 'Closed addressing strategy where each slot holds a linked list to gracefully store colliding elements.',
-    criteriaDescription: 'Complete Level 2 by calculating hashes and inserting all 5 keys into linked buckets.',
-    targetTab: 'GAME',
-    targetLevelId: 2,
+    title: 'THE HASHING LIFECYCLE PIPELINE',
+    category: 'FOUNDATION',
+    description: 'Master the 4-step pipeline for every Insert, Search, and Delete operation.',
+    criteriaDescription: 'Inspect the step-by-step hashing pipeline from key input to memory placement.',
+    targetTab: 'THEORY',
+    targetChapterId: 'theory-04',
   },
   {
-    id: 'fn-05-level3-linear',
+    id: 'fn-05-collision',
     number: '05',
     code: 'FN-05',
-    title: 'LINEAR PROBING (LEVEL 3)',
-    category: 'TECHNIQUE',
-    description: 'Open addressing algorithm searching sequentially (+1, +2...) for the nearest open slot upon collision.',
-    criteriaDescription: 'Complete Level 3 by calculating probe steps and inserting all 5 keys into open table slots.',
-    targetTab: 'GAME',
-    targetLevelId: 3,
+    title: 'WHAT IS A COLLISION & PARADOX',
+    category: 'FOUNDATION',
+    description: 'The mathematical inevitability of collisions under the Pigeonhole Principle and Birthday Paradox.',
+    criteriaDescription: 'Understand why collisions occur and why resolution strategies are essential.',
+    targetTab: 'THEORY',
+    targetChapterId: 'theory-05',
   },
   {
-    id: 'fn-06-level4-quadratic',
+    id: 'fn-06-chaining',
     number: '06',
     code: 'FN-06',
-    title: 'QUADRATIC PROBING (LEVEL 4)',
+    title: 'SEPARATE CHAINING (CLOSED ADDR)',
     category: 'TECHNIQUE',
-    description: 'Leaping open addressing using square increments (+1², +2², +3²) to avoid primary clustering.',
-    criteriaDescription: 'Complete Level 4 by computing square probe steps and inserting all 4 keys.',
-    targetTab: 'GAME',
-    targetLevelId: 4,
+    description: 'Closed addressing strategy where each slot holds a linked list to gracefully store colliding elements.',
+    criteriaDescription: 'Master linked bucket insertion and collision resolution.',
+    targetTab: 'THEORY',
+    targetChapterId: 'theory-06',
   },
   {
-    id: 'fn-07-level5-double',
+    id: 'fn-07-linear',
     number: '07',
     code: 'FN-07',
-    title: 'DOUBLE HASHING (LEVEL 5)',
+    title: 'LINEAR PROBING (OPEN ADDRESSING)',
     category: 'TECHNIQUE',
-    description: 'Advanced dual-hash resolution where a second function h2(key) computes a unique non-zero jump interval.',
-    criteriaDescription: 'Complete Level 5 by calculating h1 base index and h2 step size for all 4 keys.',
-    targetTab: 'GAME',
-    targetLevelId: 5,
+    description: 'Open addressing algorithm searching sequentially (+1, +2...) for the nearest open slot upon collision.',
+    criteriaDescription: 'Master sequential slot searching and probe sequence calculation.',
+    targetTab: 'THEORY',
+    targetChapterId: 'theory-07',
   },
   {
-    id: 'fn-08-load-factor',
+    id: 'fn-08-quadratic',
     number: '08',
     code: 'FN-08',
-    title: 'LOAD FACTOR & REHASHING',
-    category: 'ANALYSIS',
-    description: 'Analyze table saturation alpha = n/m, threshold limits (0.75), and array doubling with rehashing.',
-    criteriaDescription: 'Interact with the dynamic Load Factor gauge or master advanced theory chapters.',
+    title: 'QUADRATIC PROBING (SQUARE LEAPS)',
+    category: 'TECHNIQUE',
+    description: 'Leaping open addressing using square increments (+1², +2², +3²) to avoid primary clustering.',
+    criteriaDescription: 'Master square leap probing and secondary clustering mitigation.',
     targetTab: 'THEORY',
     targetChapterId: 'theory-08',
   },
   {
-    id: 'fn-09-quiz',
+    id: 'fn-09-double',
     number: '09',
     code: 'FN-09',
-    title: 'SIMPLE HASHING QUIZ',
-    category: 'EXAMINATION',
-    description: '10-question comprehensive assessment covering modulo hashing, collisions, separate chaining, linear/quadratic probing, and double hashing.',
-    criteriaDescription: 'Complete all 10 questions. Score 8-10 for Excellent (Mastered) or 6-7 for Good (Completed).',
-    targetTab: 'QUIZ',
-    targetChapterId: 'knowledge-quiz',
+    title: 'DOUBLE HASHING (DUAL FUNCTION)',
+    category: 'TECHNIQUE',
+    description: 'Advanced dual-hash resolution where a second function h2(key) computes a unique non-zero jump interval.',
+    criteriaDescription: 'Master dual-hash computation and step size calculation.',
+    targetTab: 'THEORY',
+    targetChapterId: 'theory-09',
   },
   {
-    id: 'fn-10-completion',
+    id: 'fn-10-realworld',
     number: '10',
     code: 'FN-10',
-    title: 'ALGORITHM MASTERY COMPLETION',
-    category: 'EXAMINATION',
-    description: 'Complete all 5 collision resolution levels and review the full algorithm certification suite.',
-    criteriaDescription: 'Complete all 5 levels in Game mode to achieve full DSA Hashing Mastery Completion.',
-    targetTab: 'GAME',
-    targetLevelId: 6,
+    title: 'REAL-WORLD APPLICATIONS',
+    category: 'ANALYSIS',
+    description: 'Explore databases, compilers, caches, and distributed consistent hashing in production systems.',
+    criteriaDescription: 'Study industry use cases and production hash table deployments.',
+    targetTab: 'THEORY',
+    targetChapterId: 'theory-10',
+  },
+  {
+    id: 'fn-11-advantages',
+    number: '11',
+    code: 'FN-11',
+    title: 'CORE ADVANTAGES & PERFORMANCE',
+    category: 'ANALYSIS',
+    description: 'Deep dive into algorithmic complexity: average O(1) vs worst-case O(n) trade-offs.',
+    criteriaDescription: 'Analyze time complexities, space requirements, and hardware cache efficiency.',
+    targetTab: 'THEORY',
+    targetChapterId: 'theory-11',
+  },
+  {
+    id: 'fn-12-tradeoffs',
+    number: '12',
+    code: 'FN-12',
+    title: 'LIMITATIONS & TRADEOFFS',
+    category: 'ANALYSIS',
+    description: 'Understand unsorted keys, lack of range queries, rehashing overhead, and cryptographic hashing.',
+    criteriaDescription: 'Analyze memory overhead, range search limits, and load factor thresholds.',
+    targetTab: 'THEORY',
+    targetChapterId: 'theory-12',
   },
 ];
 
@@ -120,14 +142,16 @@ const INITIAL_PROGRESS: UserProgressState = {
   modules: {
     'fn-01-basics': 'NOT_STARTED',
     'fn-02-modulo': 'NOT_STARTED',
-    'fn-03-level1-basic': 'NOT_STARTED',
-    'fn-04-level2-chaining': 'NOT_STARTED',
-    'fn-05-level3-linear': 'NOT_STARTED',
-    'fn-06-level4-quadratic': 'NOT_STARTED',
-    'fn-07-level5-double': 'NOT_STARTED',
-    'fn-08-load-factor': 'NOT_STARTED',
-    'fn-09-quiz': 'NOT_STARTED',
-    'fn-10-completion': 'NOT_STARTED',
+    'fn-03-table': 'NOT_STARTED',
+    'fn-04-lifecycle': 'NOT_STARTED',
+    'fn-05-collision': 'NOT_STARTED',
+    'fn-06-chaining': 'NOT_STARTED',
+    'fn-07-linear': 'NOT_STARTED',
+    'fn-08-quadratic': 'NOT_STARTED',
+    'fn-09-double': 'NOT_STARTED',
+    'fn-10-realworld': 'NOT_STARTED',
+    'fn-11-advantages': 'NOT_STARTED',
+    'fn-12-tradeoffs': 'NOT_STARTED',
   },
   moduleProgress: {},
   completedTheoryChapters: [],
@@ -145,6 +169,7 @@ const INITIAL_PROGRESS: UserProgressState = {
   currentActiveModuleId: 'fn-01-basics',
   lastActiveTimestamp: Date.now(),
   completedVideos: [],
+  hasCelebrated100Percent: false,
 };
 
 // Normalized map of chapter aliases to standard IDs
@@ -209,7 +234,10 @@ class ProgressManager {
             ? normalizeTheoryChapterId(parsed.currentTheoryChapterId)
             : 'theory-01',
           completedVideos: Array.isArray(parsed.completedVideos)
-            ? parsed.completedVideos
+            ? Array.from(new Set(parsed.completedVideos))
+            : [],
+          levelsCompleted: Array.isArray(parsed.levelsCompleted)
+            ? Array.from(new Set(parsed.levelsCompleted))
             : [],
         };
       }
@@ -247,9 +275,12 @@ class ProgressManager {
     return JSON.parse(JSON.stringify(this.state));
   }
 
+  // 1. THEORY STATS (12 Modules)
   public getTheoryStats() {
-    const list = this.state.completedTheoryChapters || [];
-    const completed = list.length;
+    const list = Array.isArray(this.state.completedTheoryChapters)
+      ? Array.from(new Set(this.state.completedTheoryChapters))
+      : [];
+    const completed = Math.min(12, list.length);
     const total = 12;
     const percentage = Math.round((completed / total) * 100);
     return {
@@ -262,8 +293,9 @@ class ProgressManager {
     };
   }
 
+  // 2. VIDEO STATS (2 Video Lessons)
   public getVideoStats() {
-    const list = this.state.completedVideos || [];
+    const list = Array.isArray(this.state.completedVideos) ? this.state.completedVideos : [];
     const isIntroCompleted = list.includes('lesson-01') || list.includes('introduction');
     const isCollisionCompleted = list.includes('lesson-02') || list.includes('collision');
     const completed = (isIntroCompleted ? 1 : 0) + (isCollisionCompleted ? 1 : 0);
@@ -281,11 +313,11 @@ class ProgressManager {
     };
   }
 
+  // 3. GAME STATS (5 Levels)
   public getGameStats() {
-    const completedList = (this.state.levelsCompleted || []).filter(
-      (lvl) => lvl >= 1 && lvl <= 5
-    );
-    const completed = completedList.length;
+    const rawList = Array.isArray(this.state.levelsCompleted) ? this.state.levelsCompleted : [];
+    const completedList = Array.from(new Set(rawList.filter((lvl) => lvl >= 1 && lvl <= 5)));
+    const completed = Math.min(5, completedList.length);
     const total = 5;
     const percentage = Math.round((completed / total) * 100);
 
@@ -298,6 +330,7 @@ class ProgressManager {
     };
   }
 
+  // 4. QUIZ STATS (1 Whole Quiz)
   public getQuizStats() {
     const isSubmitted = Boolean(this.state.quizSubmitted);
     const completed = isSubmitted ? 1 : 0;
@@ -314,49 +347,48 @@ class ProgressManager {
     };
   }
 
+  // ALL 12 MODULES
   public getModules(): ModuleRecord[] {
     const theoryDone = this.state.completedTheoryChapters || [];
     const levelsDone = this.state.levelsCompleted || [];
-    const quizDone = Boolean(this.state.quizSubmitted);
+
+    const moduleMapping: Record<string, string> = {
+      'fn-01-basics': 'theory-01',
+      'fn-02-modulo': 'theory-02',
+      'fn-03-table': 'theory-03',
+      'fn-04-lifecycle': 'theory-04',
+      'fn-05-collision': 'theory-05',
+      'fn-06-chaining': 'theory-06',
+      'fn-07-linear': 'theory-07',
+      'fn-08-quadratic': 'theory-08',
+      'fn-09-double': 'theory-09',
+      'fn-10-realworld': 'theory-10',
+      'fn-11-advantages': 'theory-11',
+      'fn-12-tradeoffs': 'theory-12',
+    };
 
     return FIELD_NOTES_MODULES.map((m) => {
       let status = this.state.modules[m.id] || 'NOT_STARTED';
       let progressPercent = this.state.moduleProgress[m.id] || 0;
+      const chapterId = moduleMapping[m.id];
 
-      // Deterministic sync with underlying activity states
-      if (m.id === 'fn-01-basics' && theoryDone.includes('theory-01')) {
+      if (chapterId && theoryDone.includes(chapterId)) {
         status = 'COMPLETED';
         progressPercent = 100;
-      } else if (m.id === 'fn-02-modulo' && theoryDone.includes('theory-02')) {
-        status = 'COMPLETED';
-        progressPercent = 100;
-      } else if (m.id === 'fn-03-level1-basic' && levelsDone.includes(1)) {
-        status = this.state.levelsMastered.includes(1) ? 'MASTERED' : 'COMPLETED';
-        progressPercent = 100;
-      } else if (m.id === 'fn-04-level2-chaining' && levelsDone.includes(2)) {
+      }
+
+      // Also support game level masteries for interactive modules
+      if (m.id === 'fn-06-chaining' && levelsDone.includes(2)) {
         status = this.state.levelsMastered.includes(2) ? 'MASTERED' : 'COMPLETED';
         progressPercent = 100;
-      } else if (m.id === 'fn-05-level3-linear' && levelsDone.includes(3)) {
+      } else if (m.id === 'fn-07-linear' && levelsDone.includes(3)) {
         status = this.state.levelsMastered.includes(3) ? 'MASTERED' : 'COMPLETED';
         progressPercent = 100;
-      } else if (m.id === 'fn-06-level4-quadratic' && levelsDone.includes(4)) {
+      } else if (m.id === 'fn-08-quadratic' && levelsDone.includes(4)) {
         status = this.state.levelsMastered.includes(4) ? 'MASTERED' : 'COMPLETED';
         progressPercent = 100;
-      } else if (m.id === 'fn-07-level5-double' && levelsDone.includes(5)) {
+      } else if (m.id === 'fn-09-double' && levelsDone.includes(5)) {
         status = this.state.levelsMastered.includes(5) ? 'MASTERED' : 'COMPLETED';
-        progressPercent = 100;
-      } else if (
-        m.id === 'fn-08-load-factor' &&
-        (theoryDone.includes('theory-08') || theoryDone.includes('theory-10') || this.state.sandboxOperationsCount >= 3)
-      ) {
-        status = 'COMPLETED';
-        progressPercent = 100;
-      } else if (m.id === 'fn-09-quiz' && quizDone) {
-        status = (this.state.quizFinalScore >= 80) ? 'MASTERED' : 'COMPLETED';
-        progressPercent = 100;
-      } else if (m.id === 'fn-10-completion' && [1, 2, 3, 4, 5].every((lvl) => levelsDone.includes(lvl))) {
-        const allMastered = [1, 2, 3, 4, 5].every((lvl) => this.state.levelsMastered.includes(lvl));
-        status = allMastered ? 'MASTERED' : 'COMPLETED';
         progressPercent = 100;
       }
 
@@ -374,17 +406,27 @@ class ProgressManager {
     });
   }
 
+  // OVERALL PROGRESS (20 Unique Activities)
   public getStats() {
     const theory = this.getTheoryStats();
     const video = this.getVideoStats();
     const game = this.getGameStats();
     const quiz = this.getQuizStats();
 
-    // 20 distinct measurable learning activities:
-    // 12 Theory Chapters + 2 Videos + 5 Game Levels + 1 Whole Quiz
+    // Exactly 20 distinct measurable learning activities:
+    // 12 Theory Modules + 5 Game Levels + 2 Videos + 1 Quiz
     const total = 20;
     const completed = theory.completed + video.completed + game.completed + quiz.completed;
-    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const isAllComplete =
+      theory.completed === 12 &&
+      video.completed === 2 &&
+      game.completed === 5 &&
+      quiz.completed === 1;
+
+    // Strict 100% calculation: exactly 100% ONLY when every activity is finished
+    const percentage = isAllComplete
+      ? 100
+      : Math.min(99, Math.max(0, Math.round((completed / total) * 100)));
 
     const modules = this.getModules();
     const mastered = modules.filter((m) => m.status === 'MASTERED').length;
@@ -400,6 +442,7 @@ class ProgressManager {
       completed,
       mastered,
       percentage,
+      isAllComplete,
       nextModule: currentUnfinished,
       theory,
       video,
@@ -431,20 +474,25 @@ class ProgressManager {
     this.state.completedTheoryChapters.push(normalized);
     this.state.currentTheoryChapterId = normalized;
 
-    // Synchronize underlying curriculum modules
-    if (normalized === 'theory-01') {
-      this.completeModule('fn-01-basics');
-    }
-    if (normalized === 'theory-02' || normalized === 'theory-03') {
-      this.completeModule('fn-02-modulo');
-    }
-    if (
-      normalized === 'theory-08' ||
-      normalized === 'theory-10' ||
-      normalized === 'theory-11' ||
-      normalized === 'theory-12'
-    ) {
-      this.completeModule('fn-08-load-factor');
+    // Synchronize underlying module ID
+    const chapterToModuleMap: Record<string, string> = {
+      'theory-01': 'fn-01-basics',
+      'theory-02': 'fn-02-modulo',
+      'theory-03': 'fn-03-table',
+      'theory-04': 'fn-04-lifecycle',
+      'theory-05': 'fn-05-collision',
+      'theory-06': 'fn-06-chaining',
+      'theory-07': 'fn-07-linear',
+      'theory-08': 'fn-08-quadratic',
+      'theory-09': 'fn-09-double',
+      'theory-10': 'fn-10-realworld',
+      'theory-11': 'fn-11-advantages',
+      'theory-12': 'fn-12-tradeoffs',
+    };
+
+    const targetModuleId = chapterToModuleMap[normalized];
+    if (targetModuleId) {
+      this.completeModule(targetModuleId);
     }
 
     this.saveState();
@@ -529,50 +577,13 @@ class ProgressManager {
       this.state.levelsMastered.push(levelId);
     }
 
-    // Map level to module ID
-    const levelToModuleMap: Record<number, string> = {
-      1: 'fn-03-level1-basic',
-      2: 'fn-04-level2-chaining',
-      3: 'fn-05-level3-linear',
-      4: 'fn-06-level4-quadratic',
-      5: 'fn-07-level5-double',
-    };
-
-    const moduleId = levelToModuleMap[levelId];
-    if (moduleId) {
-      this.completeModule(moduleId, isPerfect);
-    }
-
-    // If all 5 levels are completed, mark Algorithm Mastery Completion (FN-10)
-    const allFiveDone = [1, 2, 3, 4, 5].every((lvl) => this.state.levelsCompleted.includes(lvl));
-    if (allFiveDone) {
-      const allFiveMastered = [1, 2, 3, 4, 5].every((lvl) => this.state.levelsMastered.includes(lvl));
-      this.completeModule('fn-10-completion', allFiveMastered);
-    }
-
-    // Advance current active module to next level if available
-    if (levelId < 5) {
-      const nextModuleId = levelToModuleMap[levelId + 1];
-      if (nextModuleId && this.state.modules[nextModuleId] === 'NOT_STARTED') {
-        this.state.modules[nextModuleId] = 'IN_PROGRESS';
-      }
-    }
-
     this.saveState();
   }
 
   public checkAndCompleteCertification() {
-    const modules = this.getModules();
-    const otherNineDone = modules
-      .filter((m) => m.id !== 'fn-10-completion')
-      .every((m) => m.status === 'COMPLETED' || m.status === 'MASTERED');
-
-    if (
-      otherNineDone &&
-      this.state.modules['fn-10-completion'] !== 'COMPLETED' &&
-      this.state.modules['fn-10-completion'] !== 'MASTERED'
-    ) {
-      this.completeModule('fn-10-completion', true);
+    const stats = this.getStats();
+    if (stats.isAllComplete && !this.state.hasCelebrated100Percent) {
+      this.saveState();
     }
   }
 
@@ -586,14 +597,6 @@ class ProgressManager {
     this.state.quizSubmitted = true;
     const percentage = Math.round((correctCount / totalQuestions) * 100);
     this.state.quizFinalScore = percentage;
-
-    if (correctCount >= 8) {
-      this.completeModule('fn-09-quiz', true); // 8-10: Excellent — Hashing Master!
-    } else if (correctCount >= 6) {
-      this.completeModule('fn-09-quiz', false); // 6-7: Good — Completed
-    } else {
-      this.updateModuleProgress('fn-09-quiz', percentage);
-    }
     this.saveState();
   }
 
@@ -611,22 +614,11 @@ class ProgressManager {
     if (!this.state.masterChallengesCompleted.includes(challengeId)) {
       this.state.masterChallengesCompleted.push(challengeId);
     }
-    const totalDone = this.state.masterChallengesCompleted.length;
-    if (totalDone >= 4) {
-      this.completeModule('fn-10-completion', true); // Mastered
-    } else if (totalDone >= 2) {
-      this.completeModule('fn-10-completion', false); // Completed
-    } else {
-      this.updateModuleProgress('fn-10-completion', totalDone * 25);
-    }
     this.saveState();
   }
 
   public recordSandboxOp() {
     this.state.sandboxOperationsCount += 1;
-    if (this.state.sandboxOperationsCount >= 3) {
-      this.updateModuleProgress('fn-08-load-factor', 100);
-    }
     this.saveState();
   }
 
@@ -645,14 +637,16 @@ class ProgressManager {
       modules: {
         'fn-01-basics': 'NOT_STARTED',
         'fn-02-modulo': 'NOT_STARTED',
-        'fn-03-level1-basic': 'NOT_STARTED',
-        'fn-04-level2-chaining': 'NOT_STARTED',
-        'fn-05-level3-linear': 'NOT_STARTED',
-        'fn-06-level4-quadratic': 'NOT_STARTED',
-        'fn-07-level5-double': 'NOT_STARTED',
-        'fn-08-load-factor': 'NOT_STARTED',
-        'fn-09-quiz': 'NOT_STARTED',
-        'fn-10-completion': 'NOT_STARTED',
+        'fn-03-table': 'NOT_STARTED',
+        'fn-04-lifecycle': 'NOT_STARTED',
+        'fn-05-collision': 'NOT_STARTED',
+        'fn-06-chaining': 'NOT_STARTED',
+        'fn-07-linear': 'NOT_STARTED',
+        'fn-08-quadratic': 'NOT_STARTED',
+        'fn-09-double': 'NOT_STARTED',
+        'fn-10-realworld': 'NOT_STARTED',
+        'fn-11-advantages': 'NOT_STARTED',
+        'fn-12-tradeoffs': 'NOT_STARTED',
       },
       moduleProgress: {},
       completedTheoryChapters: [],

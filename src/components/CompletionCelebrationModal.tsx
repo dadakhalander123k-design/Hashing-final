@@ -49,16 +49,18 @@ export const CompletionCelebrationModal: React.FC<CompletionCelebrationModalProp
   });
 
   const competencies = [
-    { code: 'FN-01', title: 'Direct Hashing & O(1) Time Complexity', status: 'Mastered' },
-    { code: 'FN-02', title: 'Modulo Arithmetic & Table Boundaries', status: 'Mastered' },
-    { code: 'FN-03', title: 'Level 1: Direct Memory Slot Mapping', status: 'Mastered' },
-    { code: 'FN-04', title: 'Level 2: Separate Chaining & Linked Buckets', status: 'Mastered' },
-    { code: 'FN-05', title: 'Level 3: Linear Probing & Cluster Stepping', status: 'Mastered' },
-    { code: 'FN-06', title: 'Level 4: Quadratic Probing & Parabolic Jumps', status: 'Mastered' },
-    { code: 'FN-07', title: 'Level 5: Double Hashing & Secondary Steps', status: 'Mastered' },
-    { code: 'FN-08', title: 'Load Factor Metrics & Dynamic Rehashing', status: 'Mastered' },
-    { code: 'FN-09', title: 'Comprehensive 10-Question Hash Examination', status: 'Mastered' },
-    { code: 'FN-10', title: 'Full DSA Algorithm Mastery Certification', status: 'Certified' },
+    { code: 'FN-01', title: 'What is Hashing? & O(1) Time Complexity', status: 'Mastered' },
+    { code: 'FN-02', title: 'The Hash Function & Modulo Arithmetic', status: 'Mastered' },
+    { code: 'FN-03', title: 'The Hash Table Architecture & Direct Addressing', status: 'Mastered' },
+    { code: 'FN-04', title: 'The Hashing Lifecycle Pipeline', status: 'Mastered' },
+    { code: 'FN-05', title: 'What is a Collision? & Birthday Paradox', status: 'Mastered' },
+    { code: 'FN-06', title: 'Separate Chaining & Linked Buckets', status: 'Mastered' },
+    { code: 'FN-07', title: 'Linear Probing & Open Addressing', status: 'Mastered' },
+    { code: 'FN-08', title: 'Quadratic Probing & Square Leap Intervals', status: 'Mastered' },
+    { code: 'FN-09', title: 'Double Hashing & Dual Step Functions', status: 'Mastered' },
+    { code: 'FN-10', title: 'Real-World Production Applications & Systems', status: 'Mastered' },
+    { code: 'FN-11', title: 'Core Algorithmic Advantages & Hardware Cache', status: 'Mastered' },
+    { code: 'FN-12', title: 'Limitations, Range Search Tradeoffs & Rehashing', status: 'Mastered' },
   ];
 
   const handlePrint = () => {
