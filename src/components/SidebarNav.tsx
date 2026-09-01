@@ -108,32 +108,11 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       id="app-sidebar-navigation"
       className="w-64 h-full flex flex-col bg-white dark:bg-[#070B18] border-r border-[#E5E7EB] dark:border-purple-500/20 select-none shadow-xs transition-colors duration-300"
     >
-      {/* Top Brand Header: AlgoLearn Primary, Hash Quest Secondary + Top-Right Close Button */}
+      {/* Top Sidebar Header with Close Button (No duplicate branding) */}
       <div className="p-4 sm:p-5 border-b border-[#E5E7EB] dark:border-purple-500/15 flex items-center justify-between gap-2">
-        <div
-          onClick={() => handleSelect('HOME')}
-          className="flex items-center gap-3 cursor-pointer group select-none min-w-0"
-        >
-          <div className="w-10 h-10 rounded-xl bg-[#EEF2FF] dark:bg-purple-600 text-[#4F46E5] dark:text-white border border-[#E0E7FF] dark:border-purple-500/30 flex items-center justify-center font-bold text-xl shadow-xs group-hover:scale-105 transition-transform shrink-0">
-            #
-          </div>
-          <div className="min-w-0">
-            <div className="font-extrabold text-[#111827] dark:text-slate-100 tracking-tight text-base font-sans leading-tight">
-              AlgoLearn
-            </div>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="font-semibold text-xs text-[#4F46E5] dark:text-purple-300 font-sans tracking-wide">
-                Hash Quest
-              </span>
-              <span className="px-1.5 py-0.2 text-[9px] font-bold rounded-md bg-[#EEF2FF] dark:bg-purple-950/60 text-[#4F46E5] dark:text-purple-300 border border-[#E0E7FF] dark:border-purple-500/30 font-mono">
-                v2.0
-              </span>
-            </div>
-            <p className="text-[10px] font-medium text-[#64748B] dark:text-slate-400 font-sans leading-tight mt-0.5 truncate">
-              Interactive Hash Engine
-            </p>
-          </div>
-        </div>
+        <span className="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">
+          Menu
+        </span>
 
         {/* Close Button in Top-Right Corner of Navigation */}
         <button

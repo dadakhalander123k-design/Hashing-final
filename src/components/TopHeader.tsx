@@ -11,6 +11,7 @@ import {
 import { MainViewTab, TechniqueType } from '../types/game';
 import { soundManager } from '../utils/audio';
 import { useTheme } from '../utils/themeContext';
+import { AlgoLearnLogo } from './AlgoLearnLogo';
 
 export interface TopHeaderProps {
   activeTab: MainViewTab;
@@ -79,9 +80,9 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         isDesktopSidebarOpen ? 'lg:left-64' : 'lg:left-0'
       } z-20 bg-white dark:bg-[#070B18]/95 border-b border-slate-200 dark:border-purple-500/20 shadow-xs backdrop-blur-md transition-all duration-300`}
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
-        {/* Left Side: 1. Three-Bar Menu Button -> 2. Logo -> 3. AlgoLearn -> 4. Current Page */}
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4">
+        {/* Left Side: 1. Menu Button -> 2. AlgoLearn Logo -> 3. Current Section */}
+        <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
           {/* 1. THREE-BAR MENU BUTTON */}
           <button
             id="btn-sidebar-toggle"
@@ -93,17 +94,14 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* 2. LOGO / BRAND ICON */}
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#EEF2FF] dark:bg-purple-600 text-[#4F46E5] dark:text-white border border-[#E0E7FF] dark:border-purple-500/30 flex items-center justify-center font-bold text-base sm:text-lg shadow-xs shrink-0 select-none">
-            #
+          {/* 2. ALGOLEARN LOGO (LIGHT & DARK THEME AUTO-SWITCHING) */}
+          <div className="flex items-center shrink-0">
+            <AlgoLearnLogo theme={theme} className="h-7.5 sm:h-8.5 w-auto" />
           </div>
 
-          {/* 3. ALGOLEARN (PRIMARY) + 4. CURRENT PAGE (SECONDARY / SUBORDINATE) */}
-          <div className="flex flex-col min-w-0 select-none justify-center">
-            <span className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-slate-100 font-sans tracking-tight leading-none">
-              AlgoLearn
-            </span>
-            <span className="text-[11px] sm:text-xs font-semibold text-indigo-600 dark:text-purple-300 font-sans tracking-wide leading-tight mt-0.5">
+          {/* 3. CURRENT PAGE / SECTION (SECONDARY) */}
+          <div className="hidden xs:flex items-center gap-2 pl-2.5 sm:pl-3 border-l border-slate-200 dark:border-purple-500/25 min-w-0">
+            <span className="text-xs sm:text-sm font-semibold text-indigo-600 dark:text-purple-300 font-sans tracking-wide leading-none truncate">
               {pageName}
             </span>
           </div>
