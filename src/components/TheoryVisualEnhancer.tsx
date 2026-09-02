@@ -35,8 +35,8 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
     return (
       <div className="space-y-4 font-sans text-slate-900 dark:text-white animate-fadeIn">
         {/* Concept Flow Diagram */}
-        <div className="bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/20 rounded-2xl p-5 sm:p-6 shadow-xs dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
-          <div className="text-xs font-bold uppercase text-indigo-600 dark:text-purple-400 tracking-wider mb-4 flex items-center gap-1.5 font-mono">
+        <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+          <div className="text-xs font-bold uppercase text-[#2563EB] dark:text-blue-400 tracking-wider mb-4 flex items-center gap-1.5 font-mono">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Architecture Diagram // Hashing Concept</span>
           </div>
@@ -44,38 +44,38 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
           {/* Desktop & Mobile Responsive Flow */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-2 text-center">
             {/* Step 1: Input Key */}
-            <div className="w-full sm:w-auto flex-1 p-3.5 bg-slate-50 dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/20 rounded-xl shadow-xs">
+            <div className="w-full sm:w-auto flex-1 p-3.5 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
               <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block uppercase font-mono">1. Input Key</span>
               <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono">23</span>
             </div>
 
-            <div className="text-indigo-600 dark:text-purple-400 font-black text-lg rotate-90 sm:rotate-0">➔</div>
+            <div className="text-[#2563EB] dark:text-blue-400 font-black text-lg rotate-90 sm:rotate-0">➔</div>
 
             {/* Step 2: Hash Function */}
-            <div className="w-full sm:w-auto flex-1 p-3.5 bg-indigo-50 dark:bg-purple-950/50 border border-indigo-200 dark:border-purple-500/30 rounded-xl shadow-xs">
-              <span className="text-[10px] text-indigo-600 dark:text-purple-300 font-bold block uppercase font-mono">2. Hash Function</span>
-              <span className="text-sm sm:text-base font-bold text-indigo-900 dark:text-cyan-300 font-mono">23 % 10</span>
+            <div className="w-full sm:w-auto flex-1 p-3.5 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-500/30 rounded-xl shadow-xs">
+              <span className="text-[10px] text-[#2563EB] dark:text-blue-300 font-bold block uppercase font-mono">2. Hash Function</span>
+              <span className="text-sm sm:text-base font-bold text-blue-900 dark:text-blue-300 font-mono">23 % 10</span>
             </div>
 
-            <div className="text-indigo-600 dark:text-purple-400 font-black text-lg rotate-90 sm:rotate-0">➔</div>
+            <div className="text-[#2563EB] dark:text-blue-400 font-black text-lg rotate-90 sm:rotate-0">➔</div>
 
             {/* Step 3: Array Index */}
-            <div className="w-full sm:w-auto flex-1 p-3.5 bg-indigo-600 dark:bg-purple-600 text-white rounded-xl shadow-xs">
-              <span className="text-[10px] text-indigo-100 font-bold block uppercase font-mono">3. Target Index</span>
+            <div className="w-full sm:w-auto flex-1 p-3.5 bg-[#2563EB] dark:bg-[#3B82F6] text-white rounded-xl shadow-xs">
+              <span className="text-[10px] text-blue-100 font-bold block uppercase font-mono">3. Target Index</span>
               <span className="text-xl sm:text-2xl font-black font-mono">[03]</span>
             </div>
 
-            <div className="text-indigo-600 dark:text-purple-400 font-black text-lg rotate-90 sm:rotate-0">➔</div>
+            <div className="text-[#2563EB] dark:text-blue-400 font-black text-lg rotate-90 sm:rotate-0">➔</div>
 
             {/* Step 4: Storage */}
-            <div className="w-full sm:w-auto flex-1 p-3.5 bg-indigo-50 dark:bg-[#0F1733] text-indigo-900 dark:text-white border border-indigo-200 dark:border-purple-500/30 rounded-xl shadow-xs">
-              <span className="text-[10px] text-indigo-600 dark:text-slate-400 font-bold block uppercase font-mono">4. Hash Table</span>
+            <div className="w-full sm:w-auto flex-1 p-3.5 bg-blue-50 dark:bg-[#1E293B] text-blue-900 dark:text-white border border-blue-200 dark:border-blue-500/30 rounded-xl shadow-xs">
+              <span className="text-[10px] text-[#2563EB] dark:text-slate-400 font-bold block uppercase font-mono">4. Hash Table</span>
               <span className="text-sm font-bold font-mono">Bucket 3</span>
             </div>
           </div>
 
           {/* Visual Hash Table Representation */}
-          <div className="mt-5 pt-4 border-t border-slate-100 dark:border-purple-500/15 space-y-2">
+          <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
             <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 block font-mono">
               Hash Table Memory Slots (Size = 10):
             </span>
@@ -85,18 +85,18 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
                   key={idx}
                   className={`p-2.5 rounded-xl border transition-all ${
                     idx === 3
-                      ? 'bg-indigo-50 dark:bg-purple-950/60 border-indigo-500 dark:border-purple-400 shadow-sm scale-105'
-                      : 'bg-slate-50 dark:bg-[#080D1F] border-slate-200 dark:border-purple-500/15 text-slate-400 dark:text-slate-500'
+                      ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-500 dark:border-blue-400 shadow-sm scale-105'
+                      : 'bg-slate-50 dark:bg-[#0B1120] border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500'
                   }`}
                 >
                   <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 font-mono">[{idx}]</div>
-                  <div className={`text-sm font-black mt-0.5 font-mono ${idx === 3 ? 'text-indigo-700 dark:text-cyan-300' : 'text-slate-300 dark:text-slate-600'}`}>
+                  <div className={`text-sm font-black mt-0.5 font-mono ${idx === 3 ? 'text-[#2563EB] dark:text-blue-300' : 'text-slate-300 dark:text-slate-600'}`}>
                     {idx === 3 ? '23' : '—'}
                   </div>
                 </div>
               ))}
             </div>
-            <div className="flex items-center justify-center gap-1.5 text-xs text-indigo-600 dark:text-purple-400 font-semibold pt-2">
+            <div className="flex items-center justify-center gap-1.5 text-xs text-[#2563EB] dark:text-blue-400 font-semibold pt-2">
               <ArrowDown className="w-3.5 h-3.5" />
               <span>Key 23 stored directly at index 3 in O(1) time</span>
             </div>
@@ -105,9 +105,9 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
 
         {/* Worked Example & How it Works Sequence */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/20 rounded-2xl p-5 shadow-xs space-y-2">
+          <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-2">
             <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 font-mono">Worked Example</span>
-            <div className="bg-[#F8FAFC] dark:bg-[#080D1F] text-[#111827] dark:text-cyan-300 p-3.5 rounded-xl text-sm font-bold font-mono border border-[#E5E7EB] dark:border-purple-500/20 border-l-4 border-l-[#4F46E5] dark:border-l-purple-500">
+            <div className="bg-[#F8FAFC] dark:bg-[#0B1120] text-[#111827] dark:text-blue-300 p-3.5 rounded-xl text-sm font-bold font-mono border border-[#E5E7EB] dark:border-slate-800 border-l-4 border-l-[#2563EB] dark:border-l-blue-500">
               <code>23 % 10 = 3</code>
             </div>
             <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-sans pt-1">
@@ -115,7 +115,7 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/20 rounded-2xl p-5 shadow-xs space-y-2">
+          <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-2">
             <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 font-mono">Why O(1) Matters</span>
             <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/30 rounded-xl text-emerald-800 dark:text-emerald-300 text-xs font-medium space-y-1">
               <div className="font-bold">Linear Array Search: O(N)</div>
@@ -136,33 +136,33 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
   if (chapterId === 'theory-02' || chapterId === 'hash-function') {
     return (
       <div className="space-y-4 font-sans text-slate-900 dark:text-white animate-fadeIn">
-        <div className="bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/20 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="text-xs font-bold uppercase text-indigo-600 dark:text-purple-400 tracking-wider flex items-center gap-1.5 font-mono">
+        <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="text-xs font-bold uppercase text-[#2563EB] dark:text-blue-400 tracking-wider flex items-center gap-1.5 font-mono">
             <Cpu className="w-4 h-4" />
             <span>Mathematical Proof & Modulo Boundaries</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
-            <div className="p-3.5 bg-slate-50 dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/20 rounded-xl shadow-xs">
+            <div className="p-3.5 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
               <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold font-mono">1. DIVISION METHOD</span>
               <div className="text-sm font-bold text-slate-900 dark:text-white font-mono mt-1">h(k) = k mod m</div>
               <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">Best with prime table size m</span>
             </div>
 
-            <div className="p-3.5 bg-indigo-50 dark:bg-purple-950/50 border border-indigo-200 dark:border-purple-500/30 rounded-xl shadow-xs">
-              <span className="text-[10px] text-indigo-600 dark:text-purple-300 font-bold font-mono">2. BOUNDARY GUARANTEE</span>
-              <div className="text-sm font-bold text-indigo-900 dark:text-cyan-300 font-mono mt-1">0 ≤ h(k) &lt; m</div>
+            <div className="p-3.5 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-500/30 rounded-xl shadow-xs">
+              <span className="text-[10px] text-[#2563EB] dark:text-blue-300 font-bold font-mono">2. BOUNDARY GUARANTEE</span>
+              <div className="text-sm font-bold text-blue-900 dark:text-blue-300 font-mono mt-1">0 ≤ h(k) &lt; m</div>
               <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">Output never exceeds array bounds</span>
             </div>
 
-            <div className="p-3.5 bg-slate-50 dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/20 rounded-xl shadow-xs">
+            <div className="p-3.5 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
               <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold font-mono">3. UNIFORM DISPERSAL</span>
               <div className="text-sm font-bold text-slate-900 dark:text-white font-mono mt-1">P(h(k) = i) = 1/m</div>
               <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">Minimizes clustered hot-spots</span>
             </div>
           </div>
 
-          <div className="bg-[#F8FAFC] dark:bg-[#080D1F] text-[#111827] dark:text-cyan-300 p-4 rounded-xl text-xs font-mono space-y-1.5 border border-[#E5E7EB] dark:border-purple-500/20 border-l-4 border-l-[#4F46E5] dark:border-l-purple-500">
+          <div className="bg-[#F8FAFC] dark:bg-[#0B1120] text-[#111827] dark:text-blue-300 p-4 rounded-xl text-xs font-mono space-y-1.5 border border-[#E5E7EB] dark:border-slate-800 border-l-4 border-l-[#2563EB] dark:border-l-blue-500">
             <div>// Modulo Division Examples (Table Size m = 7):</div>
             <div>h(15) = 15 % 7 = 1  → Bucket [01]</div>
             <div>h(22) = 22 % 7 = 1  → Bucket [01] (COLLISION!)</div>
@@ -185,9 +185,9 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
 
     return (
       <div className="space-y-4 font-sans text-slate-900 dark:text-white animate-fadeIn">
-        <div className="bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/20 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase text-indigo-600 dark:text-purple-400 tracking-wider font-mono">
+            <span className="text-xs font-bold uppercase text-[#2563EB] dark:text-blue-400 tracking-wider font-mono">
               Memory Slot Array (Buckets 0 to 9)
             </span>
             <button
@@ -207,8 +207,8 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
                   key={slotIdx}
                   className={`p-3 rounded-xl border transition-all ${
                     matched
-                      ? 'bg-indigo-50 dark:bg-purple-950/60 border-indigo-500 dark:border-purple-400 shadow-xs'
-                      : 'bg-slate-50 dark:bg-[#080D1F] border-slate-200 dark:border-purple-500/15 text-slate-400 dark:text-slate-500'
+                      ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-500 dark:border-blue-400 shadow-xs'
+                      : 'bg-slate-50 dark:bg-[#0B1120] border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500'
                   }`}
                 >
                   <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400">Slot [{slotIdx}]</div>
@@ -220,7 +220,7 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
             })}
           </div>
 
-          <div className="p-3.5 bg-slate-50 dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/20 rounded-xl text-xs text-slate-600 dark:text-slate-300 font-mono">
+          <div className="p-3.5 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-600 dark:text-slate-300 font-mono">
             {topic3Step === 0 && 'Click "Step Insertion" to populate the hash table sequentially.'}
             {topic3Step === 1 && 'Inserted Key 12 at Index 12 % 10 = [02] in O(1) time.'}
             {topic3Step === 2 && 'Inserted Key 45 at Index 45 % 10 = [05] in O(1) time.'}
@@ -237,17 +237,17 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
   if (chapterId === 'theory-05' || chapterId === 'what-is-a-collision') {
     return (
       <div className="space-y-4 font-sans text-slate-900 dark:text-white animate-fadeIn">
-        <div className="bg-white dark:bg-[#0B1228] border border-rose-200 dark:border-rose-500/30 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-[#111827] border border-rose-200 dark:border-rose-500/30 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
           <div className="text-xs font-bold uppercase text-rose-600 dark:text-rose-400 tracking-wider flex items-center gap-1.5 font-mono">
             <ShieldAlert className="w-4 h-4" />
             <span>Collision Demonstration // Two Keys Target Same Slot</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 bg-slate-50 dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/20 rounded-xl text-center space-y-1">
+            <div className="p-4 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl text-center space-y-1">
               <span className="text-xs font-bold text-slate-500 dark:text-slate-400 font-mono">Existing Key</span>
               <div className="text-xl font-black text-slate-900 dark:text-white font-mono">Key: 15</div>
-              <div className="text-xs font-mono text-indigo-600 dark:text-purple-400 font-bold">15 % 10 = Index [05]</div>
+              <div className="text-xs font-mono text-[#2563EB] dark:text-blue-400 font-bold">15 % 10 = Index [05]</div>
             </div>
 
             <div className="p-4 bg-rose-50 dark:bg-rose-950/50 border border-rose-300 dark:border-rose-500/40 rounded-xl text-center space-y-1">
@@ -271,33 +271,33 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
   if (chapterId === 'theory-06' || chapterId === 'separate-chaining') {
     return (
       <div className="space-y-4 font-sans text-slate-900 dark:text-white animate-fadeIn">
-        <div className="bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/20 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="text-xs font-bold uppercase text-indigo-600 dark:text-purple-400 tracking-wider flex items-center gap-1.5 font-mono">
+        <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="text-xs font-bold uppercase text-[#2563EB] dark:text-blue-400 tracking-wider flex items-center gap-1.5 font-mono">
             <LinkIcon className="w-4 h-4" />
             <span>Closed Addressing // Linked Bucket Architecture</span>
           </div>
 
           <div className="space-y-2 font-mono text-xs">
-            <div className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-[#080D1F] rounded-xl border border-slate-200 dark:border-purple-500/20">
-              <span className="bg-indigo-600 dark:bg-[#0F1733] text-white px-2.5 py-1 rounded-md font-bold">Bucket [0]</span>
+            <div className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-[#0B1120] rounded-xl border border-slate-200 dark:border-slate-800">
+              <span className="bg-[#2563EB] dark:bg-[#1E293B] text-white px-2.5 py-1 rounded-md font-bold">Bucket [0]</span>
               <span className="text-slate-400">→ NULL</span>
             </div>
 
-            <div className="flex items-center gap-2 p-2.5 bg-indigo-50/70 dark:bg-purple-950/40 rounded-xl border border-indigo-200 dark:border-purple-500/30 overflow-x-auto">
-              <span className="bg-indigo-600 dark:bg-purple-600 text-white px-2.5 py-1 rounded-md font-bold">Bucket [3]</span>
-              <span className="text-indigo-600 dark:text-purple-400 font-black">→</span>
-              <span className="bg-white dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/30 px-3 py-1 rounded-md font-bold text-slate-800 dark:text-white">[23]</span>
-              <span className="text-indigo-600 dark:text-purple-400 font-black">→</span>
-              <span className="bg-white dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/30 px-3 py-1 rounded-md font-bold text-slate-800 dark:text-white">[33]</span>
-              <span className="text-indigo-600 dark:text-purple-400 font-black">→</span>
-              <span className="bg-white dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/30 px-3 py-1 rounded-md font-bold text-slate-800 dark:text-white">[73]</span>
+            <div className="flex items-center gap-2 p-2.5 bg-blue-50/70 dark:bg-blue-950/40 rounded-xl border border-blue-200 dark:border-blue-500/30 overflow-x-auto">
+              <span className="bg-[#2563EB] dark:bg-[#3B82F6] text-white px-2.5 py-1 rounded-md font-bold">Bucket [3]</span>
+              <span className="text-[#2563EB] dark:text-blue-400 font-black">→</span>
+              <span className="bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 px-3 py-1 rounded-md font-bold text-slate-800 dark:text-white">[23]</span>
+              <span className="text-[#2563EB] dark:text-blue-400 font-black">→</span>
+              <span className="bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 px-3 py-1 rounded-md font-bold text-slate-800 dark:text-white">[33]</span>
+              <span className="text-[#2563EB] dark:text-blue-400 font-black">→</span>
+              <span className="bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 px-3 py-1 rounded-md font-bold text-slate-800 dark:text-white">[73]</span>
               <span className="text-slate-400">→ NULL</span>
             </div>
 
-            <div className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-[#080D1F] rounded-xl border border-slate-200 dark:border-purple-500/20">
-              <span className="bg-indigo-600 dark:bg-[#0F1733] text-white px-2.5 py-1 rounded-md font-bold">Bucket [7]</span>
+            <div className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-[#0B1120] rounded-xl border border-slate-200 dark:border-slate-800">
+              <span className="bg-[#2563EB] dark:bg-[#1E293B] text-white px-2.5 py-1 rounded-md font-bold">Bucket [7]</span>
               <span className="text-slate-400">→</span>
-              <span className="bg-white dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/30 px-3 py-1 rounded-md font-bold text-slate-800 dark:text-white">[47]</span>
+              <span className="bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 px-3 py-1 rounded-md font-bold text-slate-800 dark:text-white">[47]</span>
               <span className="text-slate-400">→ NULL</span>
             </div>
           </div>
@@ -312,28 +312,28 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
   if (chapterId === 'theory-07' || chapterId === 'linear-probing') {
     return (
       <div className="space-y-4 font-sans text-slate-900 dark:text-white animate-fadeIn">
-        <div className="bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/20 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="text-xs font-bold uppercase text-indigo-600 dark:text-purple-400 tracking-wider flex items-center gap-1.5 font-mono">
+        <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="text-xs font-bold uppercase text-[#2563EB] dark:text-blue-400 tracking-wider flex items-center gap-1.5 font-mono">
             <Search className="w-4 h-4" />
             <span>Open Addressing // Sequential Step Scanning (+1, +2, +3...)</span>
           </div>
 
-          <div className="bg-[#F8FAFC] dark:bg-[#080D1F] text-[#111827] dark:text-cyan-300 p-4 rounded-xl text-xs font-mono border border-[#E5E7EB] dark:border-purple-500/20 border-l-4 border-l-[#4F46E5] dark:border-l-purple-500">
+          <div className="bg-[#F8FAFC] dark:bg-[#0B1120] text-[#111827] dark:text-blue-300 p-4 rounded-xl text-xs font-mono border border-[#E5E7EB] dark:border-slate-800 border-l-4 border-l-[#2563EB] dark:border-l-blue-500">
             <code>h(k, i) = (h(k) + i) mod m</code>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 text-center font-mono text-xs">
-            <div className="p-3 bg-slate-50 dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/20 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl">
               <span className="text-slate-500 dark:text-slate-400 block font-bold">Step i = 0</span>
               <span className="text-sm font-black text-slate-900 dark:text-white mt-1 block">Slot [3] (Full)</span>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/20 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl">
               <span className="text-slate-500 dark:text-slate-400 block font-bold">Step i = 1</span>
               <span className="text-sm font-black text-slate-900 dark:text-white mt-1 block">Slot [4] (Full)</span>
             </div>
-            <div className="p-3 bg-indigo-50 dark:bg-purple-950/60 border border-indigo-200 dark:border-purple-500/30 rounded-xl">
-              <span className="text-indigo-600 dark:text-purple-300 block font-bold">Step i = 2</span>
-              <span className="text-sm font-black text-indigo-700 dark:text-cyan-300 mt-1 block">Slot [5] (Empty ✓)</span>
+            <div className="p-3 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-500/30 rounded-xl">
+              <span className="text-[#2563EB] dark:text-blue-300 block font-bold">Step i = 2</span>
+              <span className="text-sm font-black text-[#2563EB] dark:text-blue-300 mt-1 block">Slot [5] (Empty ✓)</span>
             </div>
             <div className="p-3 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-500/30 rounded-xl">
               <span className="text-emerald-700 dark:text-emerald-300 block font-bold">Placed</span>
@@ -351,32 +351,32 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
   if (chapterId === 'theory-08' || chapterId === 'quadratic-probing') {
     return (
       <div className="space-y-4 font-sans text-slate-900 dark:text-white animate-fadeIn">
-        <div className="bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/20 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="text-xs font-bold uppercase text-indigo-600 dark:text-purple-400 tracking-wider flex items-center gap-1.5 font-mono">
+        <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="text-xs font-bold uppercase text-[#2563EB] dark:text-blue-400 tracking-wider flex items-center gap-1.5 font-mono">
             <Zap className="w-4 h-4" />
             <span>Open Addressing // Parabolic Jump Sequence (+1, +4, +9, +16...)</span>
           </div>
 
-          <div className="bg-[#F8FAFC] dark:bg-[#080D1F] text-[#111827] dark:text-cyan-300 p-4 rounded-xl text-xs font-mono border border-[#E5E7EB] dark:border-purple-500/20 border-l-4 border-l-[#4F46E5] dark:border-l-purple-500">
+          <div className="bg-[#F8FAFC] dark:bg-[#0B1120] text-[#111827] dark:text-blue-300 p-4 rounded-xl text-xs font-mono border border-[#E5E7EB] dark:border-slate-800 border-l-4 border-l-[#2563EB] dark:border-l-blue-500">
             <code>h(k, i) = (h(k) + i²) mod m</code>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center font-mono text-xs">
-            <div className="p-3 bg-slate-50 dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/20 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl">
               <span className="text-slate-500 dark:text-slate-400 block font-bold">i = 0 (+0)</span>
               <span className="text-sm font-black text-slate-900 dark:text-white mt-1 block">Slot [3]</span>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/20 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl">
               <span className="text-slate-500 dark:text-slate-400 block font-bold">i = 1 (+1²)</span>
               <span className="text-sm font-black text-slate-900 dark:text-white mt-1 block">Slot [4]</span>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-[#080D1F] border border-slate-200 dark:border-purple-500/20 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl">
               <span className="text-slate-500 dark:text-slate-400 block font-bold">i = 2 (+2² = +4)</span>
               <span className="text-sm font-black text-slate-900 dark:text-white mt-1 block">Slot [7]</span>
             </div>
-            <div className="p-3 bg-indigo-50 dark:bg-purple-950/60 border border-indigo-200 dark:border-purple-500/30 rounded-xl">
-              <span className="text-indigo-600 dark:text-purple-300 block font-bold">i = 3 (+3² = +9)</span>
-              <span className="text-sm font-black text-indigo-700 dark:text-cyan-300 mt-1 block">Slot [2]</span>
+            <div className="p-3 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-500/30 rounded-xl">
+              <span className="text-[#2563EB] dark:text-blue-300 block font-bold">i = 3 (+3² = +9)</span>
+              <span className="text-sm font-black text-[#2563EB] dark:text-blue-300 mt-1 block">Slot [2]</span>
             </div>
           </div>
         </div>
@@ -390,13 +390,13 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
   if (chapterId === 'theory-09' || chapterId === 'double-hashing') {
     return (
       <div className="space-y-4 font-sans text-slate-900 dark:text-white animate-fadeIn">
-        <div className="bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/20 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="text-xs font-bold uppercase text-indigo-600 dark:text-purple-400 tracking-wider flex items-center gap-1.5 font-mono">
+        <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="text-xs font-bold uppercase text-[#2563EB] dark:text-blue-400 tracking-wider flex items-center gap-1.5 font-mono">
             <Layers className="w-4 h-4" />
             <span>Optimal Open Addressing // Dual Hash Functions</span>
           </div>
 
-          <div className="bg-[#F8FAFC] dark:bg-[#080D1F] text-[#111827] dark:text-cyan-300 p-4 rounded-xl text-xs font-mono border border-[#E5E7EB] dark:border-purple-500/20 border-l-4 border-l-[#4F46E5] dark:border-l-purple-500 space-y-1">
+          <div className="bg-[#F8FAFC] dark:bg-[#0B1120] text-[#111827] dark:text-blue-300 p-4 rounded-xl text-xs font-mono border border-[#E5E7EB] dark:border-slate-800 border-l-4 border-l-[#2563EB] dark:border-l-blue-500 space-y-1">
             <div>h₁(k) = k mod m (Primary Starting Slot)</div>
             <div>h₂(k) = 1 + (k mod (m - 1)) (Non-Zero Key-Specific Jump Stride)</div>
             <div>h(k, i) = (h₁(k) + i × h₂(k)) mod m</div>
@@ -427,8 +427,8 @@ export const TheoryVisualEnhancer: React.FC<TheoryVisualEnhancerProps> = ({ chap
           {apps.map((app, idx) => {
             const Icon = app.icon;
             return (
-              <div key={idx} className="bg-white dark:bg-[#0B1228] border border-slate-200 dark:border-purple-500/20 rounded-xl p-4 shadow-xs flex items-start gap-3">
-                <div className="p-2.5 rounded-lg bg-indigo-50 dark:bg-purple-950/50 text-indigo-600 dark:text-purple-400 shrink-0 border border-indigo-100 dark:border-purple-500/25">
+              <div key={idx} className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-xs flex items-start gap-3">
+                <div className="p-2.5 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-blue-400 shrink-0 border border-blue-100 dark:border-blue-500/25">
                   <Icon className="w-5 h-5" />
                 </div>
                 <div>

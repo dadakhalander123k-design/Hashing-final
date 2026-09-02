@@ -532,7 +532,7 @@ export default function App() {
   const h2Val = currentKey !== null ? calculateH2(currentKey) : 1;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#050816] text-slate-900 dark:text-[#F8FAFC] font-sans flex antialiased selection:bg-indigo-600 dark:selection:bg-purple-600 selection:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B1120] text-[#111827] dark:text-[#F8FAFC] font-sans flex antialiased selection:bg-[#2563EB] dark:selection:bg-[#3B82F6] selection:text-white transition-colors duration-300">
       {/* Sticky Left Sidebar Navigation */}
       <SidebarNav
         activeTab={activeTab}
@@ -691,11 +691,11 @@ export default function App() {
                   <div key={`game-level-${currentLevel.id}`} className="flex flex-col gap-6 animate-chapter-switch">
                     {/* Level Title & Subtitle Banner */}
                     <div className="text-center max-w-2xl mx-auto font-sans">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 dark:bg-purple-950/60 border border-indigo-100 dark:border-purple-500/30 text-indigo-700 dark:text-purple-300 text-xs font-bold mb-2 uppercase font-mono rounded-lg">
-                        <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-purple-400" />
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 text-blue-700 dark:text-blue-300 text-xs font-bold mb-2 uppercase font-mono rounded-lg">
+                        <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                         <span>Level {currentLevel.id < 10 ? `0${currentLevel.id}` : currentLevel.id} • {currentLevel.title}</span>
                       </div>
-                      <h2 className="text-2xl sm:text-4xl font-bold font-display text-slate-900 dark:text-white tracking-tight animate-heading-enter">
+                      <h2 className="text-2xl sm:text-4xl font-bold font-display text-[#111827] dark:text-[#F8FAFC] tracking-tight animate-heading-enter">
                         {currentLevel.subtitle}
                       </h2>
                     </div>
