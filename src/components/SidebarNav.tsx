@@ -108,31 +108,29 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       id="app-sidebar-navigation"
       className="w-64 h-full flex flex-col bg-white dark:bg-[#0F172A] border-r border-[#E2E8F0] dark:border-slate-800 select-none shadow-xs transition-colors duration-300"
     >
-      {/* Top Sidebar Header with Close Button (No duplicate branding) */}
-      <div className="p-4 sm:p-5 border-b border-[#E2E8F0] dark:border-slate-800 flex items-center justify-end">
+      {/* Top Sidebar Header with Heading and Close Button positioned at the top */}
+      <div className="px-4 pt-3.5 pb-2 border-b border-[#E2E8F0]/80 dark:border-slate-800 flex items-center justify-between">
+        <div className="text-[11px] font-bold tracking-wider text-slate-400 dark:text-slate-500 uppercase font-mono">
+          NAVIGATION MENU
+        </div>
         {/* Close Button in Top-Right Corner of Navigation */}
         <button
           id="btn-sidebar-close"
           onClick={handleClose}
-          className="p-1.5 sm:p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100/80 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/90 dark:border-slate-700 rounded-xl transition-all duration-150 cursor-pointer shadow-xs flex items-center justify-center shrink-0"
+          className="p-1.5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100/80 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/90 dark:border-slate-700 rounded-lg transition-all duration-150 cursor-pointer shadow-xs flex items-center justify-center shrink-0"
           aria-label="Close navigation menu"
           title="Close Navigation (✕)"
         >
-          <X className="w-4.5 h-4.5" />
+          <X className="w-4 h-4" />
         </button>
       </div>
 
       {/* Navigation Item List */}
       <div
-        className="px-3 py-4 space-y-1 overflow-y-auto"
+        className="px-3 pt-2 pb-4 space-y-1 overflow-y-auto"
         onMouseEnter={() => setIsProgressHovered(true)}
         onMouseLeave={() => setIsProgressHovered(false)}
       >
-        {/* SINGLE NAVIGATION MENU HEADING */}
-        <div className="px-3 pb-2 text-[11px] font-bold tracking-wider text-slate-400 dark:text-slate-500 uppercase font-mono">
-          NAVIGATION MENU
-        </div>
-
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id || (item.id === 'GAME' && activeTab === 'QUEST');
