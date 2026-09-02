@@ -142,7 +142,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               onClick={() => handleSelect(item.id)}
               className={`group w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-150 cursor-pointer ${
                 isActive
-                  ? 'bg-[#EFF6FF] dark:bg-blue-950/40 text-[#2563EB] dark:text-[#93C5FD] font-semibold shadow-xs dark:shadow-[0_0_14px_rgba(37,99,235,0.18)] border border-[#DBEAFE] dark:border-blue-500/30'
+                  ? 'bg-[#EFF6FF] dark:bg-blue-950/40 text-[#2563EB] dark:text-[#93C5FD] font-semibold shadow-xs dark:shadow-none border border-[#DBEAFE] dark:border-blue-500/30'
                   : 'text-[#64748B] dark:text-slate-400 hover:bg-[#F8FAFF] dark:hover:bg-blue-950/20 hover:text-[#2563EB] dark:hover:text-white border border-transparent'
               }`}
             >

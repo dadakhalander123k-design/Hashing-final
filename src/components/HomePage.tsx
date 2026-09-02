@@ -71,7 +71,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="lg:col-span-5 flex items-center justify-center lg:justify-end">
             <div className="relative flex items-center gap-3 sm:gap-5 py-2">
               {/* 3D Glossy Royal Blue Hash Function Badge */}
-              <div className="relative z-10 w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-gradient-to-br from-[#2563EB] via-[#1D4ED8] to-[#1E40AF] dark:from-blue-500 dark:via-blue-600 dark:to-blue-800 text-white flex items-center justify-center shadow-[0_12px_28px_rgba(37,99,235,0.32),inset_0_2px_4px_rgba(255,255,255,0.4)] dark:shadow-[0_0_28px_rgba(59,130,246,0.35)] border border-blue-200/40 transform -rotate-3 hover:rotate-0 transition-transform shrink-0">
+              <div className="relative z-10 w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-gradient-to-br from-[#1D4ED8] via-[#2563EB] to-[#6366F1] dark:from-[#1D4ED8] dark:via-[#2563EB] dark:to-[#4F46E5] text-white flex items-center justify-center shadow-lg dark:shadow-none border border-blue-200/40 dark:border-blue-500/30 transform -rotate-3 hover:rotate-0 transition-transform shrink-0">
                 <span className="font-mono text-3xl sm:text-4xl font-extrabold select-none drop-shadow-sm">#</span>
               </div>
 

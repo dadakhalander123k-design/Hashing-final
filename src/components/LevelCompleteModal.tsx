@@ -36,7 +36,7 @@ export const LevelCompleteModal: React.FC<LevelCompleteModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-editorial-fade font-sans">
-      <div className="bg-white dark:bg-[#111827] w-full max-w-md border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl dark:shadow-[0_0_30px_rgba(37,99,235,0.3)] overflow-hidden p-6 sm:p-8 flex flex-col items-center text-center">
+      <div className="bg-white dark:bg-[#111827] w-full max-w-md border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6 sm:p-8 flex flex-col items-center text-center">
         {/* Victory Icon */}
         <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-500/30 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center mb-3 shadow-xs">
           <Award className="w-8 h-8" />

@@ -10,9 +10,9 @@ interface IntroModalProps {
 export const IntroModal: React.FC<IntroModalProps> = ({ onStartGame, onOpenLearn }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-editorial-fade font-sans">
-      <div className="bg-white dark:bg-[#111827] w-full max-w-md border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl dark:shadow-[0_0_30px_rgba(37,99,235,0.3)] overflow-hidden p-6 sm:p-8 flex flex-col items-center text-center">
+      <div className="bg-white dark:bg-[#111827] w-full max-w-md border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6 sm:p-8 flex flex-col items-center text-center">
         {/* App Icon */}
-        <div className="w-14 h-14 bg-[#2563EB] dark:bg-[#3B82F6] text-white rounded-2xl flex items-center justify-center font-bold text-3xl mb-3 shadow-md shadow-blue-200 dark:shadow-[0_0_20px_rgba(37,99,235,0.5)]">
+        <div className="w-14 h-14 bg-[#2563EB] dark:bg-[#2563EB] text-white rounded-2xl flex items-center justify-center font-bold text-3xl mb-3 shadow-md shadow-blue-200 dark:shadow-none">
           #
         </div>
 

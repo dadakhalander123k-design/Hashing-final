@@ -76,7 +76,7 @@ export const CompletionCelebrationModal: React.FC<CompletionCelebrationModalProp
     >
       <div
         id="completion-celebration-modal"
-        className="relative w-full max-w-3xl my-8 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl dark:shadow-[0_0_35px_rgba(37,99,235,0.35)] p-6 sm:p-8 text-slate-900 dark:text-white animate-editorial-scale"
+        className="relative w-full max-w-3xl my-8 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] p-6 sm:p-8 text-slate-900 dark:text-white animate-editorial-scale"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}

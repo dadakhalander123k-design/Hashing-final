@@ -54,13 +54,13 @@ export const HashCell: React.FC<HashCellProps> = ({
 
   if (isCollided) {
     cellClass =
-      'bg-gradient-to-b from-rose-50/95 via-rose-50/80 to-rose-100/60 dark:bg-slate-900/90 border-2 border-rose-500 shadow-md shadow-rose-500/20 ring-3 ring-rose-200 dark:ring-rose-500/40 dark:shadow-[0_0_18px_rgba(244,63,94,0.4)] animate-shake';
+      'bg-gradient-to-b from-rose-50/95 via-rose-50/80 to-rose-100/60 dark:bg-slate-900/90 border-2 border-rose-500 shadow-md shadow-rose-500/20 ring-3 ring-rose-200 dark:ring-rose-500/40 animate-shake';
   } else if (isDragHover) {
     cellClass =
-      'bg-gradient-to-b from-blue-100/90 via-blue-50/70 to-white dark:bg-slate-900/90 border-2 border-[#2563EB] dark:border-blue-400 shadow-lg shadow-blue-500/25 ring-3 ring-blue-200 dark:ring-blue-500/50 dark:shadow-[0_0_20px_rgba(37,99,235,0.45)] scale-[1.04]';
+      'bg-gradient-to-b from-blue-100/90 via-blue-50/70 to-white dark:bg-slate-900/90 border-2 border-[#2563EB] dark:border-blue-400 shadow-lg shadow-blue-500/25 ring-3 ring-blue-200 dark:ring-blue-500/50 scale-[1.04]';
   } else if (isTarget || isProbingTarget) {
     cellClass =
-      'bg-gradient-to-b from-blue-100/95 via-blue-50/60 to-white dark:bg-slate-900/90 border-2 border-[#2563EB] dark:border-blue-400 shadow-md shadow-blue-500/25 ring-3 ring-blue-300/80 dark:ring-blue-500/40 dark:shadow-[0_0_20px_rgba(37,99,235,0.5)] scale-[1.03]';
+      'bg-gradient-to-b from-blue-100/95 via-blue-50/60 to-white dark:bg-slate-900/90 border-2 border-[#2563EB] dark:border-blue-400 shadow-md shadow-blue-500/25 ring-3 ring-blue-300/80 dark:ring-blue-500/40 scale-[1.03]';
   }
 
   return (
@@ -109,7 +109,7 @@ export const HashCell: React.FC<HashCellProps> = ({
                 className={`w-full py-2.5 px-1.5 text-center font-mono font-black text-sm sm:text-base rounded-lg border transition-all duration-200 shadow-xs ${
                   isCollided
                     ? 'bg-rose-600 text-white border-rose-700 dark:border-rose-500 shadow-sm'
-                    : 'bg-[#2563EB] dark:bg-[#3B82F6] text-white border-blue-700/60 dark:border-blue-500 shadow-sm dark:shadow-[0_0_12px_rgba(37,99,235,0.35)]'
+                    : 'bg-[#2563EB] dark:bg-[#2563EB] text-white border-blue-700/60 dark:border-blue-500 shadow-sm dark:shadow-none'
                 }`}
               >
                 {slot.items[0]?.value}

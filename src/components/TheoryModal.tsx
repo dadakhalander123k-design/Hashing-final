@@ -43,7 +43,7 @@ export const TheoryModal: React.FC<TheoryModalProps> = ({ onClose, onOpenFullLea
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn font-sans">
-      <div className="bg-white dark:bg-[#111827] w-full max-w-2xl border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl dark:shadow-[0_0_30px_rgba(37,99,235,0.3)] overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white dark:bg-[#111827] w-full max-w-2xl border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0B1120] flex items-center justify-between">
           <div className="flex items-center gap-2.5">

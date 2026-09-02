@@ -490,7 +490,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
 
               let pillStyle = 'bg-slate-50 dark:bg-[#0B1120] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-[#172033]';
               if (isCurrent) {
-                pillStyle = 'bg-[#2563EB] dark:bg-[#3B82F6] text-white border-[#2563EB] dark:border-blue-500 font-bold shadow-xs dark:shadow-[0_0_12px_rgba(37,99,235,0.4)]';
+                pillStyle = 'bg-[#2563EB] dark:bg-[#2563EB] text-white border-[#2563EB] dark:border-blue-500 font-bold shadow-xs dark:shadow-none';
               } else if (isAnswered) {
                 if (rec.isCorrect) {
                   pillStyle = 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30 font-semibold';
@@ -559,7 +559,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             </p>
 
             {/* 5. Large Highlighted Score Card */}
-            <div className="w-full max-w-md mx-auto p-6 sm:p-8 bg-white dark:bg-[#0B1120] border-2 border-blue-200/80 dark:border-blue-500/40 rounded-3xl shadow-xs dark:shadow-[0_0_24px_rgba(37,99,235,0.2)] flex flex-col items-center justify-center text-center mb-6 sm:mb-8">
+            <div className="w-full max-w-md mx-auto p-6 sm:p-8 bg-white dark:bg-[#0B1120] border-2 border-blue-200/80 dark:border-blue-500/40 rounded-3xl shadow-xs dark:shadow-none flex flex-col items-center justify-center text-center mb-6 sm:mb-8">
               <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-[#2563EB] dark:text-[#60A5FA] uppercase mb-2">
                 FINAL HIGHLIGHTED SCORE
               </span>
@@ -612,7 +612,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 id="btn-quiz-retake"
                 type="button"
                 onClick={handleResetQuiz}
-                className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-blue-600 text-white font-sans text-sm font-semibold shadow-md shadow-blue-500/20 dark:shadow-[0_0_16px_rgba(59,130,246,0.35)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#2563EB] dark:hover:bg-blue-600 text-white font-sans text-sm font-semibold shadow-md dark:shadow-none transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4 stroke-[2.2]" />
                 <span>Retake Quiz</span>
