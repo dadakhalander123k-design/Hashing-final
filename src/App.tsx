@@ -32,6 +32,8 @@ import { GameLevelGuide } from './components/GameLevelGuide';
 import { CompletionCelebrationModal } from './components/CompletionCelebrationModal';
 import { ResetProgressModal } from './components/ResetProgressModal';
 import { AIBotFloatingButton } from './components/AIBotFloatingButton';
+import { GuidedSolvePanel } from './components/GuidedSolvePanel';
+import { getGuidedSolveStepInfo } from './utils/guidedSolveEngine';
 import { Sparkles } from 'lucide-react';
 import { progressManager } from './utils/progressManager';
 import { useScrollReveal } from './hooks/useScrollReveal';
@@ -158,6 +160,10 @@ export default function App() {
   const [showCollisionModal, setShowCollisionModal] = useState<boolean>(false);
   const [showLevelCompleteModal, setShowLevelCompleteModal] = useState<boolean>(false);
 
+  // Guided Solve State
+  const [isGuidedSolveActive, setIsGuidedSolveActive] = useState<boolean>(false);
+  const [isExecutingGuidedStep, setIsExecutingGuidedStep] = useState<boolean>(false);
+
   // Sandbox pre-configuration
   const [sandboxTechnique, setSandboxTechnique] = useState<TechniqueType>('linear');
 
@@ -186,6 +192,8 @@ export default function App() {
     setIsProbing(false);
     setShowCollisionModal(false);
     setShowLevelCompleteModal(false);
+    setIsGuidedSolveActive(false);
+    setIsExecutingGuidedStep(false);
     setGameState('KEY_APPEARS');
 
     if (firstKey !== null) {
@@ -531,6 +539,80 @@ export default function App() {
   const currentStep = probeSteps[currentProbeStepIndex];
   const h2Val = currentKey !== null ? calculateH2(currentKey) : 1;
 
+  // Compute live Guided Solve Step Information
+  const guidedStepInfo = getGuidedSolveStepInfo(
+    currentLevel,
+    slots,
+    keySequenceIndex,
+    currentKey,
+    calculatedIndex,
+    gameState,
+    isProbing,
+    currentProbeStepIndex,
+    probeSteps
+  );
+
+  const handleGuidedSolveNextStep = () => {
+    if (isExecutingGuidedStep) return;
+    setIsExecutingGuidedStep(true);
+
+    try {
+      const stepInfo = getGuidedSolveStepInfo(
+        currentLevel,
+        slots,
+        keySequenceIndex,
+        currentKey,
+        calculatedIndex,
+        gameState,
+        isProbing,
+        currentProbeStepIndex,
+        probeSteps
+      );
+
+      switch (stepInfo.actionType) {
+        case 'CALCULATE': {
+          if (currentKey !== null) {
+            performCalculation(currentKey);
+          }
+          break;
+        }
+        case 'PLACE': {
+          if (calculatedIndex !== null) {
+            placeKeyInSlot(calculatedIndex);
+          } else if (currentKey !== null) {
+            const baseH = calculateBaseHash(currentKey, currentLevel.tableSize);
+            placeKeyInSlot(baseH);
+          }
+          break;
+        }
+        case 'PROCEED_COLLISION': {
+          handleProceedFromCollision();
+          break;
+        }
+        case 'NEXT_PROBE': {
+          handleNextProbeStep();
+          break;
+        }
+        case 'CONFIRM_PROBE': {
+          handleConfirmProbeInsertion();
+          break;
+        }
+        case 'COMPLETE': {
+          setIsGuidedSolveActive(false);
+          break;
+        }
+      }
+    } finally {
+      setTimeout(() => {
+        setIsExecutingGuidedStep(false);
+      }, 50);
+    }
+  };
+
+  const handleGuidedSolveStop = () => {
+    setIsGuidedSolveActive(false);
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B1120] text-[#111827] dark:text-[#F8FAFC] font-sans flex antialiased selection:bg-[#2563EB] dark:selection:bg-[#3B82F6] selection:text-white transition-colors duration-300">
       {/* Sticky Left Sidebar Navigation */}
@@ -701,7 +783,21 @@ export default function App() {
                     </div>
 
                     {/* Level Instruction Guide (Technical Field Notes Guide) */}
-                    <GameLevelGuide levelId={currentLevel.id} />
+                    <GameLevelGuide
+                      levelId={currentLevel.id}
+                      isGuidedSolveActive={isGuidedSolveActive}
+                      onToggleGuidedSolve={() => setIsGuidedSolveActive((prev) => !prev)}
+                    />
+
+                    {/* Compact Interactive Guided Solve Teacher Panel */}
+                    {isGuidedSolveActive && (
+                      <GuidedSolvePanel
+                        stepInfo={guidedStepInfo}
+                        onNextStep={handleGuidedSolveNextStep}
+                        onStop={handleGuidedSolveStop}
+                        isExecuting={isExecutingGuidedStep}
+                      />
+                    )}
 
                     {/* Active Key Interaction Area */}
                     <CurrentKeyCard

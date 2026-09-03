@@ -3,6 +3,8 @@ import { Sparkles } from 'lucide-react';
 
 interface GameLevelGuideProps {
   levelId: number;
+  isGuidedSolveActive?: boolean;
+  onToggleGuidedSolve?: () => void;
 }
 
 const LEVEL_GUIDES: Record<number, string> = {
@@ -13,7 +15,11 @@ const LEVEL_GUIDES: Record<number, string> = {
   5: 'Use the first hash to find the starting position. Use the second hash to determine the jump.',
 };
 
-export const GameLevelGuide: React.FC<GameLevelGuideProps> = ({ levelId }) => {
+export const GameLevelGuide: React.FC<GameLevelGuideProps> = ({
+  levelId,
+  isGuidedSolveActive = false,
+  onToggleGuidedSolve,
+}) => {
   const guideText =
     LEVEL_GUIDES[levelId] ||
     'Calculate the index and place the key in the correct slot according to the level rules.';
@@ -35,21 +41,24 @@ export const GameLevelGuide: React.FC<GameLevelGuideProps> = ({ levelId }) => {
           </span>
         </div>
 
-        {/* Small Non-functional AI Placeholder Button */}
-        <button
-          id="btn-game-ai-placeholder"
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            // Non-functional visual placeholder as instructed
-          }}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold font-mono rounded-lg bg-white dark:bg-[#0B1120] text-[#2563EB] dark:text-[#3B82F6] border border-blue-200 dark:border-blue-500/40 shadow-xs hover:border-blue-300 dark:hover:border-blue-400 transition-all cursor-default select-none"
-          title="AI Assistant (Preview)"
-          aria-label="AI Help Placeholder"
-        >
-          <Sparkles className="w-3 h-3 text-[#2563EB] dark:text-[#3B82F6]" />
-          <span>✦ AI HELP</span>
-        </button>
+        {/* Guided Solve Toggle Action Button */}
+        {onToggleGuidedSolve && (
+          <button
+            id="btn-guided-solve-toggle"
+            type="button"
+            onClick={onToggleGuidedSolve}
+            className={`inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-bold font-mono rounded-lg border shadow-xs transition-all cursor-pointer select-none ${
+              isGuidedSolveActive
+                ? 'bg-[#2563EB] text-white border-[#1D4ED8] dark:border-[#2563EB]'
+                : 'bg-white dark:bg-[#0B1120] text-[#2563EB] dark:text-[#3B82F6] border-blue-200 dark:border-blue-500/40 hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-[#172033]'
+            }`}
+            title={isGuidedSolveActive ? 'Stop Guided Solve' : 'Start Interactive Guided Solve'}
+            aria-label="Guided Solve Toggle"
+          >
+            <Sparkles className={`w-3 h-3 ${isGuidedSolveActive ? 'text-white' : 'text-[#2563EB] dark:text-[#3B82F6]'}`} />
+            <span>{isGuidedSolveActive ? 'GUIDED SOLVE ON' : '✦ GUIDED SOLVE'}</span>
+          </button>
+        )}
       </div>
       <p className="text-xs sm:text-[13px] text-slate-700 dark:text-slate-300 leading-relaxed font-medium pl-3 border-l-2 border-[#2563EB] dark:border-blue-500">
         {guideText}
