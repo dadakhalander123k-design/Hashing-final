@@ -391,7 +391,26 @@ export const VideoTutorialsView: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-8 animate-fadeIn pb-12">
+    <div className="w-full max-w-7xl mx-auto space-y-6 sm:space-y-8 animate-fadeIn pb-12">
+      {/* Header Section with Primary H1 */}
+      <div className="bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)]">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 text-[#2563EB] dark:text-[#3B82F6] rounded-lg text-xs font-semibold uppercase tracking-wider font-mono">
+            <VideoIcon className="w-3.5 h-3.5" />
+            <span>Video Masterclasses</span>
+          </div>
+          <div className="text-xs font-mono text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#0B1120] px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-800">
+            Completed: <span className="text-[#2563EB] dark:text-[#3B82F6] font-bold">{completedVideos.length}</span> / {VIDEO_LESSONS.length} Lessons
+          </div>
+        </div>
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight animate-heading-enter">
+          Interactive Video Masterclasses
+        </h1>
+        <p className="text-sm text-slate-600 dark:text-slate-300 max-w-2xl mt-1 leading-relaxed">
+          High-definition video lessons and visual animations breaking down hash table architectures, modulo arithmetic, and collision resolution techniques.
+        </p>
+      </div>
+
       {/* =========================================================================
           PART 3 — TWO LESSON CARDS (SIDE BY SIDE ON DESKTOP, STACKED ON MOBILE)
           ========================================================================= */}

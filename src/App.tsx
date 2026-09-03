@@ -26,7 +26,7 @@ import { VideoTutorialsView } from './components/VideoTutorialsView';
 import { MyProgressView } from './components/MyProgressView';
 import { QuizView } from './components/QuizView';
 import { QuestCompletionView } from './components/QuestCompletionView';
-import { FieldNotesBackground } from './components/FieldNotesBackground';
+import { NotFoundView } from './components/NotFoundView';
 import { GameHintCard } from './components/GameHintCard';
 import { GameLevelGuide } from './components/GameLevelGuide';
 import { CompletionCelebrationModal } from './components/CompletionCelebrationModal';
@@ -38,9 +38,64 @@ import { Sparkles } from 'lucide-react';
 import { progressManager } from './utils/progressManager';
 import { useScrollReveal } from './hooks/useScrollReveal';
 
+type ActiveViewTab = MainViewTab | 'NOT_FOUND';
+
+const parseHashToTab = (hashStr: string): ActiveViewTab => {
+  const cleanHash = hashStr.replace(/^#\/?/, '').toLowerCase().trim();
+  if (!cleanHash || cleanHash === 'home' || cleanHash === 'overview') return 'HOME';
+  if (cleanHash === 'theory' || cleanHash === 'learn') return 'THEORY';
+  if (cleanHash === 'video' || cleanHash === 'videos' || cleanHash === 'visualize') return 'VIDEO';
+  if (cleanHash === 'game' || cleanHash === 'quest') return 'GAME';
+  if (cleanHash === 'lab' || cleanHash === 'sandbox') return 'LAB';
+  if (cleanHash === 'quiz' || cleanHash === 'exam') return 'QUIZ';
+  if (cleanHash === 'progress') return 'PROGRESS';
+  return 'NOT_FOUND';
+};
+
+const getTabHash = (tab: ActiveViewTab): string => {
+  switch (tab) {
+    case 'HOME': return '#overview';
+    case 'THEORY': return '#theory';
+    case 'VIDEO': return '#video';
+    case 'GAME':
+    case 'QUEST': return '#game';
+    case 'LAB': return '#lab';
+    case 'QUIZ': return '#quiz';
+    case 'PROGRESS': return '#progress';
+    case 'NOT_FOUND': return '#404';
+    default: return '#overview';
+  }
+};
+
 export default function App() {
-  // Navigation View State (Defaults to HOME landing page)
-  const [activeTab, setActiveTab] = useState<MainViewTab>('HOME');
+  // Navigation View State (Initialized from URL Hash with HOME fallback)
+  const [activeTab, setActiveTab] = useState<ActiveViewTab>(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      return parseHashToTab(window.location.hash);
+    }
+    return 'HOME';
+  });
+
+  const handleTabChange = (tab: ActiveViewTab) => {
+    setActiveTab(tab);
+    if (typeof window !== 'undefined') {
+      const targetHash = getTabHash(tab);
+      if (window.location.hash !== targetHash) {
+        window.history.replaceState(null, '', targetHash);
+      }
+    }
+  };
+
+  // Synchronize activeTab when browser back/forward buttons or hash changes occur
+  useEffect(() => {
+    const handleHashChange = () => {
+      const parsedTab = parseHashToTab(window.location.hash);
+      setActiveTab(parsedTab);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
   const [activeTheoryTopic, setActiveTheoryTopic] = useState<string>('what-is-hashing');
   const [show100Celebration, setShow100Celebration] = useState<boolean>(false);
   const [showResetModal, setShowResetModal] = useState<boolean>(false);
@@ -236,6 +291,7 @@ export default function App() {
         title = `Level 0${currentLevel.id}: ${currentLevel.title} | AlgoLearn`;
         desc = `Interactive hashing game level 0${currentLevel.id} covering ${currentLevel.technique} collision resolution and array slot mapping.`;
         break;
+      case 'LAB':
       case 'SANDBOX':
         title = 'Interactive Sandbox Lab | AlgoLearn';
         desc = 'Free-play experimentation lab for testing custom hash table capacities, keys, load factors, and collision resolution algorithms.';
@@ -252,6 +308,10 @@ export default function App() {
         title = 'My Mastery & Progress | AlgoLearn';
         desc = 'Track completed quest levels, accuracy scores, video progress, and assessment certificates on AlgoLearn.';
         break;
+      case 'NOT_FOUND':
+        title = 'Page Not Found (404) | AlgoLearn';
+        desc = 'The requested curriculum page or module could not be found on AlgoLearn.';
+        break;
     }
 
     document.title = title;
@@ -259,6 +319,18 @@ export default function App() {
     if (metaDesc) {
       metaDesc.setAttribute('content', desc);
     }
+
+    // Dynamic canonical link synchronization
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
+    const hash = activeTab === 'HOME' ? '' : getTabHash(activeTab);
+    canonical.setAttribute('href', `${currentOrigin}${currentPath}${hash}`);
   }, [activeTab, currentLevel.id, currentLevel.title, currentLevel.technique]);
 
   // Handle calculation
@@ -661,9 +733,9 @@ export default function App() {
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B1120] text-[#111827] dark:text-[#F8FAFC] font-sans flex antialiased selection:bg-[#2563EB] dark:selection:bg-[#3B82F6] selection:text-white transition-colors duration-300">
       {/* Sticky Left Sidebar Navigation */}
       <SidebarNav
-        activeTab={activeTab}
+        activeTab={activeTab === 'NOT_FOUND' ? 'HOME' : activeTab}
         onChangeTab={(tab) => {
-          setActiveTab(tab);
+          handleTabChange(tab);
           setMobileSidebarOpen(false);
         }}
         isOpenMobile={mobileSidebarOpen}
@@ -679,7 +751,7 @@ export default function App() {
       >
         {/* Top Header Bar */}
         <TopHeader
-          activeTab={activeTab}
+          activeTab={activeTab === 'NOT_FOUND' ? 'HOME' : activeTab}
           currentLevelId={currentLevelIndex >= 5 && isAllLevelsCompleted ? 6 : currentLevel.id}
           score={score}
           streak={streak}
@@ -711,14 +783,14 @@ export default function App() {
                 onContinueLearning={handleContinueLearning}
                 onExploreTopics={() => {
                   setActiveTheoryTopic('theory-01');
-                  setActiveTab('THEORY');
+                  handleTabChange('THEORY');
                 }}
                 onNavigateToTab={(tab, targetOption) => {
                   if (tab === 'THEORY') {
                     if (typeof targetOption === 'string') {
                       setActiveTheoryTopic(targetOption);
                     }
-                    setActiveTab('THEORY');
+                    handleTabChange('THEORY');
                   } else if (tab === 'GAME' || tab === 'QUEST') {
                     if (typeof targetOption === 'number') {
                       if (targetOption === 6 && !isAllLevelsCompleted) {
@@ -730,13 +802,13 @@ export default function App() {
                         if (targetOption <= 5) initLevel(targetOption - 1);
                       }
                     }
-                    setActiveTab('GAME');
+                    handleTabChange('GAME');
                   } else if (tab === 'LAB') {
-                    setActiveTab('LAB');
+                    handleTabChange('LAB');
                   } else if (tab === 'QUIZ') {
-                    setActiveTab('QUIZ');
+                    handleTabChange('QUIZ');
                   } else if (tab === 'PROGRESS') {
-                    setActiveTab('PROGRESS');
+                    handleTabChange('PROGRESS');
                   }
                 }}
               />
@@ -755,11 +827,11 @@ export default function App() {
                     setCurrentLevelIndex(lvlId - 1);
                     if (lvlId <= 5) initLevel(lvlId - 1);
                   }
-                  setActiveTab('GAME');
+                  handleTabChange('GAME');
                 }}
                 onOpenSandbox={(tech) => {
                   if (tech) setSandboxTechnique(tech);
-                  setActiveTab('LAB');
+                  handleTabChange('LAB');
                 }}
               />
             )}
@@ -787,7 +859,7 @@ export default function App() {
                       initLevel(lvlId - 1);
                     }
                   }}
-                  onOpenLab={() => setActiveTab('LAB')}
+                  onOpenLab={() => handleTabChange('LAB')}
                   isCompletionActive={currentLevelIndex >= 5 && isAllLevelsCompleted}
                 />
 
@@ -800,16 +872,16 @@ export default function App() {
                     }}
                     onOpenTheory={() => {
                       setActiveTheoryTopic('what-is-hashing');
-                      setActiveTab('THEORY');
+                      handleTabChange('THEORY');
                     }}
                     onOpenSandbox={() => {
-                      setActiveTab('LAB');
+                      handleTabChange('LAB');
                     }}
                     onOpenQuiz={() => {
-                      setActiveTab('QUIZ');
+                      handleTabChange('QUIZ');
                     }}
                     onOpenProgress={() => {
-                      setActiveTab('PROGRESS');
+                      handleTabChange('PROGRESS');
                     }}
                   />
                 ) : (
@@ -820,9 +892,9 @@ export default function App() {
                         <Sparkles className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
                         <span>Level {currentLevel.id < 10 ? `0${currentLevel.id}` : currentLevel.id} • {currentLevel.title}</span>
                       </div>
-                      <h2 className="text-2xl sm:text-4xl font-bold font-display text-[#111827] dark:text-[#F8FAFC] tracking-tight animate-heading-enter">
+                      <h1 className="text-2xl sm:text-4xl font-bold font-display text-[#111827] dark:text-[#F8FAFC] tracking-tight animate-heading-enter">
                         {currentLevel.subtitle}
-                      </h2>
+                      </h1>
                     </div>
 
                     {/* Level Instruction Guide (Technical Field Notes Guide) */}
@@ -928,10 +1000,10 @@ export default function App() {
             {activeTab === 'LAB' && (
               <SandboxMode
                 initialTechnique={sandboxTechnique}
-                onExit={() => setActiveTab('GAME')}
+                onExit={() => handleTabChange('GAME')}
                 onOpenTheory={() => {
                   setActiveTheoryTopic('theory-01');
-                  setActiveTab('THEORY');
+                  handleTabChange('THEORY');
                 }}
               />
             )}
@@ -941,8 +1013,8 @@ export default function App() {
               <QuizView
                 onNavigateToTheory={handleNavigateToTheory}
                 onNavigateToQuest={handleNavigateToQuest}
-                onNavigateToProgress={() => setActiveTab('PROGRESS')}
-                onNavigateToHome={() => setActiveTab('HOME')}
+                onNavigateToProgress={() => handleTabChange('PROGRESS')}
+                onNavigateToHome={() => handleTabChange('HOME')}
               />
             )}
 
@@ -952,17 +1024,28 @@ export default function App() {
                 onNavigateToTab={(tab, levelId, chapterId) => {
                   if (tab === 'THEORY' || tab === 'LEARN') {
                     if (chapterId) setActiveTheoryTopic(chapterId);
-                    setActiveTab('THEORY');
+                    handleTabChange('THEORY');
                   } else if (tab === 'QUEST' || tab === 'GAME') {
                     if (levelId) setCurrentLevelIndex(levelId - 1);
-                    setActiveTab('GAME');
+                    handleTabChange('GAME');
                   } else if (tab === 'LAB' || tab === 'SANDBOX') {
-                    setActiveTab('LAB');
+                    handleTabChange('LAB');
                   } else if (tab === 'QUIZ' || tab === 'EXAM') {
-                    setActiveTab('QUIZ');
+                    handleTabChange('QUIZ');
                   } else {
-                    setActiveTab(tab as MainViewTab);
+                    handleTabChange(tab as MainViewTab);
                   }
+                }}
+              />
+            )}
+
+            {/* 7. CUSTOM 404 ERROR SECTION */}
+            {activeTab === 'NOT_FOUND' && (
+              <NotFoundView
+                onNavigateHome={() => handleTabChange('HOME')}
+                onNavigateTheory={() => {
+                  setActiveTheoryTopic('theory-01');
+                  handleTabChange('THEORY');
                 }}
               />
             )}
