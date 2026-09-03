@@ -61,7 +61,7 @@ export const MasterChallengeView: React.FC<MasterChallengeViewProps> = ({
       {/* Hero Header */}
       <div className="border-b border-slate-200 dark:border-slate-800 pb-6 mb-8 text-center sm:text-left">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA] border border-blue-100 dark:border-blue-500/30 text-xs font-semibold rounded-md font-mono">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#3B82F6] border border-blue-100 dark:border-blue-500/30 text-xs font-semibold rounded-md font-mono">
             EXAMINATION // LEVEL 06
           </span>
           <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
@@ -102,7 +102,7 @@ export const MasterChallengeView: React.FC<MasterChallengeViewProps> = ({
                     <span className="text-xs font-bold font-mono bg-[#2563EB] dark:bg-[#3B82F6] text-white px-2 py-0.5 rounded-md">
                       {chal.code}
                     </span>
-                    <span className="text-[11px] font-semibold text-[#2563EB] dark:text-blue-300 uppercase tracking-wider font-mono">
+                    <span className="text-[11px] font-semibold text-[#2563EB] dark:text-[#3B82F6] uppercase tracking-wider font-mono">
                       {chal.difficulty}
                     </span>
                   </div>
@@ -125,7 +125,7 @@ export const MasterChallengeView: React.FC<MasterChallengeViewProps> = ({
                 <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                   KEYS: [{chal.keys.join(', ')}]
                 </span>
-                <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                <span className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                   {isDone ? 'Replay' : 'Start'} <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
@@ -144,7 +144,7 @@ export const MasterChallengeView: React.FC<MasterChallengeViewProps> = ({
           }}
           className="btn-modern-secondary py-2.5 px-5 text-sm font-semibold flex items-center gap-2 cursor-pointer"
         >
-          <Sparkles className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />
+          <Sparkles className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />
           <span>Open Lab Workbench</span>
         </button>
         <button

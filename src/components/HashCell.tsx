@@ -49,18 +49,18 @@ export const HashCell: React.FC<HashCellProps> = ({
 
   // Dimensional cell styling with soft background gradients in Light Mode, and clean deep slate/black in Dark Mode
   let cellClass = isOccupied
-    ? 'bg-gradient-to-b from-blue-50/70 via-white to-slate-50/90 dark:bg-slate-900/80 border-2 border-blue-200/90 dark:border-blue-500/40 shadow-xs hover:border-blue-400 dark:hover:border-blue-400 hover:shadow-sm'
-    : 'bg-gradient-to-b from-white via-slate-50/60 to-slate-100/70 dark:bg-slate-900/60 border-2 border-slate-200/90 dark:border-slate-800 shadow-2xs hover:border-blue-300 dark:hover:border-blue-500/50 hover:bg-slate-50/50';
+    ? 'bg-gradient-to-b from-blue-50/70 via-white to-slate-50/90 dark:bg-slate-900/80 border-2 border-blue-200/90 dark:border-[#2563EB]/40 shadow-xs hover:border-blue-400 dark:hover:border-[#2563EB] hover:shadow-sm'
+    : 'bg-gradient-to-b from-white via-slate-50/60 to-slate-100/70 dark:bg-slate-900/60 border-2 border-slate-200/90 dark:border-slate-800 shadow-2xs hover:border-blue-300 dark:hover:border-[#2563EB]/50 hover:bg-slate-50/50';
 
   if (isCollided) {
     cellClass =
       'bg-gradient-to-b from-rose-50/95 via-rose-50/80 to-rose-100/60 dark:bg-slate-900/90 border-2 border-rose-500 shadow-md shadow-rose-500/20 ring-3 ring-rose-200 dark:ring-rose-500/40 animate-shake';
   } else if (isDragHover) {
     cellClass =
-      'bg-gradient-to-b from-blue-100/90 via-blue-50/70 to-white dark:bg-slate-900/90 border-2 border-[#2563EB] dark:border-blue-400 shadow-lg shadow-blue-500/25 ring-3 ring-blue-200 dark:ring-blue-500/50 scale-[1.04]';
+      'bg-gradient-to-b from-blue-100/90 via-blue-50/70 to-white dark:bg-slate-900/90 border-2 border-[#2563EB] dark:border-[#2563EB] shadow-md dark:shadow-none ring-2 ring-blue-200 dark:ring-[#2563EB]/40 scale-[1.03]';
   } else if (isTarget || isProbingTarget) {
     cellClass =
-      'bg-gradient-to-b from-blue-100/95 via-blue-50/60 to-white dark:bg-slate-900/90 border-2 border-[#2563EB] dark:border-blue-400 shadow-md shadow-blue-500/25 ring-3 ring-blue-300/80 dark:ring-blue-500/40 scale-[1.03]';
+      'bg-gradient-to-b from-blue-100/95 via-blue-50/60 to-white dark:bg-slate-900/90 border-2 border-[#2563EB] dark:border-[#2563EB] shadow-xs dark:shadow-none ring-2 ring-blue-200 dark:ring-[#2563EB]/40 scale-[1.02]';
   }
 
   return (
@@ -70,7 +70,7 @@ export const HashCell: React.FC<HashCellProps> = ({
         <span
           className={`text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-lg border transition-all duration-200 shadow-2xs ${
             isTarget || isProbingTarget
-              ? 'bg-[#2563EB] dark:bg-[#3B82F6] text-white border-[#2563EB] dark:border-blue-500 shadow-xs'
+              ? 'bg-[#2563EB] dark:bg-[#2563EB] text-white border-[#1D4ED8] dark:border-[#2563EB] shadow-xs dark:shadow-none'
               : 'bg-white dark:bg-[#111827] text-slate-900 dark:text-slate-200 border-2 border-slate-200 dark:border-slate-800'
           }`}
         >
@@ -91,7 +91,7 @@ export const HashCell: React.FC<HashCellProps> = ({
         {!isOccupied ? (
           <div className="flex flex-col items-center justify-center text-center p-1 w-full h-full">
             {isTarget ? (
-              <span className="text-[11px] font-bold text-[#2563EB] dark:text-[#60A5FA] bg-blue-100/90 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-500/60 px-2 py-1 rounded-md uppercase tracking-wider shadow-2xs">
+              <span className="text-[11px] font-bold text-[#2563EB] dark:text-[#3B82F6] bg-blue-100/90 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-500/60 px-2 py-1 rounded-md uppercase tracking-wider shadow-2xs">
                 Drop Here
               </span>
             ) : (
@@ -109,7 +109,7 @@ export const HashCell: React.FC<HashCellProps> = ({
                 className={`w-full py-2.5 px-1.5 text-center font-mono font-black text-sm sm:text-base rounded-lg border transition-all duration-200 shadow-xs ${
                   isCollided
                     ? 'bg-rose-600 text-white border-rose-700 dark:border-rose-500 shadow-sm'
-                    : 'bg-[#2563EB] dark:bg-[#2563EB] text-white border-blue-700/60 dark:border-blue-500 shadow-sm dark:shadow-none'
+                    : 'bg-[#2563EB] dark:bg-[#2563EB] text-white border-blue-700/60 dark:border-[#2563EB] shadow-sm dark:shadow-none'
                 }`}
               >
                 {slot.items[0]?.value}
@@ -132,15 +132,15 @@ export const HashCell: React.FC<HashCellProps> = ({
             {/* If Separate Chaining: Render Chained Linked Nodes */}
             {isChaining && slot.items.length > 1 && (
               <div className="w-full flex flex-col items-center gap-1 pt-1.5 border-t border-slate-200/90 dark:border-slate-800">
-                <div className="flex items-center gap-1 text-[9px] font-mono font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase">
-                  <LinkIcon className="w-2.5 h-2.5 text-[#2563EB] dark:text-[#60A5FA]" />
+                <div className="flex items-center gap-1 text-[9px] font-mono font-bold text-[#2563EB] dark:text-[#3B82F6] uppercase">
+                  <LinkIcon className="w-2.5 h-2.5 text-[#2563EB] dark:text-[#3B82F6]" />
                   <span>Chain (+{slot.items.length - 1})</span>
                 </div>
 
                 <div className="w-full flex flex-col gap-1.5">
                   {slot.items.slice(1).map((item, idx) => (
                     <div key={item.id || idx} className="flex items-center gap-1 w-full justify-center">
-                      <ArrowDown className="w-2.5 h-2.5 text-[#2563EB] dark:text-[#60A5FA] shrink-0" />
+                      <ArrowDown className="w-2.5 h-2.5 text-[#2563EB] dark:text-[#3B82F6] shrink-0" />
                       <div className="flex-1 py-1 px-1.5 bg-white dark:bg-[#111827] text-slate-900 dark:text-white border border-blue-200 dark:border-slate-700 rounded-md text-center font-mono font-bold text-xs shadow-2xs transition-all hover:border-blue-400 dark:hover:border-blue-400">
                         {item.value}
                       </div>

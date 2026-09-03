@@ -223,14 +223,14 @@ export const SilkBackground: React.FC<SilkBackgroundProps> = ({
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-    // Warm Champagne Silk Color Palette precisely matched to Field Notes theme:
-    const colorBase = new THREE.Color('#F2E8D6');
-    const colorLightSilk = new THREE.Color('#F8F0E2');
-    const colorWarmCream = new THREE.Color('#E9D9BF');
-    const colorChampagne = new THREE.Color('#D8C19F');
-    const colorWarmBeige = new THREE.Color('#C7AD89');
-    const colorSoftShadow = new THREE.Color('#A99070');
-    const colorDeepShadow = new THREE.Color('#92795B');
+    // Royal Blue Subtle Silk Color Palette precisely matched to modern theme:
+    const colorBase = new THREE.Color('#F8FAFC');
+    const colorLightSilk = new THREE.Color('#FFFFFF');
+    const colorWarmCream = new THREE.Color('#EFF6FF');
+    const colorChampagne = new THREE.Color('#DBEAFE');
+    const colorWarmBeige = new THREE.Color('#BFDBFE');
+    const colorSoftShadow = new THREE.Color('#93C5FD');
+    const colorDeepShadow = new THREE.Color('#3B82F6');
 
     const uniforms = {
       uTime: { value: 0.0 },

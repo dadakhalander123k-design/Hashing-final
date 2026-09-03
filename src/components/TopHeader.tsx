@@ -114,7 +114,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
           {/* 3. CURRENT PAGE / SECTION (SECONDARY) */}
           <div className="hidden xs:flex items-center gap-2 pl-2.5 sm:pl-3 border-l border-slate-200 dark:border-slate-800 min-w-0">
-            <span className="text-xs sm:text-sm font-semibold text-[#2563EB] dark:text-[#60A5FA] font-sans tracking-wide leading-none truncate">
+            <span className="text-xs sm:text-sm font-semibold text-[#2563EB] dark:text-[#3B82F6] font-sans tracking-wide leading-none truncate">
               {pageName}
             </span>
           </div>
@@ -163,7 +163,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             {isMuted ? (
               <VolumeX className="w-4 h-4 text-slate-400" />
             ) : (
-              <Volume2 className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />
+              <Volume2 className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />
             )}
           </button>
 

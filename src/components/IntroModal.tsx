@@ -16,8 +16,8 @@ export const IntroModal: React.FC<IntroModalProps> = ({ onStartGame, onOpenLearn
           #
         </div>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-500/30 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded-lg font-sans mb-2">
-          <Sparkles className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-500/30 text-[#1D4ED8] dark:text-[#3B82F6] text-xs font-semibold rounded-lg font-sans mb-2">
+          <Sparkles className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
           <span>INTERACTIVE HASHING ENGINE</span>
         </div>
 
@@ -34,7 +34,7 @@ export const IntroModal: React.FC<IntroModalProps> = ({ onStartGame, onOpenLearn
           <div className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 mb-1 font-mono">
             Core Mathematical Law
           </div>
-          <div className="text-xl font-bold font-mono text-[#2563EB] dark:text-[#60A5FA]">
+          <div className="text-xl font-bold font-mono text-[#2563EB] dark:text-[#3B82F6]">
             h(k) = k mod m
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -66,7 +66,7 @@ export const IntroModal: React.FC<IntroModalProps> = ({ onStartGame, onOpenLearn
               }}
               className="w-full btn-modern-secondary py-2.5 px-4 text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <BookOpen className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+              <BookOpen className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
               <span>Explore Theory Curriculum</span>
             </button>
           )}

@@ -35,12 +35,12 @@ export const ProbingController: React.FC<ProbingControllerProps> = ({
       {/* Top Header */}
       <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100 dark:border-slate-800 font-mono">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] dark:bg-[#60A5FA] animate-pulse shadow-xs" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] dark:bg-[#3B82F6] animate-pulse shadow-xs" />
           <h4 className="text-xs uppercase font-bold text-slate-900 dark:text-white tracking-wider">
             Collision Resolution Probing
           </h4>
         </div>
-        <span className="text-xs font-bold px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 text-[#2563EB] dark:text-[#60A5FA] rounded-lg shadow-2xs">
+        <span className="text-xs font-bold px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 text-[#2563EB] dark:text-[#3B82F6] rounded-lg shadow-2xs">
           Probe Attempt #{currentStepIndex}
         </span>
       </div>
@@ -94,7 +94,7 @@ export const ProbingController: React.FC<ProbingControllerProps> = ({
                 onClick={onAutoSolveProbe}
                 className="btn-modern-secondary py-2.5 px-4 text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-2xs"
               >
-                <SkipForward className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+                <SkipForward className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
                 Auto-Probe
               </button>
             </>

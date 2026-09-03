@@ -88,15 +88,8 @@ function createBlueprintTexture(w = 1600, h = 1200, isDark = false): HTMLCanvasE
   if (!ctx) return canvas;
 
   if (isDark) {
-    // Dark Neon Mode: Deep Navy Black
+    // Dark Mode: Clean Deep Navy #0B1120
     ctx.fillStyle = '#0B1120';
-    ctx.fillRect(0, 0, w, h);
-
-    // Subtle Radial Glow in corner
-    const grad = ctx.createRadialGradient(w * 0.2, h * 0.2, 50, w * 0.2, h * 0.2, 600);
-    grad.addColorStop(0, 'rgba(37, 99, 235, 0.12)');
-    grad.addColorStop(1, 'rgba(11, 17, 32, 0)');
-    ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
 
     // Background Grid Lines

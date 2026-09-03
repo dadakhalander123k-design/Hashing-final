@@ -26,8 +26,8 @@ export const GameLevelGuide: React.FC<GameLevelGuideProps> = ({ levelId }) => {
     >
       <div className="flex items-center justify-between gap-2 mb-2 font-mono">
         <div className="flex items-center gap-2">
-          <span className="text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold leading-none">✦</span>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#2563EB] dark:text-blue-300">
+          <span className="text-[#2563EB] dark:text-[#3B82F6] text-xs font-bold leading-none">✦</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#2563EB] dark:text-[#3B82F6]">
             Level Guide
           </span>
           <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-semibold tracking-widest hidden sm:inline">
@@ -43,11 +43,11 @@ export const GameLevelGuide: React.FC<GameLevelGuideProps> = ({ levelId }) => {
             e.preventDefault();
             // Non-functional visual placeholder as instructed
           }}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold font-mono rounded-lg bg-white dark:bg-[#0B1120] text-[#2563EB] dark:text-[#60A5FA] border border-blue-200 dark:border-blue-500/40 shadow-xs hover:border-blue-300 dark:hover:border-blue-400 transition-all cursor-default select-none"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold font-mono rounded-lg bg-white dark:bg-[#0B1120] text-[#2563EB] dark:text-[#3B82F6] border border-blue-200 dark:border-blue-500/40 shadow-xs hover:border-blue-300 dark:hover:border-blue-400 transition-all cursor-default select-none"
           title="AI Assistant (Preview)"
           aria-label="AI Help Placeholder"
         >
-          <Sparkles className="w-3 h-3 text-[#2563EB] dark:text-[#60A5FA]" />
+          <Sparkles className="w-3 h-3 text-[#2563EB] dark:text-[#3B82F6]" />
           <span>✦ AI HELP</span>
         </button>
       </div>

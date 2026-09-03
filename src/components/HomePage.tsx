@@ -49,7 +49,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="lg:col-span-7 flex flex-col gap-3.5">
             {/* Small Curriculum Label */}
             <div className="flex items-center">
-              <span className="text-[11px] sm:text-xs font-mono font-bold tracking-wider text-[#2563EB] dark:text-[#60A5FA] uppercase">
+              <span className="text-[11px] sm:text-xs font-mono font-bold tracking-wider text-[#2563EB] dark:text-[#3B82F6] uppercase">
                 THEORY CURRICULUM • MODULE 01 • CHAPTER 01
               </span>
             </div>
@@ -71,7 +71,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="lg:col-span-5 flex items-center justify-center lg:justify-end">
             <div className="relative flex items-center gap-3 sm:gap-5 py-2">
               {/* 3D Glossy Royal Blue Hash Function Badge */}
-              <div className="relative z-10 w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-gradient-to-br from-[#1D4ED8] via-[#2563EB] to-[#6366F1] dark:from-[#1D4ED8] dark:via-[#2563EB] dark:to-[#4F46E5] text-white flex items-center justify-center shadow-lg dark:shadow-none border border-blue-200/40 dark:border-blue-500/30 transform -rotate-3 hover:rotate-0 transition-transform shrink-0">
+              <div className="relative z-10 w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-gradient-to-br from-[#1D4ED8] via-[#2563EB] to-[#4F46E5] text-white flex items-center justify-center shadow-lg dark:shadow-none border border-blue-200/40 dark:border-blue-500/30 transform -rotate-3 hover:rotate-0 transition-transform shrink-0">
                 <span className="font-mono text-3xl sm:text-4xl font-extrabold select-none drop-shadow-sm">#</span>
               </div>
 
@@ -86,7 +86,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     strokeWidth="1.75"
                     strokeDasharray="3.5 3.5"
                     strokeLinecap="round"
-                    className="dark:stroke-blue-400 opacity-90"
+                    className="dark:stroke-[#3B82F6] opacity-90"
                   />
                   {/* Middle branch to Index 3 */}
                   <path
@@ -95,7 +95,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     strokeWidth="1.75"
                     strokeDasharray="3.5 3.5"
                     strokeLinecap="round"
-                    className="dark:stroke-blue-400 opacity-90"
+                    className="dark:stroke-[#3B82F6] opacity-90"
                   />
                   {/* Lower curve to Index 4 (42) */}
                   <path
@@ -104,7 +104,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     strokeWidth="1.75"
                     strokeDasharray="3.5 3.5"
                     strokeLinecap="round"
-                    className="dark:stroke-blue-400 opacity-90"
+                    className="dark:stroke-[#3B82F6] opacity-90"
                   />
                 </svg>
               </div>
@@ -135,7 +135,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <div className="w-10 sm:w-11 h-full bg-[#EFF6FF] dark:bg-blue-950/60 border-r border-[#E2E8F0] dark:border-slate-800 shrink-0" />
                     <div className="flex-1 flex items-center justify-center px-1.5 py-0.5">
                       <div className="w-full h-6 rounded-md bg-white dark:bg-[#111827] border border-[#DBEAFE] dark:border-blue-500/40 flex items-center justify-center shadow-2xs">
-                        <span className="font-mono font-bold text-xs sm:text-sm text-[#2563EB] dark:text-[#60A5FA]">87</span>
+                        <span className="font-mono font-bold text-xs sm:text-sm text-[#2563EB] dark:text-[#3B82F6]">87</span>
                       </div>
                     </div>
                   </div>
@@ -145,7 +145,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <div className="w-10 sm:w-11 h-full bg-[#EFF6FF] dark:bg-blue-950/60 border-r border-[#E2E8F0] dark:border-slate-800 shrink-0" />
                     <div className="flex-1 flex items-center justify-center px-1.5 py-0.5">
                       <div className="w-full h-6 rounded-md bg-white dark:bg-[#111827] border border-[#DBEAFE] dark:border-blue-500/40 flex items-center justify-center shadow-2xs">
-                        <span className="font-mono font-bold text-xs sm:text-sm text-[#2563EB] dark:text-[#60A5FA]">22</span>
+                        <span className="font-mono font-bold text-xs sm:text-sm text-[#2563EB] dark:text-[#3B82F6]">22</span>
                       </div>
                     </div>
                   </div>
@@ -161,7 +161,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <div className="w-10 sm:w-11 h-full bg-[#EFF6FF] dark:bg-blue-950/60 border-r border-[#E2E8F0] dark:border-slate-800 shrink-0" />
                     <div className="flex-1 flex items-center justify-center px-1.5 py-0.5">
                       <div className="w-full h-6 rounded-md bg-white dark:bg-[#111827] border border-[#DBEAFE] dark:border-blue-500/40 flex items-center justify-center shadow-2xs">
-                        <span className="font-mono font-bold text-xs sm:text-sm text-[#2563EB] dark:text-[#60A5FA]">42</span>
+                        <span className="font-mono font-bold text-xs sm:text-sm text-[#2563EB] dark:text-[#3B82F6]">42</span>
                       </div>
                     </div>
                   </div>
@@ -176,7 +176,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <div className="w-10 sm:w-11 h-full bg-[#EFF6FF] dark:bg-blue-950/60 border-r border-[#E2E8F0] dark:border-slate-800 shrink-0" />
                     <div className="flex-1 flex items-center justify-center px-1.5 py-0.5">
                       <div className="w-full h-6 rounded-md bg-white dark:bg-[#111827] border border-[#DBEAFE] dark:border-blue-500/40 flex items-center justify-center shadow-2xs">
-                        <span className="font-mono font-bold text-xs sm:text-sm text-[#2563EB] dark:text-[#60A5FA]">73</span>
+                        <span className="font-mono font-bold text-xs sm:text-sm text-[#2563EB] dark:text-[#3B82F6]">73</span>
                       </div>
                     </div>
                   </div>
@@ -192,7 +192,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
           {/* Card 1: Core Idea */}
           <div className="bg-white dark:bg-[#0B1120] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4.5 flex items-start gap-3.5 shadow-2xs hover:border-blue-300 dark:hover:border-blue-500/40 transition-all">
-            <div className="w-11 h-11 rounded-2xl bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#3B82F6] shrink-0">
               <Target className="w-5 h-5" />
             </div>
             <div>
@@ -205,7 +205,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           {/* Card 2: Key Formula */}
           <div className="bg-white dark:bg-[#0B1120] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4.5 flex items-start gap-3.5 shadow-2xs hover:border-blue-300 dark:hover:border-blue-500/40 transition-all">
-            <div className="w-11 h-11 rounded-2xl bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] shrink-0 font-serif font-bold text-xl">
+            <div className="w-11 h-11 rounded-2xl bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#3B82F6] shrink-0 font-serif font-bold text-xl">
               <span>Σ</span>
             </div>
             <div>
@@ -219,7 +219,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           {/* Card 3: Main Challenge */}
           <div className="bg-white dark:bg-[#0B1120] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4.5 flex items-start gap-3.5 shadow-2xs hover:border-blue-300 dark:hover:border-blue-500/40 transition-all">
-            <div className="w-11 h-11 rounded-2xl bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#3B82F6] shrink-0">
               {/* Reference 6-point collision asterisk/flower icon */}
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 3v18" />
@@ -243,7 +243,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       <section className="reveal-on-scroll bg-white dark:bg-[#111827] p-6 sm:p-9 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)]">
         {/* Section Header */}
         <div className="flex items-center gap-2.5 mb-6">
-          <div className="w-8 h-8 rounded-full bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA]">
+          <div className="w-8 h-8 rounded-full bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#3B82F6]">
             <Lightbulb className="w-4 h-4" />
           </div>
           <h2 className="text-lg sm:text-xl font-bold text-[#111827] dark:text-white">
@@ -254,7 +254,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           {/* Left Column: Question & Explanation */}
           <div className="lg:col-span-4 flex flex-col gap-2">
-            <h3 className="text-base sm:text-lg font-bold text-[#2563EB] dark:text-[#60A5FA] leading-snug">
+            <h3 className="text-base sm:text-lg font-bold text-[#2563EB] dark:text-[#3B82F6] leading-snug">
               How can we find data without checking everything?
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -267,8 +267,8 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="grid grid-cols-2 gap-x-4 gap-y-6 items-start sm:flex sm:flex-nowrap sm:items-center sm:justify-between sm:gap-2">
               {/* Step 1: Key */}
               <div className="flex flex-col items-center text-center w-full sm:w-auto sm:flex-1 sm:min-w-[85px]">
-                <div className="w-13 h-13 rounded-full bg-white dark:bg-[#172033] border border-slate-200/80 dark:border-slate-700 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center shadow-xs mb-2.5 shrink-0">
-                  <svg className="w-7 h-7 fill-[#2563EB] dark:fill-[#60A5FA]" viewBox="0 0 24 24">
+                <div className="w-13 h-13 rounded-full bg-white dark:bg-[#172033] border border-slate-200/80 dark:border-slate-700 text-[#2563EB] dark:text-[#3B82F6] flex items-center justify-center shadow-xs mb-2.5 shrink-0">
+                  <svg className="w-7 h-7 fill-[#2563EB] dark:fill-[#3B82F6]" viewBox="0 0 24 24">
                     <g transform="rotate(-45 12 12)">
                       <path
                         fillRule="evenodd"
@@ -283,12 +283,12 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
 
               {/* Arrow 1 */}
-              <ArrowRight className="w-4 h-4 text-[#3B82F6] dark:text-[#60A5FA] shrink-0 hidden sm:block" />
+              <ArrowRight className="w-4 h-4 text-[#3B82F6] dark:text-[#3B82F6] shrink-0 hidden sm:block" />
 
               {/* Step 2: Hash Function */}
               <div className="flex flex-col items-center text-center w-full sm:w-auto sm:flex-1 sm:min-w-[85px]">
                 <div className="w-13 h-13 rounded-full bg-white dark:bg-[#172033] border border-slate-200/80 dark:border-slate-700 flex items-center justify-center shadow-xs mb-2.5 shrink-0">
-                  <div className="w-8 h-8 rounded-xl bg-[#2563EB] dark:bg-blue-600 flex items-center justify-center shadow-2xs">
+                  <div className="w-8 h-8 rounded-xl bg-[#2563EB] dark:bg-[#2563EB] flex items-center justify-center shadow-2xs">
                     <svg className="w-4.5 h-4.5 text-white stroke-white stroke-[2.5]" viewBox="0 0 24 24" fill="none" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="4" y1="9" x2="20" y2="9" />
                       <line x1="4" y1="15" x2="20" y2="15" />
@@ -302,12 +302,12 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
 
               {/* Arrow 2 */}
-              <ArrowRight className="w-4 h-4 text-[#3B82F6] dark:text-[#60A5FA] shrink-0 hidden sm:block" />
+              <ArrowRight className="w-4 h-4 text-[#3B82F6] dark:text-[#3B82F6] shrink-0 hidden sm:block" />
 
               {/* Step 3: Index */}
               <div className="flex flex-col items-center text-center w-full sm:w-auto sm:flex-1 sm:min-w-[85px]">
-                <div className="w-13 h-13 rounded-full bg-white dark:bg-[#172033] border border-slate-200/80 dark:border-slate-700 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center shadow-xs mb-2.5 shrink-0">
-                  <svg className="w-6 h-6 fill-[#2563EB] dark:fill-[#60A5FA]" viewBox="0 0 24 24">
+                <div className="w-13 h-13 rounded-full bg-white dark:bg-[#172033] border border-slate-200/80 dark:border-slate-700 text-[#2563EB] dark:text-[#3B82F6] flex items-center justify-center shadow-xs mb-2.5 shrink-0">
+                  <svg className="w-6 h-6 fill-[#2563EB] dark:fill-[#3B82F6]" viewBox="0 0 24 24">
                     <path fillRule="evenodd" clipRule="evenodd" d="M12 2C7.58 2 4 5.58 4 10c0 5.25 7.15 11.45 7.45 11.71a.84.84 0 0 0 1.1 0C12.85 21.45 20 15.25 20 10c0-4.42-3.58-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
                   </svg>
                 </div>
@@ -316,12 +316,12 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
 
               {/* Arrow 3 */}
-              <ArrowRight className="w-4 h-4 text-[#3B82F6] dark:text-[#60A5FA] shrink-0 hidden sm:block" />
+              <ArrowRight className="w-4 h-4 text-[#3B82F6] dark:text-[#3B82F6] shrink-0 hidden sm:block" />
 
               {/* Step 4: Bucket */}
               <div className="flex flex-col items-center text-center w-full sm:w-auto sm:flex-1 sm:min-w-[85px]">
-                <div className="w-13 h-13 rounded-full bg-white dark:bg-[#172033] border border-slate-200/80 dark:border-slate-700 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center shadow-xs mb-2.5 shrink-0">
-                  <svg className="w-6.5 h-6.5 fill-[#2563EB] dark:fill-[#60A5FA]" viewBox="0 0 24 24">
+                <div className="w-13 h-13 rounded-full bg-white dark:bg-[#172033] border border-slate-200/80 dark:border-slate-700 text-[#2563EB] dark:text-[#3B82F6] flex items-center justify-center shadow-xs mb-2.5 shrink-0">
+                  <svg className="w-6.5 h-6.5 fill-[#2563EB] dark:fill-[#3B82F6]" viewBox="0 0 24 24">
                     {/* Top handle pill */}
                     <rect x="8.5" y="2" width="7" height="2.2" rx="1.1" />
                     {/* Horizontal rim */}
@@ -344,7 +344,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       <section className="reveal-on-scroll bg-white dark:bg-[#111827] p-6 sm:p-9 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)]">
         {/* Section Header */}
         <div className="flex items-center gap-2.5 mb-8">
-          <div className="w-8 h-8 rounded-full bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA]">
+          <div className="w-8 h-8 rounded-full bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#3B82F6]">
             <BookOpen className="w-4 h-4" />
           </div>
           <h2 className="text-lg sm:text-xl font-bold text-[#111827] dark:text-white">
@@ -366,10 +366,10 @@ export const HomePage: React.FC<HomePageProps> = ({
               }}
               className="flex flex-col items-center text-center group cursor-pointer w-full max-w-[220px] md:max-w-none"
             >
-              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-blue-300 border-2 border-white dark:border-[#111827] shadow-xs flex items-center justify-center font-mono font-extrabold text-xs mb-3 group-hover:bg-[#2563EB] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-[#3B82F6] border-2 border-white dark:border-[#111827] shadow-xs flex items-center justify-center font-mono font-extrabold text-xs mb-3 group-hover:bg-[#2563EB] group-hover:text-white transition-colors">
                 01
               </div>
-              <div className="w-12 h-12 rounded-full bg-[#F8FAFF] dark:bg-[#172033] border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] mb-2.5 shadow-2xs group-hover:border-blue-400 transition-all font-mono font-bold text-lg">
+              <div className="w-12 h-12 rounded-full bg-[#F8FAFF] dark:bg-[#172033] border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#3B82F6] mb-2.5 shadow-2xs group-hover:border-blue-400 transition-all font-mono font-bold text-lg">
                 #
               </div>
               <h3 className="text-xs sm:text-sm font-bold text-[#111827] dark:text-white leading-snug">
@@ -388,10 +388,10 @@ export const HomePage: React.FC<HomePageProps> = ({
               }}
               className="flex flex-col items-center text-center group cursor-pointer w-full max-w-[220px] md:max-w-none"
             >
-              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-blue-300 border-2 border-white dark:border-[#111827] shadow-xs flex items-center justify-center font-mono font-extrabold text-xs mb-3 group-hover:bg-[#2563EB] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-[#3B82F6] border-2 border-white dark:border-[#111827] shadow-xs flex items-center justify-center font-mono font-extrabold text-xs mb-3 group-hover:bg-[#2563EB] group-hover:text-white transition-colors">
                 02
               </div>
-              <div className="w-12 h-12 rounded-full bg-[#F8FAFF] dark:bg-[#172033] border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-blue-400 mb-2.5 shadow-2xs group-hover:border-[#DBEAFE] transition-all">
+              <div className="w-12 h-12 rounded-full bg-[#F8FAFF] dark:bg-[#172033] border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#3B82F6] mb-2.5 shadow-2xs group-hover:border-[#DBEAFE] transition-all">
                 <Database className="w-5 h-5" />
               </div>
               <h3 className="text-xs sm:text-sm font-bold text-[#111827] dark:text-white leading-snug">
@@ -410,10 +410,10 @@ export const HomePage: React.FC<HomePageProps> = ({
               }}
               className="flex flex-col items-center text-center group cursor-pointer w-full max-w-[220px] md:max-w-none"
             >
-              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-blue-300 border-2 border-white dark:border-[#111827] shadow-xs flex items-center justify-center font-mono font-extrabold text-xs mb-3 group-hover:bg-[#2563EB] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-[#3B82F6] border-2 border-white dark:border-[#111827] shadow-xs flex items-center justify-center font-mono font-extrabold text-xs mb-3 group-hover:bg-[#2563EB] group-hover:text-white transition-colors">
                 03
               </div>
-              <div className="w-12 h-12 rounded-full bg-[#F8FAFF] dark:bg-[#172033] border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] mb-2.5 shadow-2xs group-hover:border-[#2563EB] transition-all">
+              <div className="w-12 h-12 rounded-full bg-[#F8FAFF] dark:bg-[#172033] border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#3B82F6] mb-2.5 shadow-2xs group-hover:border-[#2563EB] transition-all">
                 <Divide className="w-5 h-5" />
               </div>
               <h3 className="text-xs sm:text-sm font-bold text-[#111827] dark:text-white leading-snug">
@@ -432,7 +432,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               }}
               className="flex flex-col items-center text-center group cursor-pointer w-full max-w-[220px] md:max-w-none"
             >
-              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-blue-300 border-2 border-white dark:border-[#111827] shadow-xs flex items-center justify-center font-mono font-extrabold text-xs mb-3 group-hover:bg-[#2563EB] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-[#3B82F6] border-2 border-white dark:border-[#111827] shadow-xs flex items-center justify-center font-mono font-extrabold text-xs mb-3 group-hover:bg-[#2563EB] group-hover:text-white transition-colors">
                 04
               </div>
               <div className="w-12 h-12 rounded-full bg-[#FFFBEB] dark:bg-[#172033] border border-[#FDE68A] dark:border-amber-500/30 flex items-center justify-center text-[#F59E0B] dark:text-amber-400 mb-2.5 shadow-2xs group-hover:border-amber-400 transition-all">
@@ -454,7 +454,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               }}
               className="flex flex-col items-center text-center group cursor-pointer w-full max-w-[220px] md:max-w-none"
             >
-              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-blue-300 border-2 border-white dark:border-[#111827] shadow-xs flex items-center justify-center font-mono font-extrabold text-xs mb-3 group-hover:bg-[#2563EB] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-[#3B82F6] border-2 border-white dark:border-[#111827] shadow-xs flex items-center justify-center font-mono font-extrabold text-xs mb-3 group-hover:bg-[#2563EB] group-hover:text-white transition-colors">
                 05
               </div>
               <div className="w-12 h-12 rounded-full bg-[#F0FDF4] dark:bg-[#172033] border border-[#BBF7D0] dark:border-emerald-500/30 flex items-center justify-center text-[#10B981] dark:text-emerald-400 mb-2.5 shadow-2xs group-hover:border-emerald-400 transition-all">
@@ -481,7 +481,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       <section className="reveal-on-scroll bg-white dark:bg-[#111827] p-6 sm:p-9 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)]">
         {/* Section Header */}
         <div className="flex items-center gap-2.5 mb-6">
-          <div className="w-8 h-8 rounded-full bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA]">
+          <div className="w-8 h-8 rounded-full bg-[#EFF6FF] dark:bg-blue-950/70 border border-[#DBEAFE] dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#3B82F6]">
             <Star className="w-4 h-4" />
           </div>
           <h2 className="text-lg sm:text-xl font-bold text-[#111827] dark:text-white">
@@ -679,7 +679,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <button
             id="btn-home-start-learning"
             onClick={handleStartLearning}
-            className="w-full md:w-auto px-8 py-4 bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] text-white font-bold text-sm sm:text-base rounded-xl shadow-md shadow-blue-500/25 dark:shadow-blue-500/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer shrink-0 group hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full md:w-auto px-8 py-4 bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#2563EB] dark:hover:bg-[#1D4ED8] text-white font-bold text-sm sm:text-base rounded-xl shadow-xs dark:shadow-none transition-all flex items-center justify-center gap-2.5 cursor-pointer shrink-0 group hover:scale-[1.01] active:scale-[0.99]"
           >
             <span>Start Learning</span>
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />

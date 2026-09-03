@@ -25,12 +25,12 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 }) => {
   let title = 'STEP 1: COMPUTE MODULO REMAINDER';
   let message = 'Calculate the remainder formula to find the target array index for this key.';
-  let icon = <Info className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />;
+  let icon = <Info className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />;
 
   if (gameState === 'INDEX_FOUND' || (calculatedIndex !== null && !isProbing)) {
     title = `Target Found: Slot [${calculatedIndex < 10 ? `0${calculatedIndex}` : calculatedIndex}]`;
     message = `Key ${currentKey} maps to Index ${calculatedIndex}. Drag the key card or click the slot to complete insertion!`;
-    icon = <ArrowRight className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />;
+    icon = <ArrowRight className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />;
   } else if (gameState === 'COLLISION_PAUSE') {
     title = 'Collision Encountered!';
     message = `Index ${calculatedIndex} already contains a value. Both keys resolve to the exact same memory bucket.`;
@@ -44,7 +44,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
     } else if (level.technique === 'double_hashing') {
       message = `Slot occupied. Double hashing computes a unique non-zero jump interval h2(k) for this key.`;
     }
-    icon = <Sparkles className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />;
+    icon = <Sparkles className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />;
   } else if (gameState === 'CHAIN_CONNECTING') {
     title = 'Separate Chaining Attachment';
     message = `Both keys share Index ${calculatedIndex}. They are linked sequentially into the slot's chain bucket.`;

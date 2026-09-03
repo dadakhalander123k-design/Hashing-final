@@ -442,8 +442,8 @@ export const QuizView: React.FC<QuizViewProps> = ({
       {/* Header Banner */}
       <div className="border border-slate-200 dark:border-slate-800 rounded-2xl pb-6 mb-6 bg-white dark:bg-[#111827] p-6 sm:p-8 shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] reveal-on-scroll">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 text-[#2563EB] dark:text-[#60A5FA] rounded-lg text-xs font-semibold uppercase tracking-wider font-mono">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 text-[#2563EB] dark:text-[#3B82F6] rounded-lg text-xs font-semibold uppercase tracking-wider font-mono">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
             <span>Knowledge Assessment</span>
           </div>
           <div className="flex items-center gap-2">
@@ -469,9 +469,9 @@ export const QuizView: React.FC<QuizViewProps> = ({
         <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
           <div className="flex items-center justify-between gap-2 mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
             <div className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
               <span>
-                Progress: <strong className="text-[#2563EB] dark:text-[#60A5FA] font-mono">{answeredCount}</strong> / {totalQuestions} Answered
+                Progress: <strong className="text-[#2563EB] dark:text-[#3B82F6] font-mono">{answeredCount}</strong> / {totalQuestions} Answered
               </span>
             </div>
             {isSubmitted && (
@@ -490,7 +490,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
 
               let pillStyle = 'bg-slate-50 dark:bg-[#0B1120] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-[#172033]';
               if (isCurrent) {
-                pillStyle = 'bg-[#2563EB] dark:bg-[#2563EB] text-white border-[#2563EB] dark:border-blue-500 font-bold shadow-xs dark:shadow-none';
+                pillStyle = 'bg-[#2563EB] dark:bg-[#2563EB] text-white border-[#1D4ED8] dark:border-[#2563EB] font-bold shadow-xs dark:shadow-none';
               } else if (isAnswered) {
                 if (rec.isCorrect) {
                   pillStyle = 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30 font-semibold';
@@ -539,31 +539,31 @@ export const QuizView: React.FC<QuizViewProps> = ({
             className="p-6 sm:p-10 lg:p-12 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center text-center animate-editorial-scale transition-all"
           >
             {/* 1. Top Achievement Trophy Icon */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-[#00A86B] dark:bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 dark:shadow-emerald-950/50 mx-auto mb-4 sm:mb-5">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-emerald-600 dark:bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 dark:shadow-emerald-950/50 mx-auto mb-4 sm:mb-5">
               <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-white stroke-[2.2]" />
             </div>
 
             {/* 2. Achievement Badge */}
-            <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-[#00A86B]/40 dark:border-emerald-500/40 bg-[#E6F8F0] dark:bg-emerald-950/60 text-[#008A54] dark:text-emerald-300 font-mono text-[11px] sm:text-xs font-bold tracking-wider uppercase mb-3 sm:mb-4">
+            <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-emerald-500/40 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-mono text-[11px] sm:text-xs font-bold tracking-wider uppercase mb-3 sm:mb-4">
               ★ OUTSTANDING MASTERY (GRADE A+) ★
             </div>
 
             {/* 3. Main Completion Heading */}
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B192C] dark:text-white tracking-tight uppercase mb-3">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#111827] dark:text-white tracking-tight uppercase mb-3">
               QUIZ ASSESSMENT COMPLETED
             </h2>
 
             {/* 4. Supporting Description */}
             <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed font-normal mb-6 sm:mb-8">
-              Incredible performance! You demonstrated thorough command of Stack operations and algorithmic constraints.
+              Incredible performance! You demonstrated thorough command of Hash Table operations and algorithmic constraints.
             </p>
 
             {/* 5. Large Highlighted Score Card */}
             <div className="w-full max-w-md mx-auto p-6 sm:p-8 bg-white dark:bg-[#0B1120] border-2 border-blue-200/80 dark:border-blue-500/40 rounded-3xl shadow-xs dark:shadow-none flex flex-col items-center justify-center text-center mb-6 sm:mb-8">
-              <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-[#2563EB] dark:text-[#60A5FA] uppercase mb-2">
+              <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-[#2563EB] dark:text-[#3B82F6] uppercase mb-2">
                 FINAL HIGHLIGHTED SCORE
               </span>
-              <div className="text-5xl sm:text-6xl font-black text-[#00A86B] dark:text-emerald-400 font-sans tracking-tight leading-none my-2">
+              <div className="text-5xl sm:text-6xl font-black text-emerald-600 dark:text-emerald-400 font-sans tracking-tight leading-none my-2">
                 {percentage}%
               </div>
               <div className="mt-3 px-4 py-1.5 rounded-xl bg-slate-50 dark:bg-blue-950/40 border border-slate-200 dark:border-blue-500/30 text-slate-700 dark:text-slate-300 font-mono text-xs sm:text-sm font-semibold">
@@ -578,7 +578,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 <span className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase mb-1.5">
                   CORRECT
                 </span>
-                <span className="text-xl sm:text-2xl font-extrabold text-[#00A86B] dark:text-emerald-400 font-mono flex items-center justify-center gap-1.5">
+                <span className="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono flex items-center justify-center gap-1.5">
                   <Check className="w-5 h-5 stroke-[2.5]" />
                   {score}
                 </span>
@@ -630,7 +630,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 }}
                 className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-2xl bg-white hover:bg-slate-50 dark:bg-[#0B1120] dark:hover:bg-[#172033] text-slate-800 dark:text-slate-200 border border-slate-200/90 dark:border-slate-800 font-sans text-sm font-semibold shadow-xs transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Home className="w-4 h-4 stroke-[2.2] text-[#2563EB] dark:text-[#60A5FA]" />
+                <Home className="w-4 h-4 stroke-[2.2] text-[#2563EB] dark:text-[#3B82F6]" />
                 <span>Back to Home</span>
               </button>
             </div>
@@ -641,7 +641,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             {/* Section Heading */}
             <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
               <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 font-display">
-                <ListOrdered className="w-5 h-5 text-[#2563EB] dark:text-[#60A5FA]" />
+                <ListOrdered className="w-5 h-5 text-[#2563EB] dark:text-[#3B82F6]" />
                 <span>Full Question-by-Question Review</span>
               </h3>
               <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-semibold font-mono">
@@ -673,14 +673,14 @@ export const QuizView: React.FC<QuizViewProps> = ({
                         <span className="px-3 py-1 bg-[#2563EB] dark:bg-[#3B82F6] text-white rounded-full text-xs font-bold font-mono tracking-wide shadow-xs inline-flex items-center justify-center">
                           Question {questionNumberStr}
                         </span>
-                        <span className="text-xs font-bold text-[#2563EB] dark:text-blue-300 font-mono tracking-wider">
+                        <span className="text-xs font-bold text-[#2563EB] dark:text-[#3B82F6] font-mono tracking-wider">
                           {q.techniqueCode}
                         </span>
                       </div>
 
                       <div>
                         {isCorrect ? (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#E6F8F0] dark:bg-emerald-950/60 border border-[#00A86B]/30 dark:border-emerald-500/30 text-[#008A54] dark:text-emerald-300 rounded-lg text-xs font-bold font-sans">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-bold font-sans">
                             <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                             <span>Correct</span>
                           </div>
@@ -736,7 +736,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                     {/* Technical Explanation Panel */}
                     <div className="p-4 sm:p-5 rounded-2xl bg-[#F8FAFC] dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 text-xs">
                       <div className="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white text-xs sm:text-sm mb-2">
-                        <HelpCircle className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />
+                        <HelpCircle className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />
                         <span>Technical Explanation:</span>
                       </div>
                       <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3 font-normal">
@@ -744,7 +744,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                       </p>
 
                       {q.exampleSnippet && (
-                        <div className="mb-3 p-2.5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-blue-500/30 rounded-lg font-mono text-xs text-[#2563EB] dark:text-blue-300 font-semibold">
+                        <div className="mb-3 p-2.5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-blue-500/30 rounded-lg font-mono text-xs text-[#2563EB] dark:text-[#3B82F6] font-semibold">
                           Example: {q.exampleSnippet}
                         </div>
                       )}
@@ -756,7 +756,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                               soundManager.playNav();
                               onNavigateToTheory(q.targetChapterId);
                             }}
-                            className="text-[#2563EB] dark:text-[#60A5FA] hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-xs inline-flex items-center gap-1.5 hover:underline cursor-pointer"
+                            className="text-[#2563EB] dark:text-[#3B82F6] hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-xs inline-flex items-center gap-1.5 hover:underline cursor-pointer"
                           >
                             <BookOpen className="w-3.5 h-3.5" />
                             <span>Review in Theory Guide →</span>
@@ -770,7 +770,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                             }}
                             className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-semibold text-xs inline-flex items-center gap-1.5 hover:underline cursor-pointer"
                           >
-                            <Gamepad2 className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+                            <Gamepad2 className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
                             <span>Practice in Quest Level {q.targetLevelId} →</span>
                           </button>
                         )}
@@ -802,7 +802,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 <span className="px-2.5 py-1 bg-[#2563EB] dark:bg-[#3B82F6] text-white rounded-md text-xs font-bold font-mono shadow-xs">
                   Question {currentQuestionIndex + 1 < 10 ? `0${currentQuestionIndex + 1}` : currentQuestionIndex + 1} of {totalQuestions}
                 </span>
-                <span className="text-xs font-semibold text-[#2563EB] dark:text-blue-300 font-mono">{currentQuestion.techniqueCode}</span>
+                <span className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] font-mono">{currentQuestion.techniqueCode}</span>
               </div>
 
               {isCurrentQuestionAnswered && (
@@ -845,7 +845,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                   }
                 } else if (isSelected) {
                   optStyle =
-                    'bg-blue-50/80 dark:bg-blue-950/60 border-[#2563EB] dark:border-blue-400 text-blue-950 dark:text-blue-200 font-semibold ring-2 ring-blue-500 dark:ring-blue-500/30';
+                    'bg-blue-50/80 dark:bg-blue-950/60 border-[#2563EB] dark:border-[#3B82F6] text-blue-950 dark:text-white font-semibold ring-2 ring-blue-500 dark:ring-blue-500/30';
                 }
 
                 return (
@@ -864,7 +864,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                             ? optIdx === currentQuestion.correctIndex
                               ? 'bg-emerald-600 text-white border-emerald-600'
                               : 'bg-rose-600 text-white border-rose-600'
-                            : 'bg-[#2563EB] dark:bg-[#3B82F6] text-white border-[#2563EB] dark:border-blue-500'
+                            : 'bg-[#2563EB] dark:bg-[#2563EB] text-white border-[#1D4ED8] dark:border-[#2563EB]'
                           : 'bg-slate-100 dark:bg-[#0B1120] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
                       }`}
                     >
@@ -946,7 +946,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             {isCurrentQuestionAnswered && (
               <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#0B1120] rounded-xl p-4 sm:p-5 text-xs">
                 <div className="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white mb-2">
-                  <HelpCircle className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />
+                  <HelpCircle className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />
                   <span>Technical Explanation:</span>
                 </div>
                 <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-3 font-normal text-sm">
@@ -954,7 +954,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 </p>
 
                 {currentQuestion.exampleSnippet && (
-                  <div className="mb-3 p-3 bg-white dark:bg-[#111827] border border-slate-200 dark:border-blue-500/30 rounded-lg font-mono text-xs text-[#2563EB] dark:text-blue-300 font-semibold">
+                  <div className="mb-3 p-3 bg-white dark:bg-[#111827] border border-slate-200 dark:border-blue-500/30 rounded-lg font-mono text-xs text-[#2563EB] dark:text-[#3B82F6] font-semibold">
                     Example: {currentQuestion.exampleSnippet}
                   </div>
                 )}
@@ -966,7 +966,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                         soundManager.playNav();
                         onNavigateToTheory(currentQuestion.targetChapterId);
                       }}
-                      className="text-[#2563EB] dark:text-[#60A5FA] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                      className="text-[#2563EB] dark:text-[#3B82F6] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       <BookOpen className="w-3.5 h-3.5" />
                       <span>Review in Theory Guide →</span>
@@ -980,7 +980,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                       }}
                       className="text-slate-700 dark:text-slate-300 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
                     >
-                      <Gamepad2 className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+                      <Gamepad2 className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
                       <span>Practice in Quest Level {currentQuestion.targetLevelId} →</span>
                     </button>
                   )}

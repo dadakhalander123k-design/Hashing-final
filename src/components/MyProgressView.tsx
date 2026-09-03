@@ -76,8 +76,8 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
         );
       case 'IN_PROGRESS':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#60A5FA] border border-blue-200 dark:border-blue-500/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] dark:bg-blue-400 animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#3B82F6] border border-blue-200 dark:border-blue-500/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] dark:bg-[#3B82F6] animate-pulse" />
             <span>In Progress</span>
           </span>
         );
@@ -113,7 +113,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
       <div className="border-b border-slate-200 dark:border-slate-800 pb-6 mb-8">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold font-mono uppercase tracking-widest text-[#2563EB] dark:text-[#60A5FA] bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-md border border-blue-100 dark:border-blue-500/30">
+            <span className="text-xs font-bold font-mono uppercase tracking-widest text-[#2563EB] dark:text-[#3B82F6] bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-md border border-blue-100 dark:border-blue-500/30">
               Curriculum Progress Tracker
             </span>
             <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
@@ -145,14 +145,14 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
         {is100Percent && (
           <div
             id="progress-100-percent-banner"
-            className="mt-6 p-5 bg-gradient-to-r from-blue-50 to-blue-100/60 dark:from-blue-950/50 dark:to-slate-900 border border-blue-200 dark:border-blue-500/30 rounded-2xl shadow-xs dark:shadow-none flex flex-col sm:flex-row items-center justify-between gap-4 animate-editorial-scale"
+            className="mt-6 p-5 bg-gradient-to-r from-[#EFF6FF] via-[#F8FAFF] to-[#DBEAFE]/70 dark:from-[#172033] dark:via-[#111827] dark:to-[#0B1120] border border-[#DBEAFE] dark:border-blue-500/30 rounded-2xl shadow-xs dark:shadow-none flex flex-col sm:flex-row items-center justify-between gap-4 animate-editorial-scale"
           >
             <div className="flex items-center gap-3.5">
               <div className="w-11 h-11 rounded-xl bg-[#2563EB] dark:bg-[#2563EB] text-white flex items-center justify-center font-bold shadow-xs">
                 <Sparkles className="w-6 h-6 text-amber-300" />
               </div>
               <div>
-                <div className="text-xs font-bold font-mono text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider">
+                <div className="text-xs font-bold font-mono text-[#2563EB] dark:text-[#3B82F6] uppercase tracking-wider">
                   ★ Congratulations! 100% Curriculum Completed
                 </div>
                 <div className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
@@ -195,7 +195,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
           {/* Clean Segmented Progress Bar */}
           <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
             <div
-              className="bg-[#2563EB] dark:bg-gradient-to-r dark:from-[#1D4ED8] dark:via-[#2563EB] dark:to-[#6366F1] h-full rounded-full transition-all duration-500 ease-out"
+              className="bg-gradient-to-r from-[#2563EB] via-[#4F46E5] to-[#6366F1] h-full rounded-full transition-all duration-500 ease-out"
               style={{ width: `${stats.percentage}%` }}
             />
           </div>
@@ -222,23 +222,23 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
               <div className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase mt-0.5">Activities</div>
             </div>
             <div>
-              <div className="text-2xl font-extrabold text-[#2563EB] dark:text-[#60A5FA] font-mono">{progressState.levelsCompleted.length} / 5</div>
+              <div className="text-2xl font-extrabold text-[#2563EB] dark:text-[#3B82F6] font-mono">{progressState.levelsCompleted.length} / 5</div>
               <div className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase mt-0.5">Levels Won</div>
             </div>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-3 font-medium">
-            <Trophy className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA] shrink-0" />
+            <Trophy className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6] shrink-0" />
             <span className="truncate">Master Challenges: {progressState.masterChallengesCompleted.length >= 4 ? 'All Clear (Master)' : `${progressState.masterChallengesCompleted.length} / 4 Challenges`}</span>
           </div>
         </div>
 
         {/* Card 3: Next Recommended Step */}
-        <div className="bg-gradient-to-br from-blue-50/60 to-white dark:from-blue-950/40 dark:to-[#111827] border border-blue-100 dark:border-blue-500/30 rounded-2xl p-6 flex flex-col justify-between shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] reveal-on-scroll stagger-2">
+        <div className="bg-gradient-to-br from-[#EFF6FF]/60 to-white dark:from-[#172033]/60 dark:to-[#111827] border border-blue-100 dark:border-blue-500/30 rounded-2xl p-6 flex flex-col justify-between shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] reveal-on-scroll stagger-2">
           <div>
-            <div className="flex items-center justify-between text-xs font-bold font-mono uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] mb-1">
+            <div className="flex items-center justify-between text-xs font-bold font-mono uppercase tracking-wider text-[#2563EB] dark:text-[#3B82F6] mb-1">
               <span>Recommended Next Step</span>
-              <span className="w-2 h-2 rounded-full bg-[#2563EB] dark:bg-blue-400 animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-[#2563EB] dark:bg-[#3B82F6] animate-ping" />
             </div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white line-clamp-1">
               {stats.nextModule.title}
@@ -263,7 +263,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
       <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 mb-8 shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] reveal-on-scroll">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#60A5FA] border border-blue-100 dark:border-blue-500/30">
+            <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#3B82F6] border border-blue-100 dark:border-blue-500/30">
               <Video className="w-5 h-5" />
             </div>
             <div>
@@ -281,7 +281,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
               soundManager.playNav();
               onNavigateToTab('VIDEO');
             }}
-            className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1.5 self-start sm:self-auto cursor-pointer transition-colors"
+            className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1.5 self-start sm:self-auto cursor-pointer transition-colors"
           >
             <span>Open Video Section</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -373,7 +373,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
                     <span className="text-xs font-bold font-mono px-2 py-0.5 bg-slate-100 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-md">
                       {m.code}
                     </span>
-                    <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] uppercase font-mono">
+                    <span className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] uppercase font-mono">
                       {m.category}
                     </span>
                     {renderStatusBadge(m.status)}

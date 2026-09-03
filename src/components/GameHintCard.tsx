@@ -105,8 +105,8 @@ export const GameHintCard: React.FC<GameHintCardProps> = ({
           aria-expanded={isExpanded}
         >
           <div className="flex items-center gap-2">
-            <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#60A5FA] border border-blue-100 dark:border-blue-500/30">
-              <Lightbulb className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+            <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#3B82F6] border border-blue-100 dark:border-blue-500/30">
+              <Lightbulb className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
             </span>
             <span className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider font-mono">
               Field Hint // What should I do next?
@@ -129,7 +129,7 @@ export const GameHintCard: React.FC<GameHintCardProps> = ({
         {isExpanded && (
           <div className="p-4 space-y-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#111827] animate-chapter-switch">
             <div className="flex items-center justify-between font-mono">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] px-2 py-0.5 bg-blue-50 dark:bg-blue-950/60 rounded-md border border-blue-100 dark:border-blue-500/30">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#2563EB] dark:text-[#3B82F6] px-2 py-0.5 bg-blue-50 dark:bg-blue-950/60 rounded-md border border-blue-100 dark:border-blue-500/30">
                 {hint.stage}
               </span>
               <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold">Level {level.id} Assistant</span>
@@ -140,7 +140,7 @@ export const GameHintCard: React.FC<GameHintCardProps> = ({
             </p>
 
             {hint.formulaTip && (
-              <div className="bg-[#F8FAFC] dark:bg-[#0B1120] text-[#111827] dark:text-blue-300 px-3 py-2 rounded-xl text-xs font-mono font-bold border border-[#E5E7EB] dark:border-slate-800 border-l-4 border-l-[#2563EB] dark:border-l-blue-500 overflow-x-auto">
+              <div className="bg-[#F8FAFC] dark:bg-[#0B1120] text-[#111827] dark:text-[#3B82F6] px-3 py-2 rounded-xl text-xs font-mono font-bold border border-[#E5E7EB] dark:border-slate-800 border-l-4 border-l-[#2563EB] dark:border-l-[#3B82F6] overflow-x-auto">
                 <code>{hint.formulaTip}</code>
               </div>
             )}

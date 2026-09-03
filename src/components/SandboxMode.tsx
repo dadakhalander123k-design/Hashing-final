@@ -227,7 +227,7 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
               <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight animate-heading-enter break-words">
                 Hash Table Experimentation Lab
               </h2>
-              <span className="text-xs uppercase font-bold px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 text-[#2563EB] dark:text-[#60A5FA] rounded-lg font-mono shadow-2xs">
+              <span className="text-xs uppercase font-bold px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 text-[#2563EB] dark:text-[#3B82F6] rounded-lg font-mono shadow-2xs">
                 Interactive Lab
               </span>
             </div>
@@ -246,7 +246,7 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
                 }}
                 className="btn-modern-secondary px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-2xs"
               >
-                <BookOpen className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+                <BookOpen className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
                 <span>Theory Guide</span>
               </button>
             )}
@@ -311,7 +311,7 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
           <div className="p-3 bg-slate-50/80 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl flex flex-col justify-between shadow-2xs">
             <span className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[10px] font-mono">Load Factor (α = n/m)</span>
             <div className="flex items-center justify-between mt-1">
-              <span className="text-xl font-extrabold text-[#2563EB] dark:text-[#60A5FA] font-mono">{loadFactor}</span>
+              <span className="text-xl font-extrabold text-[#2563EB] dark:text-[#3B82F6] font-mono">{loadFactor}</span>
               <span className="text-slate-500 dark:text-slate-400 text-xs font-mono font-medium">({totalKeys}/{tableSize} items)</span>
             </div>
           </div>
@@ -333,7 +333,7 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
         {/* Dynamic Formula Display Bar */}
         <div className="mt-3.5 p-2.5 bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-500/25 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs font-mono shadow-2xs">
           <span className="text-slate-600 dark:text-slate-400 font-semibold uppercase text-[11px]">Active Formula (m = {tableSize}):</span>
-          <span className="font-bold text-[#2563EB] dark:text-blue-300 bg-white dark:bg-[#0B1120] px-2.5 py-1 rounded-lg border border-blue-100 dark:border-blue-500/30 shadow-2xs">
+          <span className="font-bold text-[#2563EB] dark:text-[#3B82F6] bg-white dark:bg-[#0B1120] px-2.5 py-1 rounded-lg border border-blue-100 dark:border-blue-500/30 shadow-2xs">
             {technique === 'chaining' && `h(k) = k mod ${tableSize}`}
             {technique === 'linear' && `h(k, i) = (k mod ${tableSize} + i) mod ${tableSize}`}
             {technique === 'quadratic' && `h(k, i) = (k mod ${tableSize} + i²) mod ${tableSize}`}
@@ -350,7 +350,7 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
               value={inputKey}
               onChange={(e) => setInputKey(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleInsert()}
-              className="w-32 px-3 py-2 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:border-[#2563EB] dark:focus:border-blue-400 focus:outline-hidden shadow-2xs"
+              className="w-32 px-3 py-2 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:border-[#2563EB] dark:focus:border-[#3B82F6] focus:outline-hidden shadow-2xs"
             />
             <button
               id="btn-sandbox-insert"
@@ -364,7 +364,7 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
               onClick={handleRandomInsert}
               className="btn-modern-secondary px-3.5 py-2 text-xs font-semibold flex items-center gap-1 cursor-pointer shadow-2xs"
             >
-              <Shuffle className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" /> Random
+              <Shuffle className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" /> Random
             </button>
           </div>
 
@@ -374,7 +374,7 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
               placeholder="Search Key"
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
-              className="w-32 px-3 py-2 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:border-[#2563EB] dark:focus:border-blue-400 focus:outline-hidden shadow-2xs"
+              className="w-32 px-3 py-2 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:border-[#2563EB] dark:focus:border-[#3B82F6] focus:outline-hidden shadow-2xs"
             />
             <button
               id="btn-sandbox-search"
@@ -394,7 +394,7 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
             Hash Table Array (Load = {loadFactor})
           </span>
           {searchPath.length > 0 && (
-            <span className="text-xs font-semibold text-[#2563EB] dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-md border border-blue-100 dark:border-blue-500/30 font-mono shadow-2xs">
+            <span className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-md border border-blue-100 dark:border-blue-500/30 font-mono shadow-2xs">
               Search Path: [{searchPath.join(' → ')}]
             </span>
           )}
@@ -442,7 +442,7 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
                     <div className="flex items-center gap-1.5 shrink-0 font-mono">
                       {s.items.map((item, idx) => (
                         <React.Fragment key={item.id || idx}>
-                          {idx > 0 && <ArrowRight className="w-3 h-3 text-[#2563EB] dark:text-[#60A5FA] shrink-0" />}
+                          {idx > 0 && <ArrowRight className="w-3 h-3 text-[#2563EB] dark:text-[#3B82F6] shrink-0" />}
                           <span className="px-2.5 py-0.5 bg-white dark:bg-[#111827] border border-blue-200/80 dark:border-blue-500/30 rounded-md font-bold text-slate-900 dark:text-white shadow-2xs">
                             {item.value}
                           </span>
@@ -460,14 +460,14 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
       <div className="bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-sm dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] text-xs">
         <div className="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-3 flex items-center justify-between font-mono">
           <span>Execution Log Audit Trail</span>
-          <span className="text-[10px] text-[#2563EB] dark:text-[#60A5FA] font-bold bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-md border border-blue-100 dark:border-blue-500/30 shadow-2xs">
+          <span className="text-[10px] text-[#2563EB] dark:text-[#3B82F6] font-bold bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-md border border-blue-100 dark:border-blue-500/30 shadow-2xs">
             Live Stream
           </span>
         </div>
         <div className="space-y-1.5 font-mono">
           {logMessages.map((msg, i) => (
             <div key={i} className="flex items-start gap-2">
-              <span className="text-[#2563EB] dark:text-[#60A5FA] font-bold select-none">&gt;</span>
+              <span className="text-[#2563EB] dark:text-[#3B82F6] font-bold select-none">&gt;</span>
               <span className={i === 0 ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-500 dark:text-slate-400'}>{msg}</span>
             </div>
           ))}

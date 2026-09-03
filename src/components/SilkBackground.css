@@ -1,4 +1,4 @@
-/* SilkBackground.css - Editorial Champagne Silk Layer */
+/* SilkBackground.css - Modern Royal Blue Silk Layer */
 .silk-background-container {
   position: fixed;
   top: 65px;
@@ -10,7 +10,7 @@
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  background-color: #F2E8D6;
+  background-color: var(--bg-main, #F8FAFC);
 }
 
 .silk-canvas {
@@ -20,15 +20,11 @@
   pointer-events: none;
 }
 
-/* Fallback static textured paper background if WebGL is disabled or unsupported */
+/* Fallback static clean background if WebGL is disabled or unsupported */
 .silk-fallback-paper {
   position: absolute;
   inset: 0;
-  background-color: #F2E8D6;
-  background-image: 
-    radial-gradient(rgba(24, 24, 24, 0.04) 1px, transparent 0),
-    linear-gradient(135deg, rgba(216, 193, 159, 0.45) 0%, rgba(250, 244, 232, 0.9) 50%, rgba(199, 173, 137, 0.4) 100%);
-  background-size: 20px 20px, 100% 100%;
+  background-color: var(--bg-main, #F8FAFC);
 }
 
 

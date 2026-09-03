@@ -47,21 +47,21 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       label: 'Overview',
       icon: LayoutGrid,
       badge: 'Overview',
-      badgeClass: 'bg-slate-100 dark:bg-blue-950/40 text-slate-600 dark:text-blue-300 border border-slate-200 dark:border-blue-500/20',
+      badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700',
     },
     {
       id: 'THEORY' as MainViewTab,
       label: 'Learn',
       icon: BookOpen,
       badge: `${stats.theory.completed} / 12`,
-      badgeClass: 'bg-[#EFF6FF] dark:bg-blue-950/50 text-[#2563EB] dark:text-blue-300 border border-[#DBEAFE] dark:border-blue-500/20',
+      badgeClass: 'bg-[#EFF6FF] dark:bg-blue-950/50 text-[#2563EB] dark:text-[#3B82F6] border border-[#DBEAFE] dark:border-blue-500/20',
     },
     {
       id: 'VIDEO' as MainViewTab,
       label: 'Visualize',
       icon: Sparkles,
       badge: `${stats.video.completed} / 2`,
-      badgeClass: 'bg-[#EFF6FF] dark:bg-blue-950/50 text-[#2563EB] dark:text-blue-300 border border-[#DBEAFE] dark:border-blue-500/20',
+      badgeClass: 'bg-[#EFF6FF] dark:bg-blue-950/50 text-[#2563EB] dark:text-[#3B82F6] border border-[#DBEAFE] dark:border-blue-500/20',
     },
     {
       id: 'GAME' as MainViewTab,
@@ -75,14 +75,14 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       label: 'Quiz',
       icon: HelpCircle,
       badge: stats.quiz.isSubmitted ? 'Completed' : '10 Qs',
-      badgeClass: 'bg-[#EFF6FF] dark:bg-blue-900/40 text-[#2563EB] dark:text-blue-300 border border-[#DBEAFE] dark:border-blue-500/20',
+      badgeClass: 'bg-[#EFF6FF] dark:bg-blue-900/40 text-[#2563EB] dark:text-[#3B82F6] border border-[#DBEAFE] dark:border-blue-500/20',
     },
     {
       id: 'PROGRESS' as MainViewTab,
       label: 'Progress',
       icon: TrendingUp,
       badge: `${stats.percentage}%`,
-      badgeClass: 'bg-[#EFF6FF] dark:bg-blue-800/40 text-[#2563EB] dark:text-blue-200 font-bold border border-[#DBEAFE] dark:border-blue-500/30',
+      badgeClass: 'bg-[#EFF6FF] dark:bg-blue-800/40 text-[#2563EB] dark:text-[#3B82F6] font-bold border border-[#DBEAFE] dark:border-blue-500/30',
     },
   ];
 
@@ -142,16 +142,16 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               onClick={() => handleSelect(item.id)}
               className={`group w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-150 cursor-pointer ${
                 isActive
-                  ? 'bg-[#EFF6FF] dark:bg-blue-950/40 text-[#2563EB] dark:text-[#93C5FD] font-semibold shadow-xs dark:shadow-none border border-[#DBEAFE] dark:border-blue-500/30'
-                  : 'text-[#64748B] dark:text-slate-400 hover:bg-[#F8FAFF] dark:hover:bg-blue-950/20 hover:text-[#2563EB] dark:hover:text-white border border-transparent'
+                  ? 'bg-[#EFF6FF] dark:bg-[#172033] text-[#2563EB] dark:text-[#3B82F6] font-semibold shadow-xs dark:shadow-none border border-[#DBEAFE] dark:border-[#2563EB]/40'
+                  : 'text-[#64748B] dark:text-slate-400 hover:bg-[#F8FAFF] dark:hover:bg-[#172033] hover:text-[#2563EB] dark:hover:text-[#3B82F6] border border-transparent'
               }`}
             >
               <div className="flex items-center gap-3">
                 <div
                   className={`p-1.5 rounded-lg transition-all ${
                     isActive
-                      ? 'bg-[#2563EB] dark:bg-blue-600 text-white shadow-xs'
-                      : 'bg-[#F8FAFC] dark:bg-slate-800/60 text-[#64748B] dark:text-slate-400 group-hover:text-[#2563EB] dark:group-hover:text-white'
+                      ? 'bg-[#2563EB] dark:bg-[#2563EB] text-white shadow-xs'
+                      : 'bg-[#F8FAFC] dark:bg-slate-800/60 text-[#64748B] dark:text-slate-400 group-hover:text-[#2563EB] dark:group-hover:text-[#3B82F6]'
                   }`}
                 >
                   <Icon className="w-4 h-4" />

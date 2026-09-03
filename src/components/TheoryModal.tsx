@@ -13,7 +13,7 @@ export const TheoryModal: React.FC<TheoryModalProps> = ({ onClose, onOpenFullLea
       title: '1. What is a Hash Table?',
       desc: 'A data structure that maps keys to array indices using a hash function, achieving average O(1) time complexity for insert, search, and delete.',
       formula: 'Index = h(key) = key % tableSize',
-      icon: <Sparkles className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />,
+      icon: <Sparkles className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />,
     },
     {
       title: '2. Separate Chaining (Closed Addressing)',
@@ -31,13 +31,13 @@ export const TheoryModal: React.FC<TheoryModalProps> = ({ onClose, onOpenFullLea
       title: '4. Quadratic Probing (Open Addressing)',
       desc: 'Instead of linear stepping which causes primary clustering, quadratic probing jumps by squares (+1, +4, +9, +16...) to disperse entries across the table.',
       formula: 'h(k, i) = (h(k) + i²) % m',
-      icon: <Search className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />,
+      icon: <Search className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />,
     },
     {
       title: '5. Double Hashing (Open Addressing)',
       desc: 'Uses two independent hash functions: h1 determines the starting index, and h2 calculates a non-zero jump interval unique to each key.',
       formula: 'h(k, i) = (h1(k) + i × h2(k)) % m, where h2(k) ≠ 0',
-      icon: <Search className="w-4 h-4 text-blue-500 dark:text-blue-400" />,
+      icon: <Search className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />,
     },
   ];
 
@@ -47,7 +47,7 @@ export const TheoryModal: React.FC<TheoryModalProps> = ({ onClose, onOpenFullLea
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0B1120] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#60A5FA] border border-blue-100 dark:border-blue-500/30">
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#3B82F6] border border-blue-100 dark:border-blue-500/30">
               <BookOpen className="w-4 h-4" />
             </div>
             <div>
@@ -80,8 +80,8 @@ export const TheoryModal: React.FC<TheoryModalProps> = ({ onClose, onOpenFullLea
                 <h4 className="font-bold text-sm text-slate-900 dark:text-white">{topic.title}</h4>
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-2.5">{topic.desc}</p>
-              <div className="flex items-center gap-2 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-800 dark:text-blue-300 shadow-2xs">
-                <span className="text-[#2563EB] dark:text-[#60A5FA] text-[11px] uppercase tracking-wider font-sans">Formula:</span>
+              <div className="flex items-center gap-2 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-800 dark:text-[#3B82F6] shadow-2xs">
+                <span className="text-[#2563EB] dark:text-[#3B82F6] text-[11px] uppercase tracking-wider font-sans">Formula:</span>
                 <span>{topic.formula}</span>
               </div>
             </div>
@@ -99,7 +99,7 @@ export const TheoryModal: React.FC<TheoryModalProps> = ({ onClose, onOpenFullLea
               }}
               className="btn-modern-secondary px-4 py-2 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
             >
-              <BookOpen className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+              <BookOpen className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
               <span>Open Full Theory Guide</span>
             </button>
           ) : <div />}

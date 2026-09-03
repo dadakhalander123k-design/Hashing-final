@@ -35,13 +35,13 @@ export const HashTable: React.FC<HashTableProps> = ({
         {/* Table Header Bar with Royal Blue Accents */}
         <div className="flex flex-wrap items-center justify-between pb-3.5 mb-4 border-b border-slate-100 dark:border-slate-800 gap-2 font-sans">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] shadow-2xs">
+            <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 flex items-center justify-center text-[#2563EB] dark:text-[#3B82F6] shadow-2xs">
               <Layers className="w-4 h-4" />
             </div>
             <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
               Hash Table Array (Capacity = {tableSize})
             </h3>
-            <span className="text-xs bg-blue-50/60 dark:bg-slate-800 px-2.5 py-0.5 rounded-lg border border-blue-100 dark:border-slate-700 text-[#2563EB] dark:text-[#60A5FA] font-mono font-bold shadow-2xs">
+            <span className="text-xs bg-blue-50/60 dark:bg-slate-800 px-2.5 py-0.5 rounded-lg border border-blue-100 dark:border-slate-700 text-[#2563EB] dark:text-[#3B82F6] font-mono font-bold shadow-2xs">
               Index 00 .. {tableSize - 1 < 10 ? `0${tableSize - 1}` : tableSize - 1}
             </span>
           </div>
@@ -50,7 +50,7 @@ export const HashTable: React.FC<HashTableProps> = ({
             <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 shadow-2xs">
               <span className="w-2.5 h-2.5 bg-[#2563EB] dark:bg-[#3B82F6] rounded-xs shadow-2xs" /> Occupied
             </span>
-            <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-500/30 text-[#2563EB] dark:text-[#60A5FA] font-semibold shadow-2xs">
+            <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-500/30 text-[#2563EB] dark:text-[#3B82F6] font-semibold shadow-2xs">
               <span className="w-2.5 h-2.5 bg-[#2563EB] dark:bg-[#3B82F6] rounded-xs shadow-2xs" /> Target / Probe
             </span>
             {isChaining && (
@@ -90,7 +90,7 @@ export const HashTable: React.FC<HashTableProps> = ({
         {isChaining && (
           <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 font-sans">
             <div className="flex items-center gap-1.5 mb-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase font-mono">
-              <LinkIcon className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />
+              <LinkIcon className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
               <span>Linked Buckets Overview:</span>
             </div>
 
@@ -109,7 +109,7 @@ export const HashTable: React.FC<HashTableProps> = ({
                     <div className="flex items-center gap-1.5 shrink-0 font-mono">
                       {s.items.map((item, idx) => (
                         <React.Fragment key={item.id || idx}>
-                          {idx > 0 && <ArrowRight className="w-3 h-3 text-[#2563EB] dark:text-[#60A5FA] shrink-0" />}
+                          {idx > 0 && <ArrowRight className="w-3 h-3 text-[#2563EB] dark:text-[#3B82F6] shrink-0" />}
                           <span className="px-2.5 py-0.5 bg-white dark:bg-[#111827] border border-blue-200/80 dark:border-slate-700 rounded-md font-bold text-slate-900 dark:text-white shadow-2xs">
                             {item.value}
                           </span>
