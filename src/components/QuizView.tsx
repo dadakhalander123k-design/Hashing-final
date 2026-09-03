@@ -319,6 +319,62 @@ export const QuizView: React.FC<QuizViewProps> = ({
     };
   }, [studentAnswers]);
 
+  // Dynamic Certificate / Completion Card Theme based on final quiz percentage
+  const themeConfig = useMemo(() => {
+    if (percentage >= 80) {
+      return {
+        trophyBg: 'bg-emerald-600 dark:bg-emerald-600',
+        trophyShadow: 'shadow-emerald-500/20 dark:shadow-emerald-950/50',
+        badgeBorder: 'border-emerald-500/40 dark:border-emerald-500/40',
+        badgeBg: 'bg-emerald-50 dark:bg-emerald-950/60',
+        badgeTextClr: 'text-emerald-700 dark:text-emerald-300',
+        badgeText: '★ OUTSTANDING MASTERY (GRADE A) ★',
+        description: 'Incredible performance! You demonstrated thorough command of Hash Table operations and algorithmic constraints.',
+        scoreCardBorder: 'border-emerald-200/80 dark:border-emerald-500/40',
+        scoreText: 'text-emerald-600 dark:text-emerald-400',
+        scorePillBg: 'bg-emerald-50/80 dark:bg-emerald-950/40',
+        scorePillBorder: 'border-emerald-200 dark:border-emerald-500/30',
+        scorePillText: 'text-emerald-800 dark:text-emerald-300',
+        scoreHeaderClr: 'text-emerald-700 dark:text-emerald-300',
+        cardBorder: 'border-emerald-200/80 dark:border-emerald-900/50',
+      };
+    } else if (percentage >= 40) {
+      return {
+        trophyBg: 'bg-[#2563EB] dark:bg-[#2563EB]',
+        trophyShadow: 'shadow-blue-500/20 dark:shadow-blue-950/50',
+        badgeBorder: 'border-blue-400/40 dark:border-blue-500/40',
+        badgeBg: 'bg-blue-50 dark:bg-blue-950/60',
+        badgeTextClr: 'text-blue-700 dark:text-blue-300',
+        badgeText: '★ COMPETENT MASTERY (GRADE B) ★',
+        description: 'Good job! You have a solid grasp of hashing principles with a few areas to refine.',
+        scoreCardBorder: 'border-blue-200/80 dark:border-blue-500/40',
+        scoreText: 'text-[#2563EB] dark:text-[#3B82F6]',
+        scorePillBg: 'bg-blue-50/80 dark:bg-blue-950/40',
+        scorePillBorder: 'border-blue-200 dark:border-blue-500/30',
+        scorePillText: 'text-blue-800 dark:text-blue-300',
+        scoreHeaderClr: 'text-[#2563EB] dark:text-[#3B82F6]',
+        cardBorder: 'border-blue-200/80 dark:border-blue-900/50',
+      };
+    } else {
+      return {
+        trophyBg: 'bg-amber-500 dark:bg-amber-500',
+        trophyShadow: 'shadow-amber-500/20 dark:shadow-amber-950/50',
+        badgeBorder: 'border-amber-400/40 dark:border-amber-500/40',
+        badgeBg: 'bg-amber-50 dark:bg-amber-950/60',
+        badgeTextClr: 'text-amber-700 dark:text-amber-300',
+        badgeText: '★ NEEDS REVIEW (GRADE C) ★',
+        description: 'Keep practicing! Review the learning chapters and visual sandbox to strengthen your understanding.',
+        scoreCardBorder: 'border-amber-200/80 dark:border-amber-500/40',
+        scoreText: 'text-amber-600 dark:text-amber-400',
+        scorePillBg: 'bg-amber-50/80 dark:bg-amber-950/40',
+        scorePillBorder: 'border-amber-200 dark:border-amber-500/30',
+        scorePillText: 'text-amber-800 dark:text-amber-300',
+        scoreHeaderClr: 'text-amber-700 dark:text-amber-300',
+        cardBorder: 'border-amber-200/80 dark:border-amber-900/50',
+      };
+    }
+  }, [percentage]);
+
   // Handle student selecting an option (before or during answering)
   const handleSelectOption = (optionIndex: number) => {
     if (isCurrentQuestionAnswered && isSubmitted) return;
@@ -533,19 +589,19 @@ export const QuizView: React.FC<QuizViewProps> = ({
       {/* QUIZ COMPLETION VIEW (Displayed ONLY after Complete & Review is clicked) */}
       {isSubmitted ? (
         <div className="space-y-8">
-          {/* 1. Existing Quiz Assessment Completed Section (Completely Unchanged) */}
+          {/* 1. Dynamic Quiz Assessment Completed Section */}
           <div
             id="quiz-result-card"
-            className="p-6 sm:p-10 lg:p-12 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center text-center animate-editorial-scale transition-all"
+            className={`p-6 sm:p-10 lg:p-12 bg-white dark:bg-[#111827] border ${themeConfig.cardBorder} rounded-3xl shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center text-center animate-editorial-scale transition-all`}
           >
             {/* 1. Top Achievement Trophy Icon */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-emerald-600 dark:bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 dark:shadow-emerald-950/50 mx-auto mb-4 sm:mb-5">
+            <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl ${themeConfig.trophyBg} flex items-center justify-center shadow-lg ${themeConfig.trophyShadow} mx-auto mb-4 sm:mb-5`}>
               <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-white stroke-[2.2]" />
             </div>
 
             {/* 2. Achievement Badge */}
-            <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-emerald-500/40 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-mono text-[11px] sm:text-xs font-bold tracking-wider uppercase mb-3 sm:mb-4">
-              ★ OUTSTANDING MASTERY (GRADE A+) ★
+            <div className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full border ${themeConfig.badgeBorder} ${themeConfig.badgeBg} ${themeConfig.badgeTextClr} font-mono text-[11px] sm:text-xs font-bold tracking-wider uppercase mb-3 sm:mb-4`}>
+              {themeConfig.badgeText}
             </div>
 
             {/* 3. Main Completion Heading */}
@@ -555,18 +611,18 @@ export const QuizView: React.FC<QuizViewProps> = ({
 
             {/* 4. Supporting Description */}
             <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed font-normal mb-6 sm:mb-8">
-              Incredible performance! You demonstrated thorough command of Hash Table operations and algorithmic constraints.
+              {themeConfig.description}
             </p>
 
             {/* 5. Large Highlighted Score Card */}
-            <div className="w-full max-w-md mx-auto p-6 sm:p-8 bg-white dark:bg-[#0B1120] border-2 border-blue-200/80 dark:border-blue-500/40 rounded-3xl shadow-xs dark:shadow-none flex flex-col items-center justify-center text-center mb-6 sm:mb-8">
-              <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-[#2563EB] dark:text-[#3B82F6] uppercase mb-2">
+            <div className={`w-full max-w-md mx-auto p-6 sm:p-8 bg-white dark:bg-[#0B1120] border-2 ${themeConfig.scoreCardBorder} rounded-3xl shadow-xs dark:shadow-none flex flex-col items-center justify-center text-center mb-6 sm:mb-8`}>
+              <span className={`text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] ${themeConfig.scoreHeaderClr} uppercase mb-2`}>
                 FINAL HIGHLIGHTED SCORE
               </span>
-              <div className="text-5xl sm:text-6xl font-black text-emerald-600 dark:text-emerald-400 font-sans tracking-tight leading-none my-2">
+              <div className={`text-5xl sm:text-6xl font-black ${themeConfig.scoreText} font-sans tracking-tight leading-none my-2`}>
                 {percentage}%
               </div>
-              <div className="mt-3 px-4 py-1.5 rounded-xl bg-slate-50 dark:bg-blue-950/40 border border-slate-200 dark:border-blue-500/30 text-slate-700 dark:text-slate-300 font-mono text-xs sm:text-sm font-semibold">
+              <div className={`mt-3 px-4 py-1.5 rounded-xl ${themeConfig.scorePillBg} border ${themeConfig.scorePillBorder} ${themeConfig.scorePillText} font-mono text-xs sm:text-sm font-semibold`}>
                 {score} / {totalQuestions} Questions Correct
               </div>
             </div>
@@ -903,7 +959,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                     }`}
                   >
                     <Check className="w-4 h-4" />
-                    <span>Confirm Answer</span>
+                    <span>Submit Answer</span>
                   </button>
                 ) : (
                   <button
