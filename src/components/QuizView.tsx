@@ -254,6 +254,8 @@ export const QuizView: React.FC<QuizViewProps> = ({
     }
   });
 
+  const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false);
+
   // Subscribe to progressManager for reset synchronization
   useEffect(() => {
     const unsub = progressManager.subscribe((pState) => {
@@ -261,8 +263,10 @@ export const QuizView: React.FC<QuizViewProps> = ({
         setIsSubmitted(false);
         try {
           const stored = localStorage.getItem(QUIZ_STORAGE_ANSWERS_KEY);
-          if (!stored) {
+          if (!stored || stored === '{}') {
             setStudentAnswers({});
+            setCurrentQuestionIndex(0);
+            setPendingSelection(null);
           }
         } catch {
           // Ignore
@@ -294,11 +298,28 @@ export const QuizView: React.FC<QuizViewProps> = ({
   // Persist answers to localStorage whenever they change
   useEffect(() => {
     try {
-      localStorage.setItem(QUIZ_STORAGE_ANSWERS_KEY, JSON.stringify(studentAnswers));
+      if (Object.keys(studentAnswers).length === 0) {
+        localStorage.removeItem(QUIZ_STORAGE_ANSWERS_KEY);
+      } else {
+        localStorage.setItem(QUIZ_STORAGE_ANSWERS_KEY, JSON.stringify(studentAnswers));
+      }
     } catch {
       // Ignore storage errors
     }
   }, [studentAnswers]);
+
+  // Persist isSubmitted to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      if (isSubmitted) {
+        localStorage.setItem(QUIZ_STORAGE_SUBMITTED_KEY, 'true');
+      } else {
+        localStorage.removeItem(QUIZ_STORAGE_SUBMITTED_KEY);
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }, [isSubmitted]);
 
   // Calculate score deterministically from stored answers
   const { score, totalQuestions, percentage } = useMemo(() => {
@@ -480,10 +501,11 @@ export const QuizView: React.FC<QuizViewProps> = ({
     setIsSubmitted(false);
     setCurrentQuestionIndex(0);
     setPendingSelection(null);
+    setShowResetConfirm(false);
 
     try {
       localStorage.removeItem(QUIZ_STORAGE_ANSWERS_KEY);
-      localStorage.setItem(QUIZ_STORAGE_SUBMITTED_KEY, 'false');
+      localStorage.removeItem(QUIZ_STORAGE_SUBMITTED_KEY);
     } catch {
       // Ignore
     }
@@ -502,8 +524,8 @@ export const QuizView: React.FC<QuizViewProps> = ({
             <ShieldCheck className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
             <span>Knowledge Assessment</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <span className="hidden sm:inline text-xs font-medium text-slate-500 dark:text-slate-400">
               Simple Hashing Quiz (10 Questions)
             </span>
             {isSubmitted && (
@@ -511,6 +533,20 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 Completed
               </span>
             )}
+            <button
+              id="btn-quiz-reset-progress"
+              type="button"
+              onClick={() => {
+                soundManager.playModalOpen();
+                setShowResetConfirm(true);
+              }}
+              className="text-xs font-semibold text-slate-600 hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-400 flex items-center gap-1.5 cursor-pointer transition-colors px-2.5 py-1 rounded-lg bg-slate-100/80 hover:bg-rose-50 dark:bg-slate-800/80 dark:hover:bg-rose-950/40 border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:hover:border-rose-800/50 shadow-2xs"
+              title="Reset Quiz Progress"
+              aria-label="Reset Quiz Progress"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset Progress</span>
+            </button>
           </div>
         </div>
 
@@ -1043,6 +1079,69 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Reset Quiz Progress Confirmation Modal */}
+      {showResetConfirm && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              soundManager.playModalClose();
+              setShowResetConfirm(false);
+            }
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="quiz-reset-modal-title"
+        >
+          <div className="relative w-full max-w-md bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-7 shadow-2xl text-center animate-scale-enter font-sans">
+            {/* Warning Icon Badge */}
+            <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-500/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-xs">
+              <RotateCcw className="w-6 h-6 stroke-[2.2]" />
+            </div>
+
+            {/* Title */}
+            <h2
+              id="quiz-reset-modal-title"
+              className="text-xl sm:text-2xl font-black font-sans text-slate-900 dark:text-white tracking-tight uppercase mb-3"
+            >
+              Reset Quiz Progress?
+            </h2>
+
+            {/* Body Description */}
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6 font-normal">
+              All answers and progress will be cleared. This action cannot be undone.
+            </p>
+
+            {/* Action Buttons: [ Cancel ] [ Reset Progress ] */}
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              {/* Cancel Button */}
+              <button
+                id="btn-quiz-cancel-reset"
+                type="button"
+                onClick={() => {
+                  soundManager.playModalClose();
+                  setShowResetConfirm(false);
+                }}
+                className="py-3 px-4 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer active:scale-95 shadow-xs"
+              >
+                Cancel
+              </button>
+
+              {/* Reset Progress Button */}
+              <button
+                id="btn-quiz-confirm-reset"
+                type="button"
+                onClick={handleResetQuiz}
+                className="py-3 px-4 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider bg-rose-600 hover:bg-rose-700 text-white shadow-md shadow-rose-600/30 transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Reset Progress</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
