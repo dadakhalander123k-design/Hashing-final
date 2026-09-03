@@ -630,9 +630,8 @@ export default function App() {
 
       {/* Main Content Area */}
       <div
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
-          desktopSidebarOpen ? 'lg:pl-64' : 'lg:pl-0'
-        }`}
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${desktopSidebarOpen ? 'lg:pl-64' : 'lg:pl-0'
+          }`}
       >
         {/* Top Header Bar */}
         <TopHeader
@@ -783,11 +782,7 @@ export default function App() {
                     </div>
 
                     {/* Level Instruction Guide (Technical Field Notes Guide) */}
-                    <GameLevelGuide
-                      levelId={currentLevel.id}
-                      isGuidedSolveActive={isGuidedSolveActive}
-                      onToggleGuidedSolve={() => setIsGuidedSolveActive((prev) => !prev)}
-                    />
+                    <GameLevelGuide levelId={currentLevel.id} />
 
                     {/* Compact Interactive Guided Solve Teacher Panel */}
                     {isGuidedSolveActive && (
@@ -813,8 +808,8 @@ export default function App() {
                         if (isProbing) {
                           handleConfirmProbeInsertion();
                         } else if (currentKey !== null) {
-                          const targetSlot = calculatedIndex !== null 
-                            ? calculatedIndex 
+                          const targetSlot = calculatedIndex !== null
+                            ? calculatedIndex
                             : calculateBaseHash(currentKey, currentLevel.tableSize);
                           placeKeyInSlot(targetSlot);
                         }
@@ -824,6 +819,8 @@ export default function App() {
                       probeStepNumber={currentProbeStepIndex}
                       probeFormulaStr={currentStep?.calculationStr}
                       isProbing={isProbing}
+                      isGuidedSolveActive={isGuidedSolveActive}
+                      onToggleGuidedSolve={() => setIsGuidedSolveActive((prev) => !prev)}
                     />
 
                     {/* Contextual Field Hint System */}

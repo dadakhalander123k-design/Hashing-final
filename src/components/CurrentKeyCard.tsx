@@ -18,6 +18,8 @@ interface CurrentKeyCardProps {
   probeStepNumber?: number;
   probeFormulaStr?: string;
   isProbing?: boolean;
+  isGuidedSolveActive?: boolean;
+  onToggleGuidedSolve?: () => void;
 }
 
 export const CurrentKeyCard: React.FC<CurrentKeyCardProps> = ({
@@ -35,6 +37,8 @@ export const CurrentKeyCard: React.FC<CurrentKeyCardProps> = ({
   probeStepNumber = 0,
   probeFormulaStr = '',
   isProbing = false,
+  isGuidedSolveActive = false,
+  onToggleGuidedSolve,
 }) => {
   const [manualInput, setManualInput] = useState<string>('');
   const [inputError, setInputError] = useState<string | null>(null);
@@ -95,11 +99,10 @@ export const CurrentKeyCard: React.FC<CurrentKeyCardProps> = ({
               draggable={isCalculated}
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
-              className={`relative flex flex-col items-center justify-center w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-2 transition-all duration-150 select-none ${
-                isCalculated
+              className={`relative flex flex-col items-center justify-center w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-2 transition-all duration-150 select-none ${isCalculated
                   ? 'bg-gradient-to-b from-[#2563EB] to-[#1D4ED8] dark:from-[#2563EB] dark:to-[#1D4ED8] text-white border-[#1D4ED8] dark:border-[#2563EB] shadow-md dark:shadow-none ring-4 ring-blue-100 dark:ring-blue-500/20 cursor-grab active:cursor-grabbing hover:scale-105 active:scale-95'
                   : 'bg-slate-50 dark:bg-[#0B1120] text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-700 border-dashed shadow-2xs'
-              }`}
+                }`}
             >
               {isCalculated && (
                 <div className="absolute top-2.5 right-2.5 text-blue-200 dark:text-blue-100">
@@ -137,7 +140,7 @@ export const CurrentKeyCard: React.FC<CurrentKeyCardProps> = ({
                     <span className="text-[#2563EB] dark:text-[#3B82F6] font-extrabold">?</span>
                   </div>
 
-                  {/* Manual calculation form or Auto Calculate */}
+                  {/* Manual calculation form or Guided Solve */}
                   <form onSubmit={handleManualSubmit} className="flex flex-wrap items-center gap-2 mt-1 w-full">
                     <input
                       id="input-modulus-answer"
@@ -157,17 +160,26 @@ export const CurrentKeyCard: React.FC<CurrentKeyCardProps> = ({
                       <Check className="w-3.5 h-3.5" /> Check
                     </button>
                     <button
-                      id="btn-auto-calculate"
+                      id="btn-guided-solve"
                       type="button"
                       onClick={() => {
                         soundManager.playClick();
-                        onCalculate();
+                        if (onToggleGuidedSolve) {
+                          onToggleGuidedSolve();
+                        } else {
+                          onCalculate();
+                        }
                       }}
-                      disabled={isCalculating}
-                      className="btn-modern-secondary px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                      className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold font-mono rounded-xl border transition-all cursor-pointer select-none shadow-2xs ${
+                        isGuidedSolveActive
+                          ? 'bg-[#2563EB] text-white border-[#1D4ED8] dark:border-[#2563EB]'
+                          : 'bg-white dark:bg-[#0B1120] text-[#2563EB] dark:text-[#3B82F6] border-blue-200 dark:border-blue-500/40 hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-[#172033]'
+                      }`}
+                      title={isGuidedSolveActive ? 'Stop Guided Solve' : 'Start Guided Solve'}
+                      aria-label="Guided Solve"
                     >
-                      <Calculator className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
-                      {isCalculating ? 'Computing...' : 'Auto-Compute'}
+                      <Sparkles className={`w-3.5 h-3.5 ${isGuidedSolveActive ? 'text-white' : 'text-[#2563EB] dark:text-[#3B82F6]'}`} />
+                      <span>{isGuidedSolveActive ? 'GUIDED SOLVE ON' : '✦ GUIDED SOLVE'}</span>
                     </button>
                   </form>
 
