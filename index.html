@@ -3,12 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hash Quest — Interactive Hashing & Collision Resolution Guide</title>
-    <meta name="description" content="An interactive educational guide to hash functions, tables, collisions, and resolution algorithms." />
-    <meta property="og:title" content="Hash Quest — Interactive Hashing & Collision Resolution Guide" />
-    <meta property="og:description" content="An interactive educational guide to hash functions, tables, collisions, and resolution algorithms." />
+    <title>AlgoLearn — Interactive Data Structures & Hashing Mastery</title>
+    <meta name="description" content="Master hash functions, collision resolution strategies (separate chaining, linear & quadratic probing, double hashing), and time complexity with interactive visual algorithms on AlgoLearn." />
+    
+    <!-- Favicon & Branding Icons -->
+    <link rel="icon" type="image/png" href="/algolearn-logo.png" />
+    <link rel="apple-touch-icon" href="/algolearn-logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#2563EB" />
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:site_name" content="AlgoLearn" />
     <meta property="og:type" content="website" />
+    <meta property="og:title" content="AlgoLearn — Interactive Data Structures & Hashing Mastery" />
+    <meta property="og:description" content="Interactive visual mastery platform for hash tables, collision resolution techniques, and algorithmic data structures." />
+    <meta property="og:image" content="/algolearn-logo.png" />
+
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AlgoLearn — Interactive Data Structures & Hashing Mastery" />
+    <meta name="twitter:description" content="Interactive visual mastery platform for hash tables, collision resolution techniques, and algorithmic data structures." />
+    <meta name="twitter:image" content="/algolearn-logo.png" />
+
+    <!-- Security & Referrer Headers -->
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
 
@@ -16,10 +33,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,400&family=JetBrains+Mono:wght@400;500;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet" />
+
+    <!-- JSON-LD Structured Data Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "name": "AlgoLearn",
+          "headline": "Interactive Data Structures & Hashing Mastery",
+          "description": "Master hash functions, collision resolution strategies, and algorithmic data structures with step-by-step interactive tools.",
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "Course",
+          "name": "Hashing & Collision Resolution Masterclass",
+          "description": "Comprehensive interactive course on hash tables, separate chaining, linear probing, quadratic probing, and double hashing.",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "AlgoLearn"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body class="bg-[#F8FAFC] text-[#111827] antialiased selection:bg-[#2563EB] selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

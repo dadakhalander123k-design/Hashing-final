@@ -217,6 +217,50 @@ export default function App() {
     return () => unsub();
   }, []);
 
+  // Dynamic Page Title & Meta Description for Production SEO and Tab Precision
+  useEffect(() => {
+    let title = 'AlgoLearn — Interactive Data Structures & Hashing Mastery';
+    let desc = 'Master hash functions, collision resolution strategies (separate chaining, linear & quadratic probing, double hashing), and time complexity with interactive visual algorithms on AlgoLearn.';
+
+    switch (activeTab) {
+      case 'HOME':
+        title = 'AlgoLearn — Interactive Data Structures & Hashing Mastery';
+        desc = 'Master hash functions, collision resolution strategies (separate chaining, linear & quadratic probing, double hashing), and time complexity with interactive visual algorithms on AlgoLearn.';
+        break;
+      case 'THEORY':
+        title = 'Theory & Principles | AlgoLearn';
+        desc = 'In-depth theoretical foundations of hash tables, load factors, collision resolution, and hash function properties.';
+        break;
+      case 'GAME':
+      case 'QUEST':
+        title = `Level 0${currentLevel.id}: ${currentLevel.title} | AlgoLearn`;
+        desc = `Interactive hashing game level 0${currentLevel.id} covering ${currentLevel.technique} collision resolution and array slot mapping.`;
+        break;
+      case 'SANDBOX':
+        title = 'Interactive Sandbox Lab | AlgoLearn';
+        desc = 'Free-play experimentation lab for testing custom hash table capacities, keys, load factors, and collision resolution algorithms.';
+        break;
+      case 'VIDEO':
+        title = 'Video Masterclasses | AlgoLearn';
+        desc = 'High-definition video lessons and visual animations breaking down hash table architectures and collision resolution techniques.';
+        break;
+      case 'QUIZ':
+        title = 'Knowledge Assessment Quiz | AlgoLearn';
+        desc = 'Comprehensive 10-question evaluation covering hash calculations, separate chaining, linear/quadratic probing, and double hashing.';
+        break;
+      case 'PROGRESS':
+        title = 'My Mastery & Progress | AlgoLearn';
+        desc = 'Track completed quest levels, accuracy scores, video progress, and assessment certificates on AlgoLearn.';
+        break;
+    }
+
+    document.title = title;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', desc);
+    }
+  }, [activeTab, currentLevel.id, currentLevel.title, currentLevel.technique]);
+
   // Handle calculation
   const performCalculation = (keyVal: number | string) => {
     setIsCalculating(true);

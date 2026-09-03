@@ -224,9 +224,9 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight animate-heading-enter break-words">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight animate-heading-enter break-words">
                 Hash Table Experimentation Lab
-              </h2>
+              </h1>
               <span className="text-xs uppercase font-bold px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 text-[#2563EB] dark:text-[#3B82F6] rounded-lg font-mono shadow-2xs">
                 Interactive Lab
               </span>
