@@ -92,7 +92,7 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
           setActiveHighlightIndex(target);
           setSearchPath([]);
           soundManager.playInsert();
-          addLog(i === 0 
+          addLog(i === 0
             ? `Inserted key ${val} at initial Index [${target}] via: ${val} % ${m} = ${target}`
             : `Inserted key ${val} at Index [${target}] after ${i} probe(s) via: (${baseHash} + ${i}) % ${m} = ${target}`
           );
@@ -415,8 +415,8 @@ export const SandboxMode: React.FC<SandboxModeProps> = ({
                   isProbingTarget={isSearched}
                   isCollided={false}
                   incomingKey={null}
-                  onCellClick={() => {}}
-                  onDropKey={() => {}}
+                  onCellClick={() => { }}
+                  onDropKey={() => { }}
                 />
               );
             })}
