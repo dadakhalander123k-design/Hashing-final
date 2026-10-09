@@ -3,6 +3,14 @@ import { progressManager } from './progressManager';
 const POINTS_STORAGE_KEY = 'hash_quest_points_system_v1';
 const QUIZ_STORAGE_ANSWERS_KEY = 'hash_quest_quiz_answers_v3';
 
+export interface PointActivityEvent {
+  id: string;
+  title: string;
+  typeLabel: string;
+  points: number;
+  timestamp: number;
+}
+
 export interface PointsState {
   theoryPoints: number; // 0 to 24 (12 modules * 2 pts)
   quizPoints: number; // 0 to 20 (+2 correct, -1 wrong, clamped [0, 20])
@@ -12,7 +20,7 @@ export interface PointsState {
   guidedSolvePenalties: number; // 3 pts per genuine guided-solve use
   hintUsesCount: number;
   guidedSolveUsesCount: number;
-  totalPoints: number; // 0 to 100
+  totalPoints: number; // Real total, supports negative values!
 }
 
 interface StoredPointsData {
@@ -21,6 +29,7 @@ interface StoredPointsData {
   processedQuizQuestionIds: number[];
   hintUsesCount: number;
   guidedSolveUsesCount: number;
+  activities: PointActivityEvent[];
 }
 
 const DEFAULT_STORED_DATA: StoredPointsData = {
@@ -29,6 +38,7 @@ const DEFAULT_STORED_DATA: StoredPointsData = {
   processedQuizQuestionIds: [],
   hintUsesCount: 0,
   guidedSolveUsesCount: 0,
+  activities: [],
 };
 
 type PointsListener = (state: PointsState) => void;
@@ -39,13 +49,13 @@ class PointsManager {
 
   constructor() {
     this.data = this.loadData();
+    this.syncProgressActivities();
 
     // Listen to progressManager updates (theory, videos, levels completed, or resets)
-    if (typeof window !== 'undefined') {
-      progressManager.subscribe(() => {
-        this.notifyListeners();
-      });
-    }
+    progressManager.subscribe(() => {
+      this.syncProgressActivities();
+      this.notifyListeners();
+    });
   }
 
   private loadData(): StoredPointsData {
@@ -61,6 +71,7 @@ class PointsManager {
             processedQuizQuestionIds: Array.isArray(parsed.processedQuizQuestionIds) ? parsed.processedQuizQuestionIds : [],
             hintUsesCount: typeof parsed.hintUsesCount === 'number' && parsed.hintUsesCount >= 0 ? parsed.hintUsesCount : 0,
             guidedSolveUsesCount: typeof parsed.guidedSolveUsesCount === 'number' && parsed.guidedSolveUsesCount >= 0 ? parsed.guidedSolveUsesCount : 0,
+            activities: Array.isArray(parsed.activities) ? parsed.activities : [],
           };
         }
       }
@@ -73,13 +84,28 @@ class PointsManager {
           if (parsedAnswers && typeof parsedAnswers === 'object') {
             let initialQuizPts = 0;
             const processedIds: number[] = [];
+            const initialActivities: PointActivityEvent[] = [];
             Object.values(parsedAnswers).forEach((rec: any) => {
               if (rec && typeof rec.questionId === 'number') {
                 processedIds.push(rec.questionId);
                 if (rec.isCorrect) {
                   initialQuizPts += 2;
+                  initialActivities.push({
+                    id: `quiz-init-${rec.questionId}`,
+                    title: `Correct Quiz Answer (Q${rec.questionId})`,
+                    typeLabel: 'QUIZ CORRECT',
+                    points: 2,
+                    timestamp: Date.now() - 60000,
+                  });
                 } else {
                   initialQuizPts -= 1;
+                  initialActivities.push({
+                    id: `quiz-init-${rec.questionId}`,
+                    title: `Incorrect Quiz Answer (Q${rec.questionId})`,
+                    typeLabel: 'QUIZ INCORRECT',
+                    points: -1,
+                    timestamp: Date.now() - 60000,
+                  });
                 }
               }
             });
@@ -90,6 +116,7 @@ class PointsManager {
               processedQuizQuestionIds: processedIds,
               hintUsesCount: 0,
               guidedSolveUsesCount: 0,
+              activities: initialActivities,
             };
             localStorage.setItem(POINTS_STORAGE_KEY, JSON.stringify(initialData));
             return initialData;
@@ -111,6 +138,77 @@ class PointsManager {
       localStorage.setItem(POINTS_STORAGE_KEY, JSON.stringify(this.data));
     } catch {
       // Ignore storage errors
+    }
+  }
+
+  /**
+   * Syncs completed theory, video, and game activities from progressManager
+   */
+  private syncProgressActivities() {
+    try {
+      const pState = progressManager.getState();
+      let hasChanges = false;
+
+      // 1. Game Levels Completed
+      if (Array.isArray(pState.levelsCompleted)) {
+        pState.levelsCompleted.forEach((lvl) => {
+          if (lvl >= 1 && lvl <= 5) {
+            const eventId = `game-lvl-${lvl}`;
+            if (!this.data.activities.some((a) => a.id === eventId)) {
+              this.data.activities.unshift({
+                id: eventId,
+                title: `Completed Game Level ${lvl}`,
+                typeLabel: 'GAME COMPLETED',
+                points: 10,
+                timestamp: Date.now() - 30000,
+              });
+              hasChanges = true;
+            }
+          }
+        });
+      }
+
+      // 2. Theory Modules Completed
+      if (Array.isArray(pState.completedTheoryChapters)) {
+        pState.completedTheoryChapters.forEach((chap) => {
+          const eventId = `theory-${chap}`;
+          if (!this.data.activities.some((a) => a.id === eventId)) {
+            const num = chap.replace(/\D/g, '') || chap;
+            this.data.activities.unshift({
+              id: eventId,
+              title: `Completed Theory Module ${parseInt(num, 10) || num}`,
+              typeLabel: 'THEORY COMPLETED',
+              points: 2,
+              timestamp: Date.now() - 45000,
+            });
+            hasChanges = true;
+          }
+        });
+      }
+
+      // 3. Visualization Modules Completed
+      if (Array.isArray(pState.completedVideos)) {
+        pState.completedVideos.forEach((vid) => {
+          const eventId = `video-${vid}`;
+          if (!this.data.activities.some((a) => a.id === eventId)) {
+            const vidNum = vid.includes('02') || vid.includes('collision') ? '2' : '1';
+            this.data.activities.unshift({
+              id: eventId,
+              title: `Completed Visualization Module ${vidNum}`,
+              typeLabel: 'VISUALIZATION COMPLETED',
+              points: 3,
+              timestamp: Date.now() - 40000,
+            });
+            hasChanges = true;
+          }
+        });
+      }
+
+      if (hasChanges) {
+        this.saveData();
+      }
+    } catch {
+      // Ignore
     }
   }
 
@@ -136,7 +234,7 @@ class PointsManager {
   /**
    * Centralized Points Calculation
    * Total Points = Theory Points + Quiz Points + Visualize Points + Game Points - Hint Penalties - Guided-Solve Penalties
-   * Clamped between 0 and 100.
+   * Note: Total score can become negative (not clamped to 0) as required.
    */
   public getPoints(): PointsState {
     // 1. Theory Modules: 12 modules, +2 points each on first completion (max 24)
@@ -160,9 +258,8 @@ class PointsManager {
     // 6. Guided-Solve Penalties: 3 points per genuine guided-solve use
     const guidedSolvePenalties = this.data.guidedSolveUsesCount * 3;
 
-    // Total points calculation with strict [0, 100] bounds
-    const rawTotal = theoryPoints + quizPoints + visualizePoints + gamePoints - hintPenalties - guidedSolvePenalties;
-    const totalPoints = Math.max(0, Math.min(100, rawTotal));
+    // Total points calculation (allows negative values, e.g. -2, -12)
+    const totalPoints = theoryPoints + quizPoints + visualizePoints + gamePoints - hintPenalties - guidedSolvePenalties;
 
     return {
       theoryPoints,
@@ -177,6 +274,11 @@ class PointsManager {
     };
   }
 
+  public getActivities(): PointActivityEvent[] {
+    this.syncProgressActivities();
+    return [...this.data.activities].sort((a, b) => b.timestamp - a.timestamp);
+  }
+
   /**
    * Records a genuine quiz answer submission.
    * Prevents duplicate scoring for the same question attempt.
@@ -188,11 +290,20 @@ class PointsManager {
 
     this.data.processedQuizQuestionIds.push(questionId);
 
+    const pts = isCorrect ? 2 : -1;
     if (isCorrect) {
       this.data.quizPoints = Math.min(20, this.data.quizPoints + 2);
     } else {
       this.data.quizPoints = Math.max(0, this.data.quizPoints - 1);
     }
+
+    this.data.activities.unshift({
+      id: `quiz-${questionId}-${Date.now()}`,
+      title: isCorrect ? `Correct Quiz Answer (Q${questionId})` : `Incorrect Quiz Answer (Q${questionId})`,
+      typeLabel: isCorrect ? 'QUIZ CORRECT' : 'QUIZ INCORRECT',
+      points: pts,
+      timestamp: Date.now(),
+    });
 
     this.saveData();
     this.notifyListeners();
@@ -212,8 +323,16 @@ class PointsManager {
   /**
    * Records a genuine hint activation. Deducts 2 points per activation.
    */
-  public recordHintUse() {
+  public recordHintUse(levelId?: number) {
     this.data.hintUsesCount += 1;
+    const lvlText = levelId ? `Level ${levelId}` : 'Game';
+    this.data.activities.unshift({
+      id: `hint-${Date.now()}-${Math.random()}`,
+      title: `Used Hint: ${lvlText}`,
+      typeLabel: 'HINT USED',
+      points: -2,
+      timestamp: Date.now(),
+    });
     this.saveData();
     this.notifyListeners();
   }
@@ -221,8 +340,16 @@ class PointsManager {
   /**
    * Records a genuine guided-solve activation. Deducts 3 points per activation.
    */
-  public recordGuidedSolveUse() {
+  public recordGuidedSolveUse(levelId?: number) {
     this.data.guidedSolveUsesCount += 1;
+    const lvlText = levelId ? `Level ${levelId}` : 'Game';
+    this.data.activities.unshift({
+      id: `guided-${Date.now()}-${Math.random()}`,
+      title: `Used Guided Solve: ${lvlText}`,
+      typeLabel: 'GUIDED SOLVE USED',
+      points: -3,
+      timestamp: Date.now(),
+    });
     this.saveData();
     this.notifyListeners();
   }
@@ -237,6 +364,7 @@ class PointsManager {
       processedQuizQuestionIds: [],
       hintUsesCount: 0,
       guidedSolveUsesCount: 0,
+      activities: [],
     };
     this.saveData();
     this.notifyListeners();

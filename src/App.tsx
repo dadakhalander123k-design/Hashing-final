@@ -1001,7 +1001,7 @@ export default function App() {
                           setIsGuidedSolveActive((prev) => {
                             const nextState = !prev;
                             if (nextState) {
-                              pointsManager.recordGuidedSolveUse();
+                              pointsManager.recordGuidedSolveUse(currentLevel.id);
                             }
                             return nextState;
                           })

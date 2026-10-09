@@ -100,7 +100,7 @@ export const GameHintCard: React.FC<GameHintCardProps> = ({
           onClick={() => {
             if (!isExpanded) {
               soundManager.playPanelOpen();
-              pointsManager.recordHintUse();
+              pointsManager.recordHintUse(level.id);
             } else {
               soundManager.playPanelClose();
             }

@@ -1,36 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Target,
+  Award,
+  TrendingUp,
   BookOpen,
   Sparkles,
   Gamepad2,
   HelpCircle,
-  AlertCircle,
-  ArrowRight,
   ShieldAlert,
-  Award,
-  CheckCircle2,
+  Clock,
 } from 'lucide-react';
-import { pointsManager, PointsState } from '../utils/pointsManager';
+import { pointsManager, PointsState, PointActivityEvent } from '../utils/pointsManager';
 import { progressManager } from '../utils/progressManager';
 import { MainViewTab } from '../types/game';
-import { soundManager } from '../utils/audio';
 
 export interface PointsViewProps {
   onNavigateToTab?: (tab: MainViewTab) => void;
 }
 
-export const PointsView: React.FC<PointsViewProps> = ({ onNavigateToTab }) => {
+function formatRelativeTime(timestamp: number): string {
+  const diffSec = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+  if (diffSec < 60) return 'Just now';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHours = Math.floor(diffMin / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays}d ago`;
+}
+
+export const PointsView: React.FC<PointsViewProps> = () => {
   const [points, setPoints] = useState<PointsState>(() => pointsManager.getPoints());
-  const [stats, setStats] = useState(() => progressManager.getStats());
+  const [activities, setActivities] = useState<PointActivityEvent[]>(() => pointsManager.getActivities());
 
   useEffect(() => {
     const unsubPoints = pointsManager.subscribe((newPoints) => {
       setPoints(newPoints);
+      setActivities(pointsManager.getActivities());
     });
     const unsubProgress = progressManager.subscribe(() => {
-      setStats(progressManager.getStats());
       setPoints(pointsManager.getPoints());
+      setActivities(pointsManager.getActivities());
     });
     return () => {
       unsubPoints();
@@ -38,412 +47,303 @@ export const PointsView: React.FC<PointsViewProps> = ({ onNavigateToTab }) => {
     };
   }, []);
 
-  const handleNavigate = (tab: MainViewTab) => {
-    soundManager.playNav();
-    if (onNavigateToTab) {
-      onNavigateToTab(tab);
-    }
-  };
-
-  const percentage = Math.min(100, Math.max(0, points.totalPoints));
+  const totalPenalties = points.hintPenalties + points.guidedSolvePenalties;
 
   return (
-    <div className="w-full max-w-4xl mx-auto py-6 px-4 font-sans text-slate-900 dark:text-white animate-page-enter">
-      {/* Header Banner */}
-      <div className="border-b border-slate-200 dark:border-slate-800 pb-6 mb-6">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-500/30 text-[#2563EB] dark:text-[#3B82F6] rounded-lg text-xs font-semibold uppercase tracking-wider font-mono">
-            <Target className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
-            <span>Scorecard</span>
-          </div>
-          <span className="text-xs font-medium text-slate-500 dark:text-slate-400 font-mono">
-            Max Reward Score: 100 Points
-          </span>
-        </div>
-
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight animate-heading-enter">
-          Points
-        </h1>
-        <p className="text-sm text-slate-600 dark:text-slate-300 max-w-2xl mt-1 leading-relaxed">
-          Your current points balance out of 100, earned across Theory, Quiz, Visualization, and Game levels, with deductions applied for hints and guided solves.
-        </p>
-      </div>
-
-      {/* Hero Card: Total Points Balance */}
-      <div
-        id="points-total-card"
-        className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 shadow-xs mb-8"
-      >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
-          <div>
-            <div className="text-xs font-bold font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-              CURRENT BALANCE
+    <div className="w-full min-h-screen bg-[#F8FAFC] py-8 px-4 sm:px-6 lg:px-8 font-sans text-[#0F172A] animate-page-enter">
+      <div className="max-w-5xl mx-auto space-y-6">
+        {/* 1. Points Header Card (Screenshot 1) */}
+        <div
+          id="points-header-card"
+          className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6"
+        >
+          {/* Left Content */}
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] rounded-full text-[11px] font-bold uppercase tracking-wider font-mono">
+              <Award className="w-3.5 h-3.5 text-[#2563EB]" />
+              <span>CENTRAL POINTS SYSTEM</span>
             </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl sm:text-6xl font-black font-mono text-[#2563EB] dark:text-[#3B82F6] tracking-tight">
+
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
+              Points
+            </h1>
+
+            <p className="text-sm text-slate-500 max-w-xl leading-relaxed">
+              Overall score earned across Theory modules, Quiz challenges, Visualizations, and Game levels.
+            </p>
+          </div>
+
+          {/* Right Compact Total Points Card */}
+          <div
+            id="points-total-summary-card"
+            className="bg-[#F4F9FF] border border-[#D8E9FE] rounded-2xl p-5 sm:p-6 text-right shrink-0 w-full md:w-56 shadow-2xs"
+          >
+            <div className="text-[11px] font-bold font-mono uppercase tracking-wider text-[#2563EB] mb-1">
+              TOTAL POINTS
+            </div>
+            <div className="flex items-baseline justify-end gap-1.5">
+              <span className="text-3xl sm:text-4xl font-extrabold font-mono text-[#0F172A]">
                 {points.totalPoints}
               </span>
-              <span className="text-xl sm:text-2xl font-bold font-mono text-slate-400 dark:text-slate-500">
+              <span className="text-base sm:text-lg font-bold font-mono text-slate-500">
                 / 100
               </span>
-              <span className="text-xs font-semibold font-mono text-slate-500 dark:text-slate-400 ml-1">
-                Points
-              </span>
             </div>
-          </div>
-
-          <div className="text-left sm:text-right">
-            <div className="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400">
-              Total Score Formula
-            </div>
-            <div className="text-xs font-mono text-[#2563EB] dark:text-[#3B82F6] font-medium mt-0.5">
-              Theory + Quiz + Visualize + Game − Penalties
+            <div className="text-xs font-mono font-medium text-slate-500 mt-1">
+              {points.totalPoints} / 100 Points
             </div>
           </div>
         </div>
 
-        {/* Progress Bar Indicator */}
-        <div className="mt-6">
-          <div className="flex items-center justify-between text-xs font-mono mb-2">
-            <span className="text-slate-600 dark:text-slate-300 font-medium">Overall Progress</span>
-            <span className="font-bold text-[#2563EB] dark:text-[#3B82F6]">{percentage}%</span>
-          </div>
-          <div className="w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-            <div
-              className="h-full rounded-full bg-[#2563EB] dark:bg-[#3B82F6] transition-all duration-500 ease-out"
-              style={{ width: `${percentage}%` }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Category Breakdown Cards */}
-      <div className="mb-8">
-        <h2 className="text-sm font-bold font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">
-          Reward Categories (100 Points Total)
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* 1. Theory */}
+        {/* 2. Main Two-Column Layout (Screenshot 2) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          {/* Left Column: Points Breakdown Card (~2/3 width) */}
           <div
-            id="points-category-theory"
-            className="p-5 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-2xs"
+            id="points-breakdown-card"
+            className="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs"
           >
-            <div>
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#3B82F6] flex items-center justify-center">
+            {/* Card Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-2">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4" />
+                </div>
+                <h2 className="text-base font-bold text-[#0F172A]">Points Breakdown</h2>
+              </div>
+              <span className="text-xs font-mono text-slate-400">Categorized</span>
+            </div>
+
+            {/* Category Rows in Exact Order */}
+            <div className="divide-y divide-slate-100">
+              {/* 1. Theory */}
+              <div className="py-3.5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center">
                     <BookOpen className="w-4 h-4" />
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Theory</h3>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">12 Modules</p>
-                  </div>
+                  <span className="text-sm font-bold text-[#0F172A]">Theory (Max 24)</span>
                 </div>
-                <div className="text-right">
-                  <span className="text-lg font-bold font-mono text-[#2563EB] dark:text-[#3B82F6]">
-                    {points.theoryPoints}
-                  </span>
-                  <span className="text-xs font-mono text-slate-400"> / 24</span>
-                </div>
+                <span className="text-sm font-bold font-mono text-[#0F172A]">
+                  +{points.theoryPoints}
+                </span>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
-                Awarded +2 points for completing each module for the first time. Reopening completed modules does not duplicate points.
-              </p>
-            </div>
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
-                {stats.theory.completed} / 12 completed
-              </span>
-              {onNavigateToTab && (
-                <button
-                  onClick={() => handleNavigate('THEORY')}
-                  className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] hover:underline flex items-center gap-1 cursor-pointer"
-                >
-                  <span>Open Theory</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* 2. Quiz */}
-          <div
-            id="points-category-quiz"
-            className="p-5 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-2xs"
-          >
-            <div>
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#3B82F6] flex items-center justify-center">
-                    <HelpCircle className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Quiz</h3>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">10 Questions</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-lg font-bold font-mono text-[#2563EB] dark:text-[#3B82F6]">
-                    {points.quizPoints}
-                  </span>
-                  <span className="text-xs font-mono text-slate-400"> / 20</span>
-                </div>
-              </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
-                Awarded +2 points for correct answers and −1 point for wrong answers. Clamped between 0 and 20 points.
-              </p>
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
-                {stats.quiz.isSubmitted ? 'Quiz Completed' : 'In Progress'}
-              </span>
-              {onNavigateToTab && (
-                <button
-                  onClick={() => handleNavigate('QUIZ')}
-                  className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] hover:underline flex items-center gap-1 cursor-pointer"
-                >
-                  <span>Open Quiz</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* 3. Visualize */}
-          <div
-            id="points-category-visualize"
-            className="p-5 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-2xs"
-          >
-            <div>
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#3B82F6] flex items-center justify-center">
+              {/* 2. Visualization */}
+              <div className="py-3.5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#F5F3FF] text-[#7C3AED] flex items-center justify-center">
                     <Sparkles className="w-4 h-4" />
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Visualize</h3>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">2 Modules</p>
-                  </div>
+                  <span className="text-sm font-bold text-[#0F172A]">Visualization (Max 6)</span>
                 </div>
-                <div className="text-right">
-                  <span className="text-lg font-bold font-mono text-[#2563EB] dark:text-[#3B82F6]">
-                    {points.visualizePoints}
-                  </span>
-                  <span className="text-xs font-mono text-slate-400"> / 6</span>
-                </div>
+                <span className="text-sm font-bold font-mono text-[#0F172A]">
+                  +{points.visualizePoints}
+                </span>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
-                Awarded +3 points for completing each module for the first time. Revisiting completed visualizations does not duplicate points.
-              </p>
-            </div>
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
-                {stats.video.completed} / 2 completed
-              </span>
-              {onNavigateToTab && (
-                <button
-                  onClick={() => handleNavigate('VIDEO')}
-                  className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] hover:underline flex items-center gap-1 cursor-pointer"
-                >
-                  <span>Open Visualize</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* 4. Game */}
-          <div
-            id="points-category-game"
-            className="p-5 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-2xs"
-          >
-            <div>
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#3B82F6] flex items-center justify-center">
+              {/* 3. Games */}
+              <div className="py-3.5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#ECFDF5] text-[#059669] flex items-center justify-center">
                     <Gamepad2 className="w-4 h-4" />
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Game</h3>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">5 Levels</p>
+                  <span className="text-sm font-bold text-[#0F172A]">Games (Max 50)</span>
+                </div>
+                <span className="text-sm font-bold font-mono text-[#0F172A]">
+                  +{points.gamePoints}
+                </span>
+              </div>
+
+              {/* 4. Quiz */}
+              <div className="py-3.5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#FAF5FF] text-[#9333EA] flex items-center justify-center">
+                    <HelpCircle className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm font-bold text-[#0F172A]">Quiz (Max 20)</span>
+                </div>
+                <span className="text-sm font-bold font-mono text-[#0F172A]">
+                  +{points.quizPoints}
+                </span>
+              </div>
+
+              {/* 5. Penalties */}
+              <div className="py-3.5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center">
+                    <ShieldAlert className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm font-bold text-[#0F172A]">Penalties</span>
+                </div>
+                <span className={`text-sm font-bold font-mono ${totalPenalties > 0 ? 'text-[#DC2626]' : 'text-[#0F172A]'}`}>
+                  {totalPenalties > 0 ? `-${totalPenalties}` : '+0'}
+                </span>
+              </div>
+            </div>
+
+            {/* Total Row */}
+            <div className="pt-4 mt-2 border-t border-slate-200 flex items-center justify-between">
+              <span className="text-base font-bold text-[#0F172A]">Total</span>
+              <span className="text-base sm:text-lg font-bold font-mono text-[#2563EB]">
+                {points.totalPoints}
+              </span>
+            </div>
+          </div>
+
+          {/* Right Column: SCORING RULES Card (~1/3 width) */}
+          <div
+            id="points-scoring-rules-card"
+            className="lg:col-span-1 bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs flex flex-col justify-between"
+          >
+            <div>
+              {/* Card Header */}
+              <div className="flex items-center gap-2.5 pb-4 border-b border-slate-100 mb-2">
+                <div className="w-7 h-7 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center">
+                  <Award className="w-4 h-4" />
+                </div>
+                <h3 className="text-xs font-bold font-mono uppercase tracking-wider text-[#0F172A]">
+                  SCORING RULES
+                </h3>
+              </div>
+
+              {/* Rules List */}
+              <div className="divide-y divide-slate-100 text-xs">
+                {/* Theory Rule */}
+                <div className="py-2.5 flex items-center justify-between gap-2">
+                  <span className="text-slate-600">Complete Theory module (12 × +2)</span>
+                  <div className="font-mono shrink-0 text-right">
+                    <span className="text-[#059669] font-bold">+2</span>{' '}
+                    <span className="text-slate-400 font-medium">(max 24)</span>
                   </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-lg font-bold font-mono text-[#2563EB] dark:text-[#3B82F6]">
-                    {points.gamePoints}
-                  </span>
-                  <span className="text-xs font-mono text-slate-400"> / 50</span>
+
+                {/* Visualize Rule */}
+                <div className="py-2.5 flex items-center justify-between gap-2">
+                  <span className="text-slate-600">Complete Visualize module (2 × +3)</span>
+                  <div className="font-mono shrink-0 text-right">
+                    <span className="text-[#059669] font-bold">+3</span>{' '}
+                    <span className="text-slate-400 font-medium">(max 6)</span>
+                  </div>
+                </div>
+
+                {/* Game Rule */}
+                <div className="py-2.5 flex items-center justify-between gap-2">
+                  <span className="text-slate-600">Complete Game level (5 × +10)</span>
+                  <div className="font-mono shrink-0 text-right">
+                    <span className="text-[#059669] font-bold">+10</span>{' '}
+                    <span className="text-slate-400 font-medium">(max 50)</span>
+                  </div>
+                </div>
+
+                {/* Quiz Correct Rule */}
+                <div className="py-2.5 flex items-center justify-between gap-2">
+                  <span className="text-slate-600">Quiz question correct</span>
+                  <span className="font-mono text-[#059669] font-bold shrink-0">+2</span>
+                </div>
+
+                {/* Quiz Incorrect Rule */}
+                <div className="py-2.5 flex items-center justify-between gap-2">
+                  <span className="text-slate-600">Quiz question incorrect</span>
+                  <span className="font-mono text-[#DC2626] font-bold shrink-0">−1</span>
+                </div>
+
+                {/* Quiz Cap Rule */}
+                <div className="py-2.5 flex items-center justify-between gap-2">
+                  <span className="text-slate-600">Quiz Category Cap</span>
+                  <span className="font-mono text-[#0F172A] font-bold shrink-0">Max 20</span>
+                </div>
+
+                {/* Hint Penalty Rule */}
+                <div className="py-2.5 flex items-center justify-between gap-2">
+                  <span className="text-slate-600">Use Hint (per actual use)</span>
+                  <span className="font-mono text-[#DC2626] font-bold shrink-0">−2</span>
+                </div>
+
+                {/* Guided Solve Penalty Rule */}
+                <div className="py-2.5 flex items-center justify-between gap-2">
+                  <span className="text-slate-600">Use Guided Solve (per actual use)</span>
+                  <span className="font-mono text-[#DC2626] font-bold shrink-0">−3</span>
+                </div>
+
+                {/* Total Score Scale */}
+                <div className="py-2.5 flex items-center justify-between gap-2">
+                  <span className="text-slate-600">Total Score Scale</span>
+                  <span className="font-mono text-[#0F172A] font-bold shrink-0">0 – 100 Points</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
-                Awarded +10 points for completing each level for the first time. Replaying completed levels does not duplicate points.
-              </p>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
-                {stats.game.completed} / 5 completed
-              </span>
-              {onNavigateToTab && (
-                <button
-                  onClick={() => handleNavigate('GAME')}
-                  className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] hover:underline flex items-center gap-1 cursor-pointer"
-                >
-                  <span>Play Game</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Penalties & Deductions Section */}
-      <div className="mb-8">
-        <h2 className="text-sm font-bold font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">
-          Penalties & Deductions
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Hint Penalties */}
-          <div
-            id="points-penalty-hints"
-            className="p-5 rounded-xl bg-white dark:bg-[#111827] border border-rose-200 dark:border-rose-900/40 shadow-2xs"
-          >
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
-                  <AlertCircle className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Hint Penalties</h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-                    {points.hintUsesCount} {points.hintUsesCount === 1 ? 'use' : 'uses'} recorded
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <span className="text-lg font-bold font-mono text-rose-600 dark:text-rose-400">
-                  −{points.hintPenalties}
-                </span>
-                <span className="text-xs font-mono text-slate-400"> pts</span>
-              </div>
-            </div>
-            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Deducts 2 points for every genuine hint activation. Repeated uses in the same level apply additional −2 point penalties.
-            </p>
-          </div>
-
-          {/* Guided-Solve Penalties */}
-          <div
-            id="points-penalty-guided-solve"
-            className="p-5 rounded-xl bg-white dark:bg-[#111827] border border-rose-200 dark:border-rose-900/40 shadow-2xs"
-          >
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
-                  <ShieldAlert className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Guided-Solve Penalties</h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-                    {points.guidedSolveUsesCount} {points.guidedSolveUsesCount === 1 ? 'use' : 'uses'} recorded
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <span className="text-lg font-bold font-mono text-rose-600 dark:text-rose-400">
-                  −{points.guidedSolvePenalties}
-                </span>
-                <span className="text-xs font-mono text-slate-400"> pts</span>
-              </div>
-            </div>
-            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Deducts 3 points for every genuine guided-solve activation. Repeated uses in the same level apply additional −3 point penalties.
+            {/* Bottom Explanatory Note */}
+            <p className="text-[11px] text-slate-400 leading-relaxed pt-4 border-t border-slate-100 mt-3">
+              Completion rewards are awarded once per unique module or level. Hints and Guided Solves deduct points for every actual use, including repeated uses in the same level. The total reflects all earned points and deductions.
             </p>
           </div>
         </div>
-      </div>
 
-      {/* Structured Points Breakdown Table */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 shadow-xs">
-        <h3 className="text-xs font-bold font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">
-          Audit Breakdown
-        </h3>
+        {/* 3. Recent Activity Section (Screenshot 3) */}
+        <div
+          id="points-recent-activity-card"
+          className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs"
+        >
+          {/* Card Header */}
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center">
+                <Clock className="w-4 h-4" />
+              </div>
+              <h3 className="text-base font-bold text-[#0F172A]">Recent Activity</h3>
+            </div>
+            <span className="text-xs font-mono text-slate-400">
+              {activities.length} {activities.length === 1 ? 'event' : 'events'}
+            </span>
+          </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono border-collapse">
-            <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400">
-                <th className="py-2 pr-4 font-semibold">Category</th>
-                <th className="py-2 px-4 font-semibold text-center">Max Capacity</th>
-                <th className="py-2 px-4 font-semibold text-center">Rules</th>
-                <th className="py-2 pl-4 font-semibold text-right">Points Earned / Deducted</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
-              <tr>
-                <td className="py-2.5 pr-4 font-bold text-slate-900 dark:text-white">Theory Modules</td>
-                <td className="py-2.5 px-4 text-center">24 pts</td>
-                <td className="py-2.5 px-4 text-center text-slate-500 dark:text-slate-400">12 × 2 pts</td>
-                <td className="py-2.5 pl-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
-                  +{points.theoryPoints}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 pr-4 font-bold text-slate-900 dark:text-white">Quiz Assessment</td>
-                <td className="py-2.5 px-4 text-center">20 pts</td>
-                <td className="py-2.5 px-4 text-center text-slate-500 dark:text-slate-400">+2 correct, −1 wrong</td>
-                <td className="py-2.5 pl-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
-                  +{points.quizPoints}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 pr-4 font-bold text-slate-900 dark:text-white">Visualization Modules</td>
-                <td className="py-2.5 px-4 text-center">6 pts</td>
-                <td className="py-2.5 px-4 text-center text-slate-500 dark:text-slate-400">2 × 3 pts</td>
-                <td className="py-2.5 pl-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
-                  +{points.visualizePoints}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 pr-4 font-bold text-slate-900 dark:text-white">Game Levels</td>
-                <td className="py-2.5 px-4 text-center">50 pts</td>
-                <td className="py-2.5 px-4 text-center text-slate-500 dark:text-slate-400">5 × 10 pts</td>
-                <td className="py-2.5 pl-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
-                  +{points.gamePoints}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 pr-4 font-bold text-slate-900 dark:text-white">Hint Penalties</td>
-                <td className="py-2.5 px-4 text-center text-slate-400">—</td>
-                <td className="py-2.5 px-4 text-center text-slate-500 dark:text-slate-400">−2 pts per use</td>
-                <td className="py-2.5 pl-4 text-right font-bold text-rose-600 dark:text-rose-400">
-                  −{points.hintPenalties}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 pr-4 font-bold text-slate-900 dark:text-white">Guided-Solve Penalties</td>
-                <td className="py-2.5 px-4 text-center text-slate-400">—</td>
-                <td className="py-2.5 px-4 text-center text-slate-500 dark:text-slate-400">−3 pts per use</td>
-                <td className="py-2.5 pl-4 text-right font-bold text-rose-600 dark:text-rose-400">
-                  −{points.guidedSolvePenalties}
-                </td>
-              </tr>
-              <tr className="border-t-2 border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40">
-                <td className="py-3 pr-4 font-bold text-sm text-slate-900 dark:text-white">Total Points</td>
-                <td className="py-3 px-4 text-center font-bold">100 pts</td>
-                <td className="py-3 px-4 text-center text-slate-500 dark:text-slate-400">Range: [0, 100]</td>
-                <td className="py-3 pl-4 text-right font-black text-base text-[#2563EB] dark:text-[#3B82F6]">
-                  {points.totalPoints} / 100
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          {/* Activity Rows List */}
+          {activities.length > 0 ? (
+            <div className="space-y-3">
+              {activities.map((item) => {
+                const isPositive = item.points >= 0;
+                return (
+                  <div
+                    key={item.id}
+                    className="bg-[#F8FAFC] border border-slate-200/70 rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      {/* Transaction Badge */}
+                      <span
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono shrink-0 border ${
+                          isPositive
+                            ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#059669]'
+                            : 'bg-[#FEF2F2] border-[#FECACA] text-[#DC2626]'
+                        }`}
+                      >
+                        {isPositive ? `+${item.points}` : item.points}
+                      </span>
+
+                      {/* Event Details */}
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-bold text-[#0F172A] truncate">
+                          {item.title}
+                        </h4>
+                        <p className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mt-0.5">
+                          {item.typeLabel}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Relative Timestamp */}
+                    <span className="text-xs font-mono text-slate-400 shrink-0">
+                      {formatRelativeTime(item.timestamp)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-xs font-mono text-slate-400">
+              No recent points activity recorded yet.
+            </div>
+          )}
         </div>
       </div>
     </div>

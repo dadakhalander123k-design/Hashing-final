@@ -230,7 +230,7 @@ export const CurrentKeyCard: React.FC<CurrentKeyCardProps> = ({
                       onClick={() => {
                         if (!showHint) {
                           soundManager.playPanelOpen();
-                          pointsManager.recordHintUse();
+                          pointsManager.recordHintUse(level.id);
                         } else {
                           soundManager.playPanelClose();
                         }
