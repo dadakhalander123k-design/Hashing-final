@@ -60,6 +60,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         return 'Quiz';
       case 'PROGRESS':
         return 'Progress';
+      case 'POINTS':
+        return 'Points';
       default:
         return 'Learn';
     }

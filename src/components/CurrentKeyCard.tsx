@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calculator, ArrowRight, Sparkles, Check, HelpCircle, GripVertical } from 'lucide-react';
 import { GameState, LevelConfig } from '../types/game';
+import { pointsManager } from '../utils/pointsManager';
 import { soundManager } from '../utils/audio';
 
 interface CurrentKeyCardProps {
@@ -227,8 +228,12 @@ export const CurrentKeyCard: React.FC<CurrentKeyCardProps> = ({
                     </button>
                     <button
                       onClick={() => {
-                        if (!showHint) soundManager.playPanelOpen();
-                        else soundManager.playPanelClose();
+                        if (!showHint) {
+                          soundManager.playPanelOpen();
+                          pointsManager.recordHintUse();
+                        } else {
+                          soundManager.playPanelClose();
+                        }
                         setShowHint(!showHint);
                       }}
                       className="btn-modern-secondary p-2 text-slate-700 dark:text-slate-200 cursor-pointer shadow-2xs"

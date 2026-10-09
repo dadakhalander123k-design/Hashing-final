@@ -20,6 +20,7 @@ import {
   Home,
 } from 'lucide-react';
 import { progressManager } from '../utils/progressManager';
+import { pointsManager } from '../utils/pointsManager';
 import { soundManager } from '../utils/audio';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 
@@ -426,6 +427,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
     };
 
     setStudentAnswers(updatedAnswers);
+    pointsManager.recordQuizAnswer(q.id, isCorrect);
 
     // Play appropriate interaction sound
     if (isCorrect) {
@@ -453,6 +455,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
       };
       updatedAnswers[q.id] = newRecord;
       setStudentAnswers(updatedAnswers);
+      pointsManager.recordQuizAnswer(q.id, isCorrect);
     }
 
     const totalAnswered = Object.keys(updatedAnswers).length;
@@ -511,6 +514,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
     }
 
     progressManager.resetQuizAttempt();
+    pointsManager.resetQuizPoints();
   };
 
   const answeredCount = Object.keys(studentAnswers).length;

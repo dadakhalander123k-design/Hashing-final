@@ -35,8 +35,10 @@ import { AIBotFloatingButton } from './components/AIBotFloatingButton';
 import { GuidedSolvePanel } from './components/GuidedSolvePanel';
 import { getGuidedSolveStepInfo } from './utils/guidedSolveEngine';
 import { GameLevelCardsView } from './components/GameLevelCardsView';
+import { PointsView } from './components/PointsView';
 import { Sparkles, ArrowLeft } from 'lucide-react';
 import { progressManager } from './utils/progressManager';
+import { pointsManager } from './utils/pointsManager';
 import { useScrollReveal } from './hooks/useScrollReveal';
 
 type ActiveViewTab = MainViewTab | 'NOT_FOUND';
@@ -50,6 +52,7 @@ const parseHashToTab = (hashStr: string): ActiveViewTab => {
   if (cleanHash === 'lab' || cleanHash === 'sandbox') return 'LAB';
   if (cleanHash === 'quiz' || cleanHash === 'exam') return 'QUIZ';
   if (cleanHash === 'progress') return 'PROGRESS';
+  if (cleanHash === 'points' || cleanHash === 'score') return 'POINTS';
   return 'NOT_FOUND';
 };
 
@@ -63,6 +66,7 @@ const getTabHash = (tab: ActiveViewTab): string => {
     case 'LAB': return '#lab';
     case 'QUIZ': return '#quiz';
     case 'PROGRESS': return '#progress';
+    case 'POINTS': return '#points';
     case 'NOT_FOUND': return '#404';
     default: return '#overview';
   }
@@ -993,7 +997,15 @@ export default function App() {
                         probeFormulaStr={currentStep?.calculationStr}
                         isProbing={isProbing}
                         isGuidedSolveActive={isGuidedSolveActive}
-                        onToggleGuidedSolve={() => setIsGuidedSolveActive((prev) => !prev)}
+                        onToggleGuidedSolve={() =>
+                          setIsGuidedSolveActive((prev) => {
+                            const nextState = !prev;
+                            if (nextState) {
+                              pointsManager.recordGuidedSolveUse();
+                            }
+                            return nextState;
+                          })
+                        }
                       />
 
                       {/* Contextual Field Hint System */}
@@ -1103,6 +1115,13 @@ export default function App() {
               />
             )}
 
+            {/* 6.5. POINTS REWARD AUDIT SECTION */}
+            {activeTab === 'POINTS' && (
+              <PointsView
+                onNavigateToTab={(tab) => handleTabChange(tab)}
+              />
+            )}
+
             {/* 7. CUSTOM 404 ERROR SECTION */}
             {activeTab === 'NOT_FOUND' && (
               <NotFoundView
@@ -1166,6 +1185,7 @@ export default function App() {
         onClose={() => setShowResetModal(false)}
         onConfirm={() => {
           progressManager.resetProgress();
+          pointsManager.resetAll();
           setScore(0);
           setStreak(0);
           setCompletedLevels([]);

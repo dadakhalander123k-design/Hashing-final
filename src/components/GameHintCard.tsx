@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Lightbulb, ChevronDown, ChevronUp, Sparkles, HelpCircle, ArrowRight } from 'lucide-react';
 import { GameState, LevelConfig, ProbeStep } from '../types/game';
+import { pointsManager } from '../utils/pointsManager';
 import { soundManager } from '../utils/audio';
 
 interface GameHintCardProps {
@@ -97,8 +98,12 @@ export const GameHintCard: React.FC<GameHintCardProps> = ({
         <button
           type="button"
           onClick={() => {
-            if (!isExpanded) soundManager.playPanelOpen();
-            else soundManager.playPanelClose();
+            if (!isExpanded) {
+              soundManager.playPanelOpen();
+              pointsManager.recordHintUse();
+            } else {
+              soundManager.playPanelClose();
+            }
             setIsExpanded(!isExpanded);
           }}
           className="w-full px-4 py-3 flex items-center justify-between gap-2 bg-slate-50 dark:bg-[#0B1120] hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors cursor-pointer text-left select-none"

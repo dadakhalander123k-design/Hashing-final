@@ -18,6 +18,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { progressManager } from '../utils/progressManager';
+import { pointsManager } from '../utils/pointsManager';
 import { ModuleRecord, ModuleStatus, UserProgressState, MainViewTab } from '../types/game';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { CompletionCelebrationModal } from './CompletionCelebrationModal';
@@ -55,6 +56,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
   const handleReset = () => {
     soundManager.playReset();
     progressManager.resetProgress();
+    pointsManager.resetAll();
     setShowResetConfirm(false);
   };
 
