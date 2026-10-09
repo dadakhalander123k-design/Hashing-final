@@ -11,6 +11,15 @@ export interface PointActivityEvent {
   timestamp: number;
 }
 
+export interface PointNotification {
+  id: string;
+  amount: number;
+  title: string;
+  message: string;
+  type: 'reward' | 'penalty';
+  timestamp: number;
+}
+
 export interface PointsState {
   theoryPoints: number; // 0 to 24 (12 modules * 2 pts)
   quizPoints: number; // 0 to 20 (+2 correct, -1 wrong, clamped [0, 20])
@@ -42,20 +51,44 @@ const DEFAULT_STORED_DATA: StoredPointsData = {
 };
 
 type PointsListener = (state: PointsState) => void;
+type NotificationListener = (notification: PointNotification) => void;
 
 class PointsManager {
   private data: StoredPointsData;
   private listeners: Set<PointsListener> = new Set();
+  private notificationListeners: Set<NotificationListener> = new Set();
+
+  private knownCompletedTheory: Set<string> = new Set();
+  private knownCompletedVideos: Set<string> = new Set();
+  private knownCompletedLevels: Set<number> = new Set();
 
   constructor() {
     this.data = this.loadData();
-    this.syncProgressActivities();
+    this.initKnownCompletions();
 
     // Listen to progressManager updates (theory, videos, levels completed, or resets)
     progressManager.subscribe(() => {
-      this.syncProgressActivities();
+      this.syncProgressActivities(true);
       this.notifyListeners();
     });
+  }
+
+  private initKnownCompletions() {
+    try {
+      const pState = progressManager.getState();
+      if (Array.isArray(pState.completedTheoryChapters)) {
+        pState.completedTheoryChapters.forEach((c) => this.knownCompletedTheory.add(c));
+      }
+      if (Array.isArray(pState.completedVideos)) {
+        pState.completedVideos.forEach((v) => this.knownCompletedVideos.add(v));
+      }
+      if (Array.isArray(pState.levelsCompleted)) {
+        pState.levelsCompleted.forEach((l) => this.knownCompletedLevels.add(l));
+      }
+    } catch {
+      // Ignore
+    }
+    this.syncProgressActivities(false);
   }
 
   private loadData(): StoredPointsData {
@@ -67,7 +100,7 @@ class PointsManager {
         if (parsed && parsed.version === 1) {
           return {
             version: 1,
-            quizPoints: typeof parsed.quizPoints === 'number' ? Math.max(0, Math.min(20, parsed.quizPoints)) : 0,
+            quizPoints: typeof parsed.quizPoints === 'number' ? Math.min(20, parsed.quizPoints) : 0,
             processedQuizQuestionIds: Array.isArray(parsed.processedQuizQuestionIds) ? parsed.processedQuizQuestionIds : [],
             hintUsesCount: typeof parsed.hintUsesCount === 'number' && parsed.hintUsesCount >= 0 ? parsed.hintUsesCount : 0,
             guidedSolveUsesCount: typeof parsed.guidedSolveUsesCount === 'number' && parsed.guidedSolveUsesCount >= 0 ? parsed.guidedSolveUsesCount : 0,
@@ -109,7 +142,7 @@ class PointsManager {
                 }
               }
             });
-            initialQuizPts = Math.max(0, Math.min(20, initialQuizPts));
+            initialQuizPts = Math.min(20, initialQuizPts);
             const initialData: StoredPointsData = {
               version: 1,
               quizPoints: initialQuizPts,
@@ -142,17 +175,21 @@ class PointsManager {
   }
 
   /**
-   * Syncs completed theory, video, and game activities from progressManager
+   * Syncs completed theory, video, and game activities from progressManager.
+   * If emitNotification is true, fires a toast for genuine new completions.
    */
-  private syncProgressActivities() {
+  private syncProgressActivities(emitNotification: boolean = false) {
     try {
       const pState = progressManager.getState();
       let hasChanges = false;
 
-      // 1. Game Levels Completed
+      // 1. Game Levels Completed (5 levels, 10 pts each)
       if (Array.isArray(pState.levelsCompleted)) {
         pState.levelsCompleted.forEach((lvl) => {
           if (lvl >= 1 && lvl <= 5) {
+            const isNewToKnown = !this.knownCompletedLevels.has(lvl);
+            this.knownCompletedLevels.add(lvl);
+
             const eventId = `game-lvl-${lvl}`;
             if (!this.data.activities.some((a) => a.id === eventId)) {
               this.data.activities.unshift({
@@ -160,17 +197,31 @@ class PointsManager {
                 title: `Completed Game Level ${lvl}`,
                 typeLabel: 'GAME COMPLETED',
                 points: 10,
-                timestamp: Date.now() - 30000,
+                timestamp: Date.now(),
               });
               hasChanges = true;
+
+              if (emitNotification && isNewToKnown) {
+                this.emitNotification({
+                  id: `notif-${Date.now()}-${Math.random()}`,
+                  amount: 10,
+                  title: '+10 Points',
+                  message: 'Game Level Completed',
+                  type: 'reward',
+                  timestamp: Date.now(),
+                });
+              }
             }
           }
         });
       }
 
-      // 2. Theory Modules Completed
+      // 2. Theory Modules Completed (12 modules, 2 pts each)
       if (Array.isArray(pState.completedTheoryChapters)) {
         pState.completedTheoryChapters.forEach((chap) => {
+          const isNewToKnown = !this.knownCompletedTheory.has(chap);
+          this.knownCompletedTheory.add(chap);
+
           const eventId = `theory-${chap}`;
           if (!this.data.activities.some((a) => a.id === eventId)) {
             const num = chap.replace(/\D/g, '') || chap;
@@ -179,16 +230,30 @@ class PointsManager {
               title: `Completed Theory Module ${parseInt(num, 10) || num}`,
               typeLabel: 'THEORY COMPLETED',
               points: 2,
-              timestamp: Date.now() - 45000,
+              timestamp: Date.now(),
             });
             hasChanges = true;
+
+            if (emitNotification && isNewToKnown) {
+              this.emitNotification({
+                id: `notif-${Date.now()}-${Math.random()}`,
+                amount: 2,
+                title: '+2 Points',
+                message: 'Theory Module Completed',
+                type: 'reward',
+                timestamp: Date.now(),
+              });
+            }
           }
         });
       }
 
-      // 3. Visualization Modules Completed
+      // 3. Visualization Modules Completed (2 modules, 3 pts each)
       if (Array.isArray(pState.completedVideos)) {
         pState.completedVideos.forEach((vid) => {
+          const isNewToKnown = !this.knownCompletedVideos.has(vid);
+          this.knownCompletedVideos.add(vid);
+
           const eventId = `video-${vid}`;
           if (!this.data.activities.some((a) => a.id === eventId)) {
             const vidNum = vid.includes('02') || vid.includes('collision') ? '2' : '1';
@@ -197,9 +262,20 @@ class PointsManager {
               title: `Completed Visualization Module ${vidNum}`,
               typeLabel: 'VISUALIZATION COMPLETED',
               points: 3,
-              timestamp: Date.now() - 40000,
+              timestamp: Date.now(),
             });
             hasChanges = true;
+
+            if (emitNotification && isNewToKnown) {
+              this.emitNotification({
+                id: `notif-${Date.now()}-${Math.random()}`,
+                amount: 3,
+                title: '+3 Points',
+                message: 'Visualization Completed',
+                type: 'reward',
+                timestamp: Date.now(),
+              });
+            }
           }
         });
       }
@@ -220,6 +296,23 @@ class PointsManager {
     };
   }
 
+  public subscribeNotifications(listener: NotificationListener): () => void {
+    this.notificationListeners.add(listener);
+    return () => {
+      this.notificationListeners.delete(listener);
+    };
+  }
+
+  public emitNotification(notification: PointNotification) {
+    this.notificationListeners.forEach((fn) => {
+      try {
+        fn(notification);
+      } catch {
+        // Safe dispatch
+      }
+    });
+  }
+
   private notifyListeners() {
     const state = this.getPoints();
     this.listeners.forEach((fn) => {
@@ -234,15 +327,15 @@ class PointsManager {
   /**
    * Centralized Points Calculation
    * Total Points = Theory Points + Quiz Points + Visualize Points + Game Points - Hint Penalties - Guided-Solve Penalties
-   * Note: Total score can become negative (not clamped to 0) as required.
+   * Real total supports negative values (e.g. -2, -12).
    */
   public getPoints(): PointsState {
     // 1. Theory Modules: 12 modules, +2 points each on first completion (max 24)
     const theoryStats = progressManager.getTheoryStats();
     const theoryPoints = Math.min(24, Math.max(0, theoryStats.completed * 2));
 
-    // 2. Quiz Points: +2 correct, -1 wrong (clamped between 0 and 20)
-    const quizPoints = Math.max(0, Math.min(20, this.data.quizPoints));
+    // 2. Quiz Points: +2 correct, -1 wrong (capped at 20)
+    const quizPoints = Math.min(20, this.data.quizPoints);
 
     // 3. Visualize Modules: 2 modules, +3 points each on first completion (max 6)
     const videoStats = progressManager.getVideoStats();
@@ -275,38 +368,62 @@ class PointsManager {
   }
 
   public getActivities(): PointActivityEvent[] {
-    this.syncProgressActivities();
+    this.syncProgressActivities(false);
     return [...this.data.activities].sort((a, b) => b.timestamp - a.timestamp);
   }
 
   /**
    * Records a genuine quiz answer submission.
-   * Prevents duplicate scoring for the same question attempt.
+   * Awards +2 for correct, deducts -1 for wrong.
+   * Capped at max 20 points.
+   * Immediately updates points balance, records activity, and triggers notification.
    */
   public recordQuizAnswer(questionId: number, isCorrect: boolean): boolean {
     if (this.data.processedQuizQuestionIds.includes(questionId)) {
-      return false; // Prevent duplicate scoring for the same answer submission
+      return false; // Prevent duplicate scoring for the same question submission
     }
 
     this.data.processedQuizQuestionIds.push(questionId);
 
-    const pts = isCorrect ? 2 : -1;
-    if (isCorrect) {
-      this.data.quizPoints = Math.min(20, this.data.quizPoints + 2);
-    } else {
-      this.data.quizPoints = Math.max(0, this.data.quizPoints - 1);
-    }
+    const prevQuizPoints = this.data.quizPoints;
+    const candidateQuizPoints = isCorrect ? Math.min(20, prevQuizPoints + 2) : prevQuizPoints - 1;
+    const actualDelta = candidateQuizPoints - prevQuizPoints;
+    this.data.quizPoints = candidateQuizPoints;
 
-    this.data.activities.unshift({
-      id: `quiz-${questionId}-${Date.now()}`,
-      title: isCorrect ? `Correct Quiz Answer (Q${questionId})` : `Incorrect Quiz Answer (Q${questionId})`,
-      typeLabel: isCorrect ? 'QUIZ CORRECT' : 'QUIZ INCORRECT',
-      points: pts,
-      timestamp: Date.now(),
-    });
+    if (actualDelta !== 0) {
+      this.data.activities.unshift({
+        id: `quiz-${questionId}-${Date.now()}`,
+        title: isCorrect ? `Correct Quiz Answer (Q${questionId})` : `Incorrect Quiz Answer (Q${questionId})`,
+        typeLabel: isCorrect ? 'QUIZ CORRECT' : 'QUIZ INCORRECT',
+        points: actualDelta,
+        timestamp: Date.now(),
+      });
+    }
 
     this.saveData();
     this.notifyListeners();
+
+    // Trigger Popup Notification only for actual applied points change
+    if (actualDelta > 0) {
+      this.emitNotification({
+        id: `notif-${Date.now()}-${Math.random()}`,
+        amount: actualDelta,
+        title: `+${actualDelta} ${actualDelta === 1 ? 'Point' : 'Points'}`,
+        message: 'Correct Answer!',
+        type: 'reward',
+        timestamp: Date.now(),
+      });
+    } else if (actualDelta < 0) {
+      this.emitNotification({
+        id: `notif-${Date.now()}-${Math.random()}`,
+        amount: actualDelta,
+        title: `${actualDelta} ${Math.abs(actualDelta) === 1 ? 'Point' : 'Points'}`,
+        message: 'Incorrect Answer',
+        type: 'penalty',
+        timestamp: Date.now(),
+      });
+    }
+
     return true;
   }
 
@@ -335,6 +452,16 @@ class PointsManager {
     });
     this.saveData();
     this.notifyListeners();
+
+    // Trigger Popup Notification
+    this.emitNotification({
+      id: `notif-${Date.now()}-${Math.random()}`,
+      amount: -2,
+      title: '-2 Points',
+      message: 'Hint Used',
+      type: 'penalty',
+      timestamp: Date.now(),
+    });
   }
 
   /**
@@ -352,6 +479,16 @@ class PointsManager {
     });
     this.saveData();
     this.notifyListeners();
+
+    // Trigger Popup Notification
+    this.emitNotification({
+      id: `notif-${Date.now()}-${Math.random()}`,
+      amount: -3,
+      title: '-3 Points',
+      message: 'Guided Solve Used',
+      type: 'penalty',
+      timestamp: Date.now(),
+    });
   }
 
   /**
@@ -366,6 +503,9 @@ class PointsManager {
       guidedSolveUsesCount: 0,
       activities: [],
     };
+    this.knownCompletedTheory.clear();
+    this.knownCompletedVideos.clear();
+    this.knownCompletedLevels.clear();
     this.saveData();
     this.notifyListeners();
   }

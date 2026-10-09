@@ -163,7 +163,7 @@ export const PointsView: React.FC<PointsViewProps> = () => {
                   <span className="text-sm font-bold text-[#0F172A]">Quiz (Max 20)</span>
                 </div>
                 <span className="text-sm font-bold font-mono text-[#0F172A]">
-                  +{points.quizPoints}
+                  {points.quizPoints >= 0 ? `+${points.quizPoints}` : `${points.quizPoints}`}
                 </span>
               </div>
 

@@ -36,6 +36,7 @@ import { GuidedSolvePanel } from './components/GuidedSolvePanel';
 import { getGuidedSolveStepInfo } from './utils/guidedSolveEngine';
 import { GameLevelCardsView } from './components/GameLevelCardsView';
 import { PointsView } from './components/PointsView';
+import { PointsNotificationToast } from './components/PointsNotificationToast';
 import { Sparkles, ArrowLeft } from 'lucide-react';
 import { progressManager } from './utils/progressManager';
 import { pointsManager } from './utils/pointsManager';
@@ -1198,6 +1199,9 @@ export default function App() {
 
       {/* Global AI Bot Floating Icon */}
       <AIBotFloatingButton />
+
+      {/* Global Points Activity Popup Toast Notification */}
+      <PointsNotificationToast />
     </div>
   );
 }

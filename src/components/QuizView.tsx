@@ -989,31 +989,17 @@ export const QuizView: React.FC<QuizViewProps> = ({
               </button>
 
               {!isCurrentQuestionAnswered ? (
-                currentQuestionIndex < totalQuestions - 1 ? (
-                  <button
-                    id="btn-confirm-answer"
-                    disabled={pendingSelection === null}
-                    onClick={handleConfirmAnswer}
-                    className={`btn-modern-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all ${
-                      pendingSelection !== null ? 'cursor-pointer' : 'opacity-40 cursor-not-allowed pointer-events-none'
-                    }`}
-                  >
-                    <Check className="w-4 h-4" />
-                    <span>Submit Answer</span>
-                  </button>
-                ) : (
-                  <button
-                    id="btn-finish-quiz"
-                    disabled={pendingSelection === null}
-                    onClick={handleSubmitExamination}
-                    className={`btn-modern-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all ${
-                      pendingSelection !== null ? 'cursor-pointer' : 'opacity-40 cursor-not-allowed pointer-events-none'
-                    }`}
-                  >
-                    <Award className="w-4 h-4" />
-                    <span>Complete & Review</span>
-                  </button>
-                )
+                <button
+                  id="btn-confirm-answer"
+                  disabled={pendingSelection === null}
+                  onClick={handleConfirmAnswer}
+                  className={`btn-modern-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all ${
+                    pendingSelection !== null ? 'cursor-pointer' : 'opacity-40 cursor-not-allowed pointer-events-none'
+                  }`}
+                >
+                  <Check className="w-4 h-4" />
+                  <span>Submit Answer</span>
+                </button>
               ) : currentQuestionIndex < totalQuestions - 1 ? (
                 <button
                   id="btn-next-question"
@@ -1030,7 +1016,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 <button
                   id="btn-finish-quiz"
                   onClick={handleSubmitExamination}
-                  className="btn-modern-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+                  className="btn-modern-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-md shadow-emerald-500/20"
                 >
                   <Award className="w-4 h-4" />
                   <span>Complete & Review</span>
