@@ -93,13 +93,6 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       badge: `${stats.percentage}%`,
       badgeClass: 'bg-[#EFF6FF] dark:bg-blue-800/40 text-[#2563EB] dark:text-[#3B82F6] font-bold border border-[#DBEAFE] dark:border-blue-500/30',
     },
-    {
-      id: 'POINTS' as MainViewTab,
-      label: 'Points',
-      icon: Target,
-      badge: `${points.totalPoints} / 100`,
-      badgeClass: 'bg-blue-50 dark:bg-blue-900/40 text-[#2563EB] dark:text-[#3B82F6] font-bold border border-blue-200 dark:border-blue-500/30',
-    },
   ];
 
   const handleSelect = (tab: MainViewTab) => {
