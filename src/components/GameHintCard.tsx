@@ -116,6 +116,9 @@ export const GameHintCard: React.FC<GameHintCardProps> = ({
             <span className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider font-mono">
               Field Hint // What should I do next?
             </span>
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40">
+              −2 pts
+            </span>
           </div>
 
           <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-semibold font-mono">

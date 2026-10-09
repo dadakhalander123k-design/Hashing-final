@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   CheckCircle2,
   XCircle,
   HelpCircle,
   Award,
-  RotateCcw,
   Sparkles,
   ArrowRight,
   ArrowLeft,
@@ -18,6 +17,8 @@ import {
   ListOrdered,
   Trophy,
   Home,
+  Clock,
+  Timer,
 } from 'lucide-react';
 import { progressManager } from '../utils/progressManager';
 import { pointsManager } from '../utils/pointsManager';
@@ -51,6 +52,7 @@ export interface StudentAnswerRecord {
   correctOptionIndex: number;
   correctAnswerText: string;
   isCorrect: boolean;
+  isTimedOut?: boolean;
 }
 
 export const QUIZ_QUESTIONS: QuizQuestion[] = [
@@ -255,25 +257,11 @@ export const QuizView: React.FC<QuizViewProps> = ({
     }
   });
 
-  const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false);
+  // Subscribe to pointsManager for live score display
+  const [pointsState, setPointsState] = useState(() => pointsManager.getState());
 
-  // Subscribe to progressManager for reset synchronization
   useEffect(() => {
-    const unsub = progressManager.subscribe((pState) => {
-      if (!pState.quizSubmitted) {
-        setIsSubmitted(false);
-        try {
-          const stored = localStorage.getItem(QUIZ_STORAGE_ANSWERS_KEY);
-          if (!stored || stored === '{}') {
-            setStudentAnswers({});
-            setCurrentQuestionIndex(0);
-            setPendingSelection(null);
-          }
-        } catch {
-          // Ignore
-        }
-      }
-    });
+    const unsub = pointsManager.subscribe((st) => setPointsState(st));
     return unsub;
   }, []);
 
@@ -282,10 +270,55 @@ export const QuizView: React.FC<QuizViewProps> = ({
   // Temporary selection before confirming/submitting the question
   const [pendingSelection, setPendingSelection] = useState<number | null>(null);
 
+  // Per-question countdown timer (30 seconds per question)
+  const QUESTION_TIME_LIMIT = 30;
+  const [timeLeft, setTimeLeft] = useState<number>(QUESTION_TIME_LIMIT);
+
   // Current question helper
   const currentQuestion = QUIZ_QUESTIONS[currentQuestionIndex] || QUIZ_QUESTIONS[0];
   const currentAnswerRecord = studentAnswers[currentQuestion.id];
   const isCurrentQuestionAnswered = currentAnswerRecord !== undefined;
+
+  // Handle countdown timer timeout (0 points awarded)
+  const handleTimeout = useCallback((qId: number) => {
+    const q = QUIZ_QUESTIONS.find((item) => item.id === qId) || currentQuestion;
+    const timeoutRecord: StudentAnswerRecord = {
+      questionId: q.id,
+      selectedOptionIndex: -1,
+      selectedAnswerText: 'Timed Out (No Answer)',
+      correctOptionIndex: q.correctIndex,
+      correctAnswerText: q.correctAnswerText,
+      isCorrect: false,
+      isTimedOut: true,
+    };
+    setStudentAnswers((prev) => {
+      if (prev[q.id]) return prev;
+      return { ...prev, [q.id]: timeoutRecord };
+    });
+    pointsManager.recordQuizTimeout(q.id);
+    soundManager.playQuizWrong();
+  }, [currentQuestion]);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (isCurrentQuestionAnswered || isSubmitted) return;
+
+    setTimeLeft(QUESTION_TIME_LIMIT);
+    const targetQId = currentQuestion.id;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          handleTimeout(targetQId);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [currentQuestionIndex, isCurrentQuestionAnswered, isSubmitted, currentQuestion.id, handleTimeout]);
 
   // Synchronize selection with current question record
   useEffect(() => {
@@ -397,9 +430,9 @@ export const QuizView: React.FC<QuizViewProps> = ({
     }
   }, [percentage]);
 
-  // Handle student selecting an option (before or during answering)
+  // Handle student selecting an option (prevent selection if answered or timed out)
   const handleSelectOption = (optionIndex: number) => {
-    if (isCurrentQuestionAnswered && isSubmitted) return;
+    if (isCurrentQuestionAnswered || isSubmitted) return;
     soundManager.playQuizSelect();
     setPendingSelection(optionIndex);
   };
@@ -497,30 +530,34 @@ export const QuizView: React.FC<QuizViewProps> = ({
     }
   };
 
-  // Handle resetting the quiz completely
-  const handleResetQuiz = () => {
-    soundManager.playReset();
-    setStudentAnswers({});
-    setIsSubmitted(false);
-    setCurrentQuestionIndex(0);
-    setPendingSelection(null);
-    setShowResetConfirm(false);
-
-    try {
-      localStorage.removeItem(QUIZ_STORAGE_ANSWERS_KEY);
-      localStorage.removeItem(QUIZ_STORAGE_SUBMITTED_KEY);
-    } catch {
-      // Ignore
-    }
-
-    progressManager.resetQuizAttempt();
-    pointsManager.resetQuizPoints();
-  };
-
   const answeredCount = Object.keys(studentAnswers).length;
 
   return (
     <div className="w-full max-w-4xl mx-auto py-4 px-4 font-sans text-slate-900 dark:text-white animate-page-enter">
+      {/* Scoring Banner */}
+      <div className="w-full mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-blue-50/90 dark:from-blue-950/40 dark:via-indigo-950/20 dark:to-blue-950/40 border border-blue-200/80 dark:border-blue-500/30 flex flex-wrap items-center justify-between gap-3 text-xs font-mono shadow-xs">
+        <div className="flex items-center gap-2">
+          <Award className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />
+          <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+            Scoring Rules:
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 font-semibold">
+          <span className="px-2.5 py-1 rounded-lg bg-emerald-100/80 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-800/50">
+            Correct: +3 pts
+          </span>
+          <span className="px-2.5 py-1 rounded-lg bg-rose-100/80 text-rose-800 dark:bg-rose-950/70 dark:text-rose-300 border border-rose-300/60 dark:border-rose-800/50">
+            Wrong: −2 pts
+          </span>
+          <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+            Timeout / Unanswered: 0 pts
+          </span>
+          <span className="px-2.5 py-1 rounded-lg bg-blue-100/80 text-[#2563EB] dark:bg-blue-950/70 dark:text-blue-300 border border-blue-300/60 dark:border-blue-800/50 font-bold">
+            Max Score: 30 pts
+          </span>
+        </div>
+      </div>
+
       {/* Header Banner */}
       <div className="border border-slate-200 dark:border-slate-800 rounded-2xl pb-6 mb-6 bg-white dark:bg-[#111827] p-6 sm:p-8 shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] reveal-on-scroll">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
@@ -529,28 +566,14 @@ export const QuizView: React.FC<QuizViewProps> = ({
             <span>Knowledge Assessment</span>
           </div>
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <span className="hidden sm:inline text-xs font-medium text-slate-500 dark:text-slate-400">
-              Simple Hashing Quiz (10 Questions)
+            <span className="px-3 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/50 text-[#2563EB] dark:text-[#3B82F6] font-mono text-xs font-bold">
+              Quiz Score: {pointsState.quizPoints} / 30 pts
             </span>
             {isSubmitted && (
-              <span className="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 rounded-md text-xs font-semibold">
+              <span className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-semibold">
                 Completed
               </span>
             )}
-            <button
-              id="btn-quiz-reset-progress"
-              type="button"
-              onClick={() => {
-                soundManager.playModalOpen();
-                setShowResetConfirm(true);
-              }}
-              className="text-xs font-semibold text-slate-600 hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-400 flex items-center gap-1.5 cursor-pointer transition-colors px-2.5 py-1 rounded-lg bg-slate-100/80 hover:bg-rose-50 dark:bg-slate-800/80 dark:hover:bg-rose-950/40 border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:hover:border-rose-800/50 shadow-2xs"
-              title="Reset Quiz Progress"
-              aria-label="Reset Quiz Progress"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset Progress</span>
-            </button>
           </div>
         </div>
 
@@ -588,7 +611,9 @@ export const QuizView: React.FC<QuizViewProps> = ({
               if (isCurrent) {
                 pillStyle = 'bg-[#2563EB] dark:bg-[#2563EB] text-white border-[#1D4ED8] dark:border-[#2563EB] font-bold shadow-xs dark:shadow-none';
               } else if (isAnswered) {
-                if (rec.isCorrect) {
+                if (rec.isTimedOut) {
+                  pillStyle = 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700 font-semibold';
+                } else if (rec.isCorrect) {
                   pillStyle = 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30 font-semibold';
                 } else {
                   pillStyle = 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-500/30 font-semibold';
@@ -616,7 +641,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                   <span>Q{idx + 1}</span>
                   {isAnswered && (
                     <span className="block text-[10px] leading-tight mt-0.5">
-                      {rec.isCorrect ? '✓' : '✕'}
+                      {rec.isTimedOut ? '⏱' : rec.isCorrect ? '✓' : '✕'}
                     </span>
                   )}
                 </button>
@@ -701,20 +726,8 @@ export const QuizView: React.FC<QuizViewProps> = ({
               </div>
             </div>
 
-            {/* 7. Action Buttons (Retake Quiz & Back to Home) */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 mt-8 w-full max-w-md mx-auto">
-              {/* 1. Retake Quiz (Primary Action) */}
-              <button
-                id="btn-quiz-retake"
-                type="button"
-                onClick={handleResetQuiz}
-                className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#2563EB] dark:hover:bg-blue-600 text-white font-sans text-sm font-semibold shadow-md dark:shadow-none transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <RotateCcw className="w-4 h-4 stroke-[2.2]" />
-                <span>Retake Quiz</span>
-              </button>
-
-              {/* 2. Back to Home (Secondary Action) */}
+            {/* Action Button: Back to Home */}
+            <div className="flex items-center justify-center gap-3.5 mt-8 w-full max-w-md mx-auto">
               <button
                 id="btn-quiz-back-to-home"
                 type="button"
@@ -722,12 +735,14 @@ export const QuizView: React.FC<QuizViewProps> = ({
                   soundManager.playNav();
                   if (onNavigateToHome) {
                     onNavigateToHome();
+                  } else {
+                    onNavigateToProgress();
                   }
                 }}
-                className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-2xl bg-white hover:bg-slate-50 dark:bg-[#0B1120] dark:hover:bg-[#172033] text-slate-800 dark:text-slate-200 border border-slate-200/90 dark:border-slate-800 font-sans text-sm font-semibold shadow-xs transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-7 py-3 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#2563EB] dark:hover:bg-blue-600 text-white font-sans text-sm font-semibold shadow-md dark:shadow-none transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Home className="w-4 h-4 stroke-[2.2] text-[#2563EB] dark:text-[#3B82F6]" />
-                <span>Back to Home</span>
+                <Home className="w-4 h-4 stroke-[2.2] text-white" />
+                <span>Back to Overview</span>
               </button>
             </div>
           </div>
@@ -775,15 +790,20 @@ export const QuizView: React.FC<QuizViewProps> = ({
                       </div>
 
                       <div>
-                        {isCorrect ? (
+                        {rec?.isTimedOut ? (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold font-sans">
+                            <Clock className="w-3.5 h-3.5 text-amber-500" />
+                            <span>Timed Out (0 pts)</span>
+                          </div>
+                        ) : isCorrect ? (
                           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-bold font-sans">
                             <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                            <span>Correct</span>
+                            <span>Correct (+3 pts)</span>
                           </div>
                         ) : (
                           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 rounded-lg text-xs font-bold font-sans">
                             <XCircle className="w-3.5 h-3.5 stroke-[2.5]" />
-                            <span>Incorrect</span>
+                            <span>Incorrect (−2 pts)</span>
                           </div>
                         )}
                       </div>
@@ -901,19 +921,37 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 <span className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] font-mono">{currentQuestion.techniqueCode}</span>
               </div>
 
-              {isCurrentQuestionAnswered && (
+              {isCurrentQuestionAnswered ? (
                 <div>
-                  {currentAnswerRecord?.isCorrect ? (
+                  {currentAnswerRecord?.isTimedOut ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 rounded-lg">
+                      <Clock className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Timed Out (0 pts)</span>
+                    </span>
+                  ) : currentAnswerRecord?.isCorrect ? (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 rounded-lg">
                       <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                      <span>Correct</span>
+                      <span>Correct (+3 pts)</span>
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-50 dark:bg-rose-950/60 text-xs font-bold text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 rounded-lg">
                       <XCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
-                      <span>Incorrect</span>
+                      <span>Incorrect (−2 pts)</span>
                     </span>
                   )}
+                </div>
+              ) : (
+                <div
+                  id="quiz-question-timer"
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg font-mono text-xs font-bold border transition-all ${
+                    timeLeft <= 10
+                      ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/60 dark:text-rose-400 dark:border-rose-800 animate-pulse'
+                      : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-400 dark:border-amber-800'
+                  }`}
+                  aria-label={`Time remaining: ${timeLeft} seconds`}
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Time: {timeLeft}s</span>
                 </div>
               )}
             </div>
@@ -1073,68 +1111,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
         </div>
       )}
 
-      {/* Reset Quiz Progress Confirmation Modal */}
-      {showResetConfirm && (
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              soundManager.playModalClose();
-              setShowResetConfirm(false);
-            }
-          }}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="quiz-reset-modal-title"
-        >
-          <div className="relative w-full max-w-md bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-7 shadow-2xl text-center animate-scale-enter font-sans">
-            {/* Warning Icon Badge */}
-            <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-500/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-xs">
-              <RotateCcw className="w-6 h-6 stroke-[2.2]" />
-            </div>
-
-            {/* Title */}
-            <h2
-              id="quiz-reset-modal-title"
-              className="text-xl sm:text-2xl font-black font-sans text-slate-900 dark:text-white tracking-tight uppercase mb-3"
-            >
-              Reset Quiz Progress?
-            </h2>
-
-            {/* Body Description */}
-            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6 font-normal">
-              All answers and progress will be cleared. This action cannot be undone.
-            </p>
-
-            {/* Action Buttons: [ Cancel ] [ Reset Progress ] */}
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              {/* Cancel Button */}
-              <button
-                id="btn-quiz-cancel-reset"
-                type="button"
-                onClick={() => {
-                  soundManager.playModalClose();
-                  setShowResetConfirm(false);
-                }}
-                className="py-3 px-4 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer active:scale-95 shadow-xs"
-              >
-                Cancel
-              </button>
-
-              {/* Reset Progress Button */}
-              <button
-                id="btn-quiz-confirm-reset"
-                type="button"
-                onClick={handleResetQuiz}
-                className="py-3 px-4 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider bg-rose-600 hover:bg-rose-700 text-white shadow-md shadow-rose-600/30 transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2"
-              >
-                <RotateCcw className="w-4 h-4" />
-                <span>Reset Progress</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

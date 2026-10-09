@@ -3,7 +3,6 @@ import {
   CheckCircle2,
   Sparkles,
   ArrowRight,
-  RotateCcw,
   Trophy,
   BookOpen,
   Gamepad2,
@@ -19,13 +18,14 @@ import {
   TrendingUp,
   Eye,
   Brain,
+  ShieldAlert,
+  XCircle,
 } from 'lucide-react';
 import { progressManager } from '../utils/progressManager';
 import { pointsManager, PointsState } from '../utils/pointsManager';
 import { ModuleRecord, ModuleStatus, UserProgressState, MainViewTab } from '../types/game';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { CompletionCelebrationModal } from './CompletionCelebrationModal';
-import { ResetProgressModal } from './ResetProgressModal';
 import { soundManager } from '../utils/audio';
 
 interface MyProgressViewProps {
@@ -36,18 +36,33 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
   useScrollReveal();
   const [progressState, setProgressState] = useState<UserProgressState>(progressManager.getState());
   const [points, setPoints] = useState<PointsState>(() => pointsManager.getPoints());
-  const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false);
   const [showCertificateModal, setShowCertificateModal] = useState<boolean>(false);
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'FOUNDATION' | 'TECHNIQUE' | 'ANALYSIS' | 'EXAMINATION'>('ALL');
+  const [quizAnswers, setQuizAnswers] = useState<Record<number, any>>(() => {
+    try {
+      const stored = localStorage.getItem('hash_quest_quiz_answers_v3');
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  });
 
   useEffect(() => {
     progressManager.checkAndCompleteCertification();
     const unsubscribe = progressManager.subscribe((state) => {
       setProgressState(state);
       setPoints(pointsManager.getPoints());
+      try {
+        const stored = localStorage.getItem('hash_quest_quiz_answers_v3');
+        setQuizAnswers(stored ? JSON.parse(stored) : {});
+      } catch {}
     });
     const unsubPoints = pointsManager.subscribe((newPoints) => {
       setPoints(newPoints);
+      try {
+        const stored = localStorage.getItem('hash_quest_quiz_answers_v3');
+        setQuizAnswers(stored ? JSON.parse(stored) : {});
+      } catch {}
     });
     return () => {
       unsubscribe();
@@ -64,20 +79,11 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
     ? modules
     : modules.filter((m) => m.category === activeFilter);
 
-  const handleReset = () => {
-    soundManager.playReset();
-    progressManager.resetProgress();
-    pointsManager.resetAll();
-    setPoints(pointsManager.getPoints());
-    setShowResetConfirm(false);
-  };
-
-  const learnMax = 24;
-  const visualizeMax = 6;
+  // Points breakdown: Visualization (20) + Game (50) + Quiz (30) = 100 max positive points. Learn = 0 pts.
+  const visualizeMax = 20;
   const gameMax = 50;
-  const quizMax = 20;
+  const quizMax = 30;
 
-  const learnPercent = Math.min(100, Math.max(0, Math.round((points.theoryPoints / learnMax) * 100)));
   const visualizePercent = Math.min(100, Math.max(0, Math.round((points.visualizePoints / visualizeMax) * 100)));
   const gamePercent = Math.min(100, Math.max(0, Math.round((points.gamePoints / gameMax) * 100)));
   const quizPercent = Math.min(100, Math.max(0, Math.round((Math.max(0, points.quizPoints) / quizMax) * 100)));
@@ -143,18 +149,6 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
             Last synced: {new Date(progressState.lastActiveTimestamp).toLocaleDateString()}
           </span>
         </div>
-
-        <button
-          id="btn-reset-progress-dialog"
-          onClick={() => {
-            soundManager.playModalOpen();
-            setShowResetConfirm(true);
-          }}
-          className="text-xs font-medium text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 flex items-center gap-1.5 cursor-pointer transition-colors"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset Progress</span>
-        </button>
       </div>
 
       {/* 100% Completion Golden Banner if Completed */}
@@ -288,50 +282,13 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
           </div>
         </div>
 
-        {/* Four Category Cards — Exact Order: 1. Learn, 2. Visualize, 3. Game, 4. Quiz */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          {/* 1. Learn Card */}
-          <div
-            id="category-card-learn"
-            onClick={() => onNavigateToTab('THEORY')}
-            className="bg-[#F8FAFC] dark:bg-[#070D1A] border border-slate-200/90 dark:border-slate-800/80 hover:border-blue-400/60 dark:hover:border-blue-500/40 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer group shadow-2xs dark:shadow-none"
-          >
-            <div>
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-200/80 text-[#2563EB] dark:bg-blue-950/70 dark:border-blue-500/30 dark:text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                  <BookOpen className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Learn</div>
-                  <div className="text-base sm:text-lg font-extrabold font-mono text-slate-900 dark:text-white leading-tight">
-                    {points.theoryPoints} / {learnMax}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2.5 mt-4">
-                <div className="flex-1 bg-slate-200/80 dark:bg-slate-800/90 rounded-full h-2 overflow-hidden">
-                  <div
-                    className="bg-[#2563EB] dark:bg-blue-500 h-full rounded-full transition-all duration-300"
-                    style={{ width: `${learnPercent}%` }}
-                  />
-                </div>
-                <span className="text-xs font-bold font-mono text-[#2563EB] dark:text-blue-400 shrink-0">
-                  {learnPercent}%
-                </span>
-              </div>
-            </div>
-
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-3">
-              Complete learning modules
-            </p>
-          </div>
-
-          {/* 2. Visualize Card */}
+        {/* Three Category Cards: 1. Visualize (20), 2. Game (50), 3. Quiz (30) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          {/* 1. Visualize Card (Max 20) */}
           <div
             id="category-card-visualize"
             onClick={() => onNavigateToTab('VIDEO')}
-            className="bg-[#F8FAFC] dark:bg-[#070D1A] border border-slate-200/90 dark:border-slate-800/80 hover:border-purple-400/60 dark:hover:border-purple-500/40 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer group shadow-2xs dark:shadow-none"
+            className="bg-[#F8FAFC] dark:bg-[#070D1A] border border-slate-200/90 dark:border-slate-800/80 hover:border-blue-400/60 dark:hover:border-blue-500/40 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer group shadow-2xs dark:shadow-none"
           >
             <div>
               <div className="flex items-center gap-3">
@@ -339,9 +296,9 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
                   <Eye className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Visualize</div>
+                  <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Visualization</div>
                   <div className="text-base sm:text-lg font-extrabold font-mono text-slate-900 dark:text-white leading-tight">
-                    {points.visualizePoints} / {visualizeMax}
+                    {points.visualizePoints} / {visualizeMax} pts
                   </div>
                 </div>
               </div>
@@ -360,15 +317,15 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
             </div>
 
             <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-3">
-              Complete visualizations & videos
+              2 masterclass videos (+10 pts each)
             </p>
           </div>
 
-          {/* 3. Game Card */}
+          {/* 2. Game Card (Max 50) */}
           <div
             id="category-card-game"
             onClick={() => onNavigateToTab('GAME', 1)}
-            className="bg-[#F8FAFC] dark:bg-[#070D1A] border border-slate-200/90 dark:border-slate-800/80 hover:border-indigo-400/60 dark:hover:border-indigo-500/40 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer group shadow-2xs dark:shadow-none"
+            className="bg-[#F8FAFC] dark:bg-[#070D1A] border border-slate-200/90 dark:border-slate-800/80 hover:border-blue-400/60 dark:hover:border-blue-500/40 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer group shadow-2xs dark:shadow-none"
           >
             <div>
               <div className="flex items-center gap-3">
@@ -378,7 +335,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
                 <div>
                   <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Game</div>
                   <div className="text-base sm:text-lg font-extrabold font-mono text-slate-900 dark:text-white leading-tight">
-                    {points.gamePoints} / {gameMax}
+                    {points.gamePoints} / {gameMax} pts
                   </div>
                 </div>
               </div>
@@ -397,15 +354,15 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
             </div>
 
             <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-3">
-              Complete game levels
+              5 interactive levels (+10 pts each)
             </p>
           </div>
 
-          {/* 4. Quiz Card */}
+          {/* 3. Quiz Card (Max 30) */}
           <div
             id="category-card-quiz"
             onClick={() => onNavigateToTab('QUIZ')}
-            className="bg-[#F8FAFC] dark:bg-[#070D1A] border border-slate-200/90 dark:border-slate-800/80 hover:border-sky-400/60 dark:hover:border-sky-500/40 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer group shadow-2xs dark:shadow-none"
+            className="bg-[#F8FAFC] dark:bg-[#070D1A] border border-slate-200/90 dark:border-slate-800/80 hover:border-blue-400/60 dark:hover:border-blue-500/40 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer group shadow-2xs dark:shadow-none"
           >
             <div>
               <div className="flex items-center gap-3">
@@ -415,7 +372,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
                 <div>
                   <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Quiz</div>
                   <div className="text-base sm:text-lg font-extrabold font-mono text-slate-900 dark:text-white leading-tight">
-                    {points.quizPoints} / {quizMax}
+                    {points.quizPoints} / {quizMax} pts
                   </div>
                 </div>
               </div>
@@ -434,10 +391,24 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
             </div>
 
             <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-3">
-              Answer quiz questions
+              10 questions (+3 correct, −2 wrong, 0 timeout)
             </p>
           </div>
         </div>
+
+        {/* Deductions Summary Row if Any Incurred */}
+        {(points.hintPenalties > 0 || points.guidedSolvePenalties > 0) && (
+          <div className="mt-4 p-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+            <span className="text-rose-700 dark:text-rose-300 font-semibold flex items-center gap-1.5">
+              <ShieldAlert className="w-4 h-4 text-rose-500" />
+              Applied Deductions:
+            </span>
+            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400 font-bold">
+              {points.hintPenalties > 0 && <span>Hints: −{points.hintPenalties} pts ({points.hintUsesCount} uses)</span>}
+              {points.guidedSolvePenalties > 0 && <span>Guided Solve: −{points.guidedSolvePenalties} pts ({points.guidedSolveUsesCount} uses)</span>}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Performance Stats & Next Recommendation */}
@@ -495,66 +466,150 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
         </div>
       </div>
 
-      {/* Video Learning Lessons Progress Card */}
-      <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 mb-8 shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] reveal-on-scroll">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#3B82F6] border border-blue-100 dark:border-blue-500/30">
-              <Video className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                VIDEO LESSONS
-              </div>
-              <h4 className="text-base font-bold text-slate-900 dark:text-white">
-                2 VIDEOS ({videoStats.completed} / 2 Completed)
-              </h4>
-            </div>
-          </div>
-
-          <button
-            onClick={() => {
-              soundManager.playNav();
-              onNavigateToTab('VIDEO');
-            }}
-            className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1.5 self-start sm:self-auto cursor-pointer transition-colors"
-          >
-            <span>Open Video Section</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+      {/* 3. Detailed Activity Completion Status (2 Videos, 5 Games, 10 Quiz Questions) */}
+      <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 mb-8 shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] reveal-on-scroll space-y-6">
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+            <Layers className="w-5 h-5 text-[#2563EB] dark:text-[#3B82F6]" />
+            <span>Activity Completion Status</span>
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Detailed breakdown of completed videos (2), challenge levels (5), and evaluated quiz questions (10).
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-          {/* Lesson 1 status */}
-          <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-[#0B1120] border border-slate-200/80 dark:border-slate-800">
-            <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
-              Introduction to Hashing
+        {/* Part A: 2 Videos */}
+        <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold font-mono uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-2">
+              <Video className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />
+              <span>Visualization Modules ({videoStats.completed} / 2 Completed • 20 pts max)</span>
             </span>
-            {videoStats.isIntroCompleted ? (
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                <Check className="w-3.5 h-3.5 stroke-[2.5]" /> Completed
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 text-xs text-slate-400">
-                <Circle className="w-3 h-3" /> Not completed
-              </span>
-            )}
+            <button
+              onClick={() => onNavigateToTab('VIDEO')}
+              className="text-xs text-[#2563EB] dark:text-[#3B82F6] hover:underline font-semibold cursor-pointer"
+            >
+              Watch Videos →
+            </button>
           </div>
 
-          {/* Lesson 2 status */}
-          <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-[#0B1120] border border-slate-200/80 dark:border-slate-800">
-            <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
-              Collision
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-[#0B1120] border border-slate-200/80 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-bold text-[#2563EB] dark:text-[#3B82F6]">01</span>
+                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">Introduction to Hashing</span>
+              </div>
+              {videoStats.isIntroCompleted ? (
+                <span className="inline-flex items-center gap-1 text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
+                  <Check className="w-3.5 h-3.5 stroke-[2.5]" /> +10 pts
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-mono">
+                  <Circle className="w-3 h-3" /> 0 / 10 pts
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-[#0B1120] border border-slate-200/80 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-bold text-[#2563EB] dark:text-[#3B82F6]">02</span>
+                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">Collision Resolution</span>
+              </div>
+              {videoStats.isCollisionCompleted ? (
+                <span className="inline-flex items-center gap-1 text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
+                  <Check className="w-3.5 h-3.5 stroke-[2.5]" /> +10 pts
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-mono">
+                  <Circle className="w-3 h-3" /> 0 / 10 pts
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Part B: 5 Game Levels */}
+        <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold font-mono uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-2">
+              <Gamepad2 className="w-4 h-4 text-indigo-500" />
+              <span>Game Challenge Levels ({progressState.levelsCompleted.length} / 5 Completed • 50 pts max)</span>
             </span>
-            {videoStats.isCollisionCompleted ? (
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                <Check className="w-3.5 h-3.5 stroke-[2.5]" /> Completed
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 text-xs text-slate-400">
-                <Circle className="w-3 h-3" /> Not completed
-              </span>
-            )}
+            <button
+              onClick={() => onNavigateToTab('GAME', 1)}
+              className="text-xs text-[#2563EB] dark:text-[#3B82F6] hover:underline font-semibold cursor-pointer"
+            >
+              Play Games →
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+            {[1, 2, 3, 4, 5].map((lvl) => {
+              const isWon = progressState.levelsCompleted.includes(lvl);
+              return (
+                <div
+                  key={lvl}
+                  className={`p-3 rounded-xl border flex flex-col items-center text-center gap-1.5 transition-all ${
+                    isWon
+                      ? 'bg-emerald-50/60 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800'
+                      : 'bg-slate-50 dark:bg-[#0B1120] border-slate-200/80 dark:border-slate-800'
+                  }`}
+                >
+                  <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">Level {lvl}</span>
+                  {isWon ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                      <Check className="w-3 h-3 stroke-[3]" /> +10 pts
+                    </span>
+                  ) : (
+                    <span className="text-[11px] text-slate-400 font-mono">Incomplete</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Part C: 10 Quiz Questions */}
+        <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold font-mono uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-2">
+              <Brain className="w-4 h-4 text-sky-500" />
+              <span>Quiz Questions Assessment ({Object.keys(quizAnswers).length} / 10 Answered • 30 pts max)</span>
+            </span>
+            <button
+              onClick={() => onNavigateToTab('QUIZ')}
+              className="text-xs text-[#2563EB] dark:text-[#3B82F6] hover:underline font-semibold cursor-pointer"
+            >
+              Take Quiz →
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((qId) => {
+              const rec = quizAnswers[qId];
+              let statusLabel = 'Unanswered (0)';
+              let style = 'bg-slate-50 dark:bg-[#0B1120] border-slate-200/80 dark:border-slate-800 text-slate-500';
+
+              if (rec) {
+                if (rec.isTimedOut) {
+                  statusLabel = 'Timeout (0 pts)';
+                  style = 'bg-amber-50/60 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 font-bold';
+                } else if (rec.isCorrect) {
+                  statusLabel = 'Correct (+3 pts)';
+                  style = 'bg-emerald-50/60 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-bold';
+                } else {
+                  statusLabel = 'Wrong (−2 pts)';
+                  style = 'bg-rose-50/60 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 font-bold';
+                }
+              }
+
+              return (
+                <div key={qId} className={`p-2.5 rounded-xl border flex flex-col items-center text-center gap-1 text-xs font-mono ${style}`}>
+                  <span className="font-bold">Q{qId}</span>
+                  <span className="text-[10px] leading-tight">{statusLabel}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -667,12 +722,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
         })}
       </div>
 
-      {/* Centered Confirmation Modal for Reset */}
-      <ResetProgressModal
-        isOpen={showResetConfirm}
-        onClose={() => setShowResetConfirm(false)}
-        onConfirm={handleReset}
-      />
+
 
       {/* 100% Completion Certificate Modal */}
       <CompletionCelebrationModal

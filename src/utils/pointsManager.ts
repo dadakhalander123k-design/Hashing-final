@@ -1,6 +1,6 @@
 import { progressManager } from './progressManager';
 
-const POINTS_STORAGE_KEY = 'hash_quest_points_system_v1';
+const POINTS_STORAGE_KEY = 'hash_quest_points_system_v2';
 const QUIZ_STORAGE_ANSWERS_KEY = 'hash_quest_quiz_answers_v3';
 
 export interface PointActivityEvent {
@@ -21,19 +21,19 @@ export interface PointNotification {
 }
 
 export interface PointsState {
-  theoryPoints: number; // 0 to 24 (12 modules * 2 pts)
-  quizPoints: number; // 0 to 20 (+2 correct, -1 wrong, clamped [0, 20])
-  visualizePoints: number; // 0 to 6 (2 modules * 3 pts)
+  theoryPoints: number; // 0 points (Learn/Theory contributes 0 pts)
+  quizPoints: number; // Max 30 (+3 correct, -2 wrong, 0 timeout, max positive 30)
+  visualizePoints: number; // 0 to 20 (2 videos * 10 pts)
   gamePoints: number; // 0 to 50 (5 levels * 10 pts)
   hintPenalties: number; // 2 pts per genuine hint use
-  guidedSolvePenalties: number; // 3 pts per genuine guided-solve use
+  guidedSolvePenalties: number; // 4 pts per genuine guided-solve use
   hintUsesCount: number;
   guidedSolveUsesCount: number;
-  totalPoints: number; // Real total, supports negative values!
+  totalPoints: number; // Real total, supports negative values, max positive 100
 }
 
 interface StoredPointsData {
-  version: 1;
+  version: 2;
   quizPoints: number;
   processedQuizQuestionIds: number[];
   hintUsesCount: number;
@@ -42,7 +42,7 @@ interface StoredPointsData {
 }
 
 const DEFAULT_STORED_DATA: StoredPointsData = {
-  version: 1,
+  version: 2,
   quizPoints: 0,
   processedQuizQuestionIds: [],
   hintUsesCount: 0,
@@ -58,15 +58,16 @@ class PointsManager {
   private listeners: Set<PointsListener> = new Set();
   private notificationListeners: Set<NotificationListener> = new Set();
 
-  private knownCompletedTheory: Set<string> = new Set();
   private knownCompletedVideos: Set<string> = new Set();
   private knownCompletedLevels: Set<number> = new Set();
+  private lastHintTimestamp: number = 0;
+  private lastGuidedSolveTimestamp: number = 0;
 
   constructor() {
     this.data = this.loadData();
     this.initKnownCompletions();
 
-    // Listen to progressManager updates (theory, videos, levels completed, or resets)
+    // Listen to progressManager updates (videos, levels completed, or resets)
     progressManager.subscribe(() => {
       this.syncProgressActivities(true);
       this.notifyListeners();
@@ -76,9 +77,6 @@ class PointsManager {
   private initKnownCompletions() {
     try {
       const pState = progressManager.getState();
-      if (Array.isArray(pState.completedTheoryChapters)) {
-        pState.completedTheoryChapters.forEach((c) => this.knownCompletedTheory.add(c));
-      }
       if (Array.isArray(pState.completedVideos)) {
         pState.completedVideos.forEach((v) => this.knownCompletedVideos.add(v));
       }
@@ -97,10 +95,10 @@ class PointsManager {
       const stored = localStorage.getItem(POINTS_STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (parsed && parsed.version === 1) {
+        if (parsed && parsed.version === 2) {
           return {
-            version: 1,
-            quizPoints: typeof parsed.quizPoints === 'number' ? Math.min(20, parsed.quizPoints) : 0,
+            version: 2,
+            quizPoints: typeof parsed.quizPoints === 'number' ? Math.min(30, parsed.quizPoints) : 0,
             processedQuizQuestionIds: Array.isArray(parsed.processedQuizQuestionIds) ? parsed.processedQuizQuestionIds : [],
             hintUsesCount: typeof parsed.hintUsesCount === 'number' && parsed.hintUsesCount >= 0 ? parsed.hintUsesCount : 0,
             guidedSolveUsesCount: typeof parsed.guidedSolveUsesCount === 'number' && parsed.guidedSolveUsesCount >= 0 ? parsed.guidedSolveUsesCount : 0,
@@ -109,7 +107,7 @@ class PointsManager {
         }
       }
 
-      // If no points record exists yet, check if there are pre-existing quiz answers in localStorage
+      // Check for pre-existing quiz answers in localStorage and migrate
       const existingAnswersRaw = localStorage.getItem(QUIZ_STORAGE_ANSWERS_KEY);
       if (existingAnswersRaw) {
         try {
@@ -121,30 +119,38 @@ class PointsManager {
             Object.values(parsedAnswers).forEach((rec: any) => {
               if (rec && typeof rec.questionId === 'number') {
                 processedIds.push(rec.questionId);
-                if (rec.isCorrect) {
-                  initialQuizPts += 2;
+                if (rec.isTimedOut) {
+                  initialActivities.push({
+                    id: `quiz-init-${rec.questionId}`,
+                    title: `Quiz Question ${rec.questionId} Timed Out (0 pts)`,
+                    typeLabel: 'QUIZ TIMEOUT',
+                    points: 0,
+                    timestamp: Date.now() - 60000,
+                  });
+                } else if (rec.isCorrect) {
+                  initialQuizPts += 3;
                   initialActivities.push({
                     id: `quiz-init-${rec.questionId}`,
                     title: `Correct Quiz Answer (Q${rec.questionId})`,
                     typeLabel: 'QUIZ CORRECT',
-                    points: 2,
+                    points: 3,
                     timestamp: Date.now() - 60000,
                   });
                 } else {
-                  initialQuizPts -= 1;
+                  initialQuizPts -= 2;
                   initialActivities.push({
                     id: `quiz-init-${rec.questionId}`,
                     title: `Incorrect Quiz Answer (Q${rec.questionId})`,
                     typeLabel: 'QUIZ INCORRECT',
-                    points: -1,
+                    points: -2,
                     timestamp: Date.now() - 60000,
                   });
                 }
               }
             });
-            initialQuizPts = Math.min(20, initialQuizPts);
+            initialQuizPts = Math.min(30, initialQuizPts);
             const initialData: StoredPointsData = {
-              version: 1,
+              version: 2,
               quizPoints: initialQuizPts,
               processedQuizQuestionIds: processedIds,
               hintUsesCount: 0,
@@ -175,15 +181,15 @@ class PointsManager {
   }
 
   /**
-   * Syncs completed theory, video, and game activities from progressManager.
-   * If emitNotification is true, fires a toast for genuine new completions.
+   * Syncs completed video (10 pts each, max 20) and game activities (10 pts each, max 50) from progressManager.
+   * Learn/Theory contributes 0 points.
    */
   private syncProgressActivities(emitNotification: boolean = false) {
     try {
       const pState = progressManager.getState();
       let hasChanges = false;
 
-      // 1. Game Levels Completed (5 levels, 10 pts each)
+      // 1. Game Levels Completed (5 levels, 10 pts each = max 50 pts)
       if (Array.isArray(pState.levelsCompleted)) {
         pState.levelsCompleted.forEach((lvl) => {
           if (lvl >= 1 && lvl <= 5) {
@@ -216,39 +222,7 @@ class PointsManager {
         });
       }
 
-      // 2. Theory Modules Completed (12 modules, 2 pts each)
-      if (Array.isArray(pState.completedTheoryChapters)) {
-        pState.completedTheoryChapters.forEach((chap) => {
-          const isNewToKnown = !this.knownCompletedTheory.has(chap);
-          this.knownCompletedTheory.add(chap);
-
-          const eventId = `theory-${chap}`;
-          if (!this.data.activities.some((a) => a.id === eventId)) {
-            const num = chap.replace(/\D/g, '') || chap;
-            this.data.activities.unshift({
-              id: eventId,
-              title: `Completed Theory Module ${parseInt(num, 10) || num}`,
-              typeLabel: 'THEORY COMPLETED',
-              points: 2,
-              timestamp: Date.now(),
-            });
-            hasChanges = true;
-
-            if (emitNotification && isNewToKnown) {
-              this.emitNotification({
-                id: `notif-${Date.now()}-${Math.random()}`,
-                amount: 2,
-                title: '+2 Points',
-                message: 'Theory Module Completed',
-                type: 'reward',
-                timestamp: Date.now(),
-              });
-            }
-          }
-        });
-      }
-
-      // 3. Visualization Modules Completed (2 modules, 3 pts each)
+      // 2. Visualization Modules Completed (2 modules, 10 pts each = max 20 pts)
       if (Array.isArray(pState.completedVideos)) {
         pState.completedVideos.forEach((vid) => {
           const isNewToKnown = !this.knownCompletedVideos.has(vid);
@@ -261,7 +235,7 @@ class PointsManager {
               id: eventId,
               title: `Completed Visualization Module ${vidNum}`,
               typeLabel: 'VISUALIZATION COMPLETED',
-              points: 3,
+              points: 10,
               timestamp: Date.now(),
             });
             hasChanges = true;
@@ -269,8 +243,8 @@ class PointsManager {
             if (emitNotification && isNewToKnown) {
               this.emitNotification({
                 id: `notif-${Date.now()}-${Math.random()}`,
-                amount: 3,
-                title: '+3 Points',
+                amount: 10,
+                title: '+10 Points',
                 message: 'Visualization Completed',
                 type: 'reward',
                 timestamp: Date.now(),
@@ -286,6 +260,10 @@ class PointsManager {
     } catch {
       // Ignore
     }
+  }
+
+  public getState(): PointsState {
+    return this.getPoints();
   }
 
   public subscribe(listener: PointsListener): () => void {
@@ -326,33 +304,35 @@ class PointsManager {
 
   /**
    * Centralized Points Calculation
-   * Total Points = Theory Points + Quiz Points + Visualize Points + Game Points - Hint Penalties - Guided-Solve Penalties
-   * Real total supports negative values (e.g. -2, -12).
+   * Visualization (20) + Game (50) + Quiz (30) = 100 max positive points.
+   * Learn / Theory contributes 0 points.
+   * Guided Solve penalty: −4 pts per actual use.
+   * Hint penalty: −2 pts per actual use.
    */
   public getPoints(): PointsState {
-    // 1. Theory Modules: 12 modules, +2 points each on first completion (max 24)
-    const theoryStats = progressManager.getTheoryStats();
-    const theoryPoints = Math.min(24, Math.max(0, theoryStats.completed * 2));
+    // 1. Theory Modules: 0 points (Learn/Theory contributes zero points)
+    const theoryPoints = 0;
 
-    // 2. Quiz Points: +2 correct, -1 wrong (capped at 20)
-    const quizPoints = Math.min(20, this.data.quizPoints);
+    // 2. Quiz Points: +3 correct, −2 wrong, 0 timeout (capped at max positive 30)
+    const quizPoints = Math.min(30, this.data.quizPoints);
 
-    // 3. Visualize Modules: 2 modules, +3 points each on first completion (max 6)
+    // 3. Visualize Modules: 2 modules, +10 points each (max 20)
     const videoStats = progressManager.getVideoStats();
-    const visualizePoints = Math.min(6, Math.max(0, videoStats.completed * 3));
+    const visualizePoints = Math.min(20, Math.max(0, videoStats.completed * 10));
 
-    // 4. Game Levels: 5 levels, +10 points each on first completion (max 50)
+    // 4. Game Levels: 5 levels, +10 points each (max 50)
     const gameStats = progressManager.getGameStats();
     const gamePoints = Math.min(50, Math.max(0, gameStats.completed * 10));
 
     // 5. Hint Penalties: 2 points per genuine hint use
     const hintPenalties = this.data.hintUsesCount * 2;
 
-    // 6. Guided-Solve Penalties: 3 points per genuine guided-solve use
-    const guidedSolvePenalties = this.data.guidedSolveUsesCount * 3;
+    // 6. Guided-Solve Penalties: 4 points per genuine guided-solve use
+    const guidedSolvePenalties = this.data.guidedSolveUsesCount * 4;
 
-    // Total points calculation (allows negative values, e.g. -2, -12)
-    const totalPoints = theoryPoints + quizPoints + visualizePoints + gamePoints - hintPenalties - guidedSolvePenalties;
+    // Total points calculation (allows negative values, maximum positive 100)
+    const rawTotal = theoryPoints + quizPoints + visualizePoints + gamePoints - hintPenalties - guidedSolvePenalties;
+    const totalPoints = Math.min(100, rawTotal);
 
     return {
       theoryPoints,
@@ -374,8 +354,8 @@ class PointsManager {
 
   /**
    * Records a genuine quiz answer submission.
-   * Awards +2 for correct, deducts -1 for wrong.
-   * Capped at max 20 points.
+   * Awards +3 for correct, deducts -2 for wrong.
+   * Capped at max positive 30 points.
    * Immediately updates points balance, records activity, and triggers notification.
    */
   public recordQuizAnswer(questionId: number, isCorrect: boolean): boolean {
@@ -386,7 +366,7 @@ class PointsManager {
     this.data.processedQuizQuestionIds.push(questionId);
 
     const prevQuizPoints = this.data.quizPoints;
-    const candidateQuizPoints = isCorrect ? Math.min(20, prevQuizPoints + 2) : prevQuizPoints - 1;
+    const candidateQuizPoints = isCorrect ? Math.min(30, prevQuizPoints + 3) : prevQuizPoints - 2;
     const actualDelta = candidateQuizPoints - prevQuizPoints;
     this.data.quizPoints = candidateQuizPoints;
 
@@ -428,7 +408,29 @@ class PointsManager {
   }
 
   /**
-   * Resets the quiz score and processed questions when the user resets their quiz attempt.
+   * Records a quiz question timeout (0 points awarded, marks processed to prevent repeated scoring).
+   */
+  public recordQuizTimeout(questionId: number): boolean {
+    if (this.data.processedQuizQuestionIds.includes(questionId)) {
+      return false;
+    }
+
+    this.data.processedQuizQuestionIds.push(questionId);
+    this.data.activities.unshift({
+      id: `quiz-timeout-${questionId}-${Date.now()}`,
+      title: `Quiz Question ${questionId} Timed Out (0 pts)`,
+      typeLabel: 'QUIZ TIMEOUT',
+      points: 0,
+      timestamp: Date.now(),
+    });
+
+    this.saveData();
+    this.notifyListeners();
+    return true;
+  }
+
+  /**
+   * Resets the quiz score and processed questions when needed.
    */
   public resetQuizPoints() {
     this.data.quizPoints = 0;
@@ -438,9 +440,16 @@ class PointsManager {
   }
 
   /**
-   * Records a genuine hint activation. Deducts 2 points per activation.
+   * Records a genuine hint activation. Deducts 2 points per actual use.
+   * Prevents duplicate deductions for the same event.
    */
   public recordHintUse(levelId?: number) {
+    const now = Date.now();
+    if (now - this.lastHintTimestamp < 500) {
+      return; // Ignore duplicate click/event
+    }
+    this.lastHintTimestamp = now;
+
     this.data.hintUsesCount += 1;
     const lvlText = levelId ? `Level ${levelId}` : 'Game';
     this.data.activities.unshift({
@@ -465,16 +474,23 @@ class PointsManager {
   }
 
   /**
-   * Records a genuine guided-solve activation. Deducts 3 points per activation.
+   * Records a genuine guided-solve activation. Deducts 4 points per actual use.
+   * Prevents duplicate deductions for the same event.
    */
   public recordGuidedSolveUse(levelId?: number) {
+    const now = Date.now();
+    if (now - this.lastGuidedSolveTimestamp < 500) {
+      return; // Ignore duplicate click/event
+    }
+    this.lastGuidedSolveTimestamp = now;
+
     this.data.guidedSolveUsesCount += 1;
     const lvlText = levelId ? `Level ${levelId}` : 'Game';
     this.data.activities.unshift({
       id: `guided-${Date.now()}-${Math.random()}`,
       title: `Used Guided Solve: ${lvlText}`,
       typeLabel: 'GUIDED SOLVE USED',
-      points: -3,
+      points: -4,
       timestamp: Date.now(),
     });
     this.saveData();
@@ -483,8 +499,8 @@ class PointsManager {
     // Trigger Popup Notification
     this.emitNotification({
       id: `notif-${Date.now()}-${Math.random()}`,
-      amount: -3,
-      title: '-3 Points',
+      amount: -4,
+      title: '-4 Points',
       message: 'Guided Solve Used',
       type: 'penalty',
       timestamp: Date.now(),
@@ -496,14 +512,13 @@ class PointsManager {
    */
   public resetAll() {
     this.data = {
-      version: 1,
+      version: 2,
       quizPoints: 0,
       processedQuizQuestionIds: [],
       hintUsesCount: 0,
       guidedSolveUsesCount: 0,
       activities: [],
     };
-    this.knownCompletedTheory.clear();
     this.knownCompletedVideos.clear();
     this.knownCompletedLevels.clear();
     this.saveData();
