@@ -320,8 +320,8 @@ export const QuizView: React.FC<QuizViewProps> = ({
   // Temporary selection before confirming/submitting the question
   const [pendingSelection, setPendingSelection] = useState<number | null>(null);
 
-  // Per-question countdown timer (30 seconds per question)
-  const QUESTION_TIME_LIMIT = 30;
+  // Per-question countdown timer (20 seconds per question)
+  const QUESTION_TIME_LIMIT = 20;
   const [timeLeft, setTimeLeft] = useState<number>(QUESTION_TIME_LIMIT);
   const [isQuizStarted, setIsQuizStarted] = useState<boolean>(false);
   const [startQuizWarning, setStartQuizWarning] = useState<string | null>(null);
