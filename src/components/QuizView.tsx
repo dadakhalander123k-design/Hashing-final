@@ -19,6 +19,7 @@ import {
   Home,
   Clock,
   Timer,
+  Play,
 } from 'lucide-react';
 import { progressManager } from '../utils/progressManager';
 import { pointsManager } from '../utils/pointsManager';
@@ -273,6 +274,12 @@ export const QuizView: React.FC<QuizViewProps> = ({
   // Per-question countdown timer (30 seconds per question)
   const QUESTION_TIME_LIMIT = 30;
   const [timeLeft, setTimeLeft] = useState<number>(QUESTION_TIME_LIMIT);
+  const [isQuizStarted, setIsQuizStarted] = useState<boolean>(false);
+
+  const handleStartQuiz = useCallback(() => {
+    setIsQuizStarted(true);
+    soundManager.playClick();
+  }, []);
 
   // Current question helper
   const currentQuestion = QUIZ_QUESTIONS[currentQuestionIndex] || QUIZ_QUESTIONS[0];
@@ -299,9 +306,9 @@ export const QuizView: React.FC<QuizViewProps> = ({
     soundManager.playQuizWrong();
   }, [currentQuestion]);
 
-  // Countdown timer effect
+  // Countdown timer effect (only runs after user clicks Start Quiz)
   useEffect(() => {
-    if (isCurrentQuestionAnswered || isSubmitted) return;
+    if (!isQuizStarted || isCurrentQuestionAnswered || isSubmitted) return;
 
     setTimeLeft(QUESTION_TIME_LIMIT);
     const targetQId = currentQuestion.id;
@@ -318,7 +325,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [currentQuestionIndex, isCurrentQuestionAnswered, isSubmitted, currentQuestion.id, handleTimeout]);
+  }, [isQuizStarted, currentQuestionIndex, isCurrentQuestionAnswered, isSubmitted, currentQuestion.id, handleTimeout]);
 
   // Synchronize selection with current question record
   useEffect(() => {
@@ -941,17 +948,32 @@ export const QuizView: React.FC<QuizViewProps> = ({
                   )}
                 </div>
               ) : (
-                <div
-                  id="quiz-question-timer"
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg font-mono text-xs font-bold border transition-all ${
-                    timeLeft <= 10
-                      ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/60 dark:text-rose-400 dark:border-rose-800 animate-pulse'
-                      : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-400 dark:border-amber-800'
-                  }`}
-                  aria-label={`Time remaining: ${timeLeft} seconds`}
-                >
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>Time: {timeLeft}s</span>
+                <div className="flex items-center gap-2 sm:gap-2.5">
+                  {!isQuizStarted && (
+                    <button
+                      id="btn-start-quiz"
+                      type="button"
+                      onClick={handleStartQuiz}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#2563EB] dark:hover:bg-[#1D4ED8] text-white border border-[#1D4ED8] dark:border-[#3B82F6] rounded-lg text-xs font-bold font-mono tracking-wide shadow-xs transition-all cursor-pointer active:scale-95"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <span>Start Quiz</span>
+                    </button>
+                  )}
+                  <div
+                    id="quiz-question-timer"
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg font-mono text-xs font-bold border transition-all ${
+                      !isQuizStarted
+                        ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-400 dark:border-amber-800'
+                        : timeLeft <= 10
+                        ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/60 dark:text-rose-400 dark:border-rose-800 animate-pulse'
+                        : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-400 dark:border-amber-800'
+                    }`}
+                    aria-label={`Time remaining: ${timeLeft} seconds`}
+                  >
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>Time: {timeLeft}s</span>
+                  </div>
                 </div>
               )}
             </div>
