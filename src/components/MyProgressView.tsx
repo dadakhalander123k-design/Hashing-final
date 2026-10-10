@@ -1,32 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
-  CheckCircle2,
-  Sparkles,
-  ArrowRight,
   Trophy,
-  BookOpen,
-  Gamepad2,
-  Layers,
-  Video,
-  Award,
-  AlertTriangle,
-  Flame,
-  Check,
   Star,
-  Circle,
-  Clock,
   TrendingUp,
   Eye,
+  Gamepad2,
   Brain,
-  ShieldAlert,
-  XCircle,
 } from 'lucide-react';
 import { progressManager } from '../utils/progressManager';
 import { pointsManager, PointsState } from '../utils/pointsManager';
-import { ModuleRecord, ModuleStatus, UserProgressState, MainViewTab } from '../types/game';
+import { UserProgressState, MainViewTab } from '../types/game';
 import { useScrollReveal } from '../hooks/useScrollReveal';
-import { CompletionCelebrationModal } from './CompletionCelebrationModal';
-import { soundManager } from '../utils/audio';
 
 interface MyProgressViewProps {
   onNavigateToTab: (tab: MainViewTab, levelId?: number, chapterId?: string) => void;
@@ -34,35 +18,17 @@ interface MyProgressViewProps {
 
 export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab }) => {
   useScrollReveal();
-  const [progressState, setProgressState] = useState<UserProgressState>(progressManager.getState());
+  const [, setProgressState] = useState<UserProgressState>(progressManager.getState());
   const [points, setPoints] = useState<PointsState>(() => pointsManager.getPoints());
-  const [showCertificateModal, setShowCertificateModal] = useState<boolean>(false);
-  const [activeFilter, setActiveFilter] = useState<'ALL' | 'FOUNDATION' | 'TECHNIQUE' | 'ANALYSIS' | 'EXAMINATION'>('ALL');
-  const [quizAnswers, setQuizAnswers] = useState<Record<number, any>>(() => {
-    try {
-      const stored = localStorage.getItem('hash_quest_quiz_answers_v3');
-      return stored ? JSON.parse(stored) : {};
-    } catch {
-      return {};
-    }
-  });
 
   useEffect(() => {
     progressManager.checkAndCompleteCertification();
     const unsubscribe = progressManager.subscribe((state) => {
       setProgressState(state);
       setPoints(pointsManager.getPoints());
-      try {
-        const stored = localStorage.getItem('hash_quest_quiz_answers_v3');
-        setQuizAnswers(stored ? JSON.parse(stored) : {});
-      } catch {}
     });
     const unsubPoints = pointsManager.subscribe((newPoints) => {
       setPoints(newPoints);
-      try {
-        const stored = localStorage.getItem('hash_quest_quiz_answers_v3');
-        setQuizAnswers(stored ? JSON.parse(stored) : {});
-      } catch {}
     });
     return () => {
       unsubscribe();
@@ -71,13 +37,6 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
   }, []);
 
   const stats = progressManager.getStats();
-  const videoStats = progressManager.getVideoStats();
-  const modules = progressManager.getModules();
-  const is100Percent = stats.percentage === 100;
-
-  const filteredModules = activeFilter === 'ALL'
-    ? modules
-    : modules.filter((m) => m.category === activeFilter);
 
   // Points breakdown: Visualization (20) + Game (50) + Quiz (30) = 100 max positive points. Learn = 0 pts.
   const visualizeMax = 20;
@@ -88,103 +47,8 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
   const gamePercent = Math.min(100, Math.max(0, Math.round((points.gamePoints / gameMax) * 100)));
   const quizPercent = Math.min(100, Math.max(0, Math.round((Math.max(0, points.quizPoints) / quizMax) * 100)));
 
-  const renderStatusBadge = (status: ModuleStatus) => {
-    switch (status) {
-      case 'MASTERED':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30">
-            <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
-            <span>Mastered</span>
-          </span>
-        );
-      case 'COMPLETED':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30">
-            <Check className="w-3 h-3 text-emerald-600 stroke-[2.5]" />
-            <span>Completed</span>
-          </span>
-        );
-      case 'IN_PROGRESS':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#3B82F6] border border-blue-200 dark:border-blue-500/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] dark:bg-[#3B82F6] animate-pulse" />
-            <span>In Progress</span>
-          </span>
-        );
-      case 'NOT_STARTED':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full bg-slate-50 dark:bg-[#0B1120] text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800">
-            <Circle className="w-3 h-3 text-slate-400 dark:text-slate-500" />
-            <span>Not Started</span>
-          </span>
-        );
-    }
-  };
-
-  const handleModuleClick = (module: ModuleRecord) => {
-    soundManager.playSelect();
-    progressManager.startModule(module.id);
-    onNavigateToTab(module.targetTab, module.targetLevelId, module.targetChapterId);
-  };
-
-  const handleContinueNext = () => {
-    soundManager.playPrimaryClick();
-    if (stats.nextModule) {
-      handleModuleClick(stats.nextModule);
-    } else {
-      onNavigateToTab('GAME', 1);
-    }
-  };
-
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 font-sans text-slate-900 dark:text-white animate-page-enter pb-24">
-      {/* Top Utility Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-bold font-mono uppercase tracking-widest text-[#2563EB] dark:text-[#3B82F6] bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-md border border-blue-100 dark:border-blue-500/30">
-            Curriculum Progress Tracker
-          </span>
-          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            Last synced: {new Date(progressState.lastActiveTimestamp).toLocaleDateString()}
-          </span>
-        </div>
-      </div>
-
-      {/* 100% Completion Golden Banner if Completed */}
-      {is100Percent && (
-        <div
-          id="progress-100-percent-banner"
-          className="mb-6 p-5 bg-gradient-to-r from-[#EFF6FF] via-[#F8FAFF] to-[#DBEAFE]/70 dark:from-[#172033] dark:via-[#111827] dark:to-[#0B1120] border border-[#DBEAFE] dark:border-blue-500/30 rounded-2xl shadow-xs dark:shadow-none flex flex-col sm:flex-row items-center justify-between gap-4 animate-editorial-scale"
-        >
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-xl bg-[#2563EB] dark:bg-[#2563EB] text-white flex items-center justify-center font-bold shadow-xs">
-              <Sparkles className="w-6 h-6 text-amber-300" />
-            </div>
-            <div>
-              <div className="text-xs font-bold font-mono text-[#2563EB] dark:text-[#3B82F6] uppercase tracking-wider">
-                ★ Congratulations! 100% Curriculum Completed
-              </div>
-              <div className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
-                You Have Mastered All 12 Hashing Modules & Activities
-              </div>
-            </div>
-          </div>
-
-          <button
-            id="btn-open-certificate-from-progress"
-            onClick={() => {
-              soundManager.playModalOpen();
-              setShowCertificateModal(true);
-            }}
-            className="btn-modern-primary px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer transition-all"
-          >
-            <Award className="w-4 h-4" />
-            <span>View Certificate</span>
-          </button>
-        </div>
-      )}
-
       {/* 1. Overall Completion Card — Matching Reference Screenshot Card 1 */}
       <div
         id="progress-overall-card"
@@ -238,7 +102,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
         </div>
       </div>
 
-      {/* 2. Topic Score Card with 4 Categories — Matching Reference Screenshot Card 2 */}
+      {/* 2. Topic Score Card with 3 Categories — Matching Reference Screenshot Card 2 */}
       <div
         id="progress-topic-score-card"
         className="bg-white dark:bg-[#0B132B] border border-slate-200 dark:border-slate-800/80 rounded-2xl sm:rounded-3xl p-6 sm:p-7 shadow-xs dark:shadow-xl mt-6 relative overflow-hidden reveal-on-scroll stagger-1"
@@ -395,342 +259,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({ onNavigateToTab 
             </p>
           </div>
         </div>
-
-        {/* Deductions Summary Row if Any Incurred */}
-        {(points.hintPenalties > 0 || points.guidedSolvePenalties > 0) && (
-          <div className="mt-4 p-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-            <span className="text-rose-700 dark:text-rose-300 font-semibold flex items-center gap-1.5">
-              <ShieldAlert className="w-4 h-4 text-rose-500" />
-              Applied Deductions:
-            </span>
-            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400 font-bold">
-              {points.hintPenalties > 0 && <span>Hints: −{points.hintPenalties} pts ({points.hintUsesCount} uses)</span>}
-              {points.guidedSolvePenalties > 0 && <span>Guided Solve: −{points.guidedSolvePenalties} pts ({points.guidedSolveUsesCount} uses)</span>}
-            </div>
-          </div>
-        )}
       </div>
-
-      {/* Performance Stats & Next Recommendation */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 mb-8">
-        {/* Stats Breakdown */}
-        <div className="bg-white dark:bg-[#0B132B] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between shadow-xs dark:shadow-xl reveal-on-scroll">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 font-mono">
-            Performance Stats
-          </div>
-
-          <div className="grid grid-cols-3 gap-2 py-3 border-y border-slate-100 dark:border-slate-800 text-center">
-            <div>
-              <div className="text-2xl font-extrabold text-amber-600 dark:text-amber-400 font-mono">{stats.mastered}</div>
-              <div className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase mt-0.5">Mastered ★</div>
-            </div>
-            <div className="border-x border-slate-100 dark:border-slate-800">
-              <div className="text-2xl font-extrabold text-slate-900 dark:text-white font-mono">{stats.completed} / {stats.total}</div>
-              <div className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase mt-0.5">Activities</div>
-            </div>
-            <div>
-              <div className="text-2xl font-extrabold text-[#2563EB] dark:text-[#3B82F6] font-mono">{progressState.levelsCompleted.length} / 5</div>
-              <div className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase mt-0.5">Levels Won</div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-3 font-medium">
-            <Trophy className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6] shrink-0" />
-            <span className="truncate">Master Challenges: {progressState.masterChallengesCompleted.length >= 4 ? 'All Clear (Master)' : `${progressState.masterChallengesCompleted.length} / 4 Challenges`}</span>
-          </div>
-        </div>
-
-        {/* Next Recommended Step */}
-        <div className="bg-white dark:bg-[#0B132B] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between shadow-xs dark:shadow-xl reveal-on-scroll stagger-1">
-          <div>
-            <div className="flex items-center justify-between text-xs font-bold font-mono uppercase tracking-wider text-[#2563EB] dark:text-[#3B82F6] mb-1">
-              <span>Recommended Next Step</span>
-              <span className="w-2 h-2 rounded-full bg-[#2563EB] dark:bg-[#3B82F6] animate-ping" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white line-clamp-1">
-              {stats.nextModule.title}
-            </h3>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-              {stats.nextModule.criteriaDescription}
-            </p>
-          </div>
-
-          <button
-            id="btn-continue-learning-cta"
-            onClick={handleContinueNext}
-            className="w-full mt-4 btn-modern-primary py-2.5 px-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider cursor-pointer"
-          >
-            <span>Continue Learning</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* 3. Detailed Activity Completion Status (2 Videos, 5 Games, 10 Quiz Questions) */}
-      <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 mb-8 shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] reveal-on-scroll space-y-6">
-        <div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-            <Layers className="w-5 h-5 text-[#2563EB] dark:text-[#3B82F6]" />
-            <span>Activity Completion Status</span>
-          </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Detailed breakdown of completed videos (2), challenge levels (5), and evaluated quiz questions (10).
-          </p>
-        </div>
-
-        {/* Part A: 2 Videos */}
-        <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold font-mono uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-2">
-              <Video className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />
-              <span>Visualization Modules ({videoStats.completed} / 2 Completed • 20 pts max)</span>
-            </span>
-            <button
-              onClick={() => onNavigateToTab('VIDEO')}
-              className="text-xs text-[#2563EB] dark:text-[#3B82F6] hover:underline font-semibold cursor-pointer"
-            >
-              Watch Videos →
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-[#0B1120] border border-slate-200/80 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold text-[#2563EB] dark:text-[#3B82F6]">01</span>
-                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">Introduction to Hashing</span>
-              </div>
-              {videoStats.isIntroCompleted ? (
-                <span className="inline-flex items-center gap-1 text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
-                  <Check className="w-3.5 h-3.5 stroke-[2.5]" /> +10 pts
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-mono">
-                  <Circle className="w-3 h-3" /> 0 / 10 pts
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-[#0B1120] border border-slate-200/80 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold text-[#2563EB] dark:text-[#3B82F6]">02</span>
-                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">Collision Resolution</span>
-              </div>
-              {videoStats.isCollisionCompleted ? (
-                <span className="inline-flex items-center gap-1 text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
-                  <Check className="w-3.5 h-3.5 stroke-[2.5]" /> +10 pts
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-mono">
-                  <Circle className="w-3 h-3" /> 0 / 10 pts
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Part B: 5 Game Levels */}
-        <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold font-mono uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-2">
-              <Gamepad2 className="w-4 h-4 text-indigo-500" />
-              <span>Game Challenge Levels ({progressState.levelsCompleted.length} / 5 Completed • 50 pts max)</span>
-            </span>
-            <button
-              onClick={() => onNavigateToTab('GAME', 1)}
-              className="text-xs text-[#2563EB] dark:text-[#3B82F6] hover:underline font-semibold cursor-pointer"
-            >
-              Play Games →
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-            {[1, 2, 3, 4, 5].map((lvl) => {
-              const isWon = progressState.levelsCompleted.includes(lvl);
-              return (
-                <div
-                  key={lvl}
-                  className={`p-3 rounded-xl border flex flex-col items-center text-center gap-1.5 transition-all ${
-                    isWon
-                      ? 'bg-emerald-50/60 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800'
-                      : 'bg-slate-50 dark:bg-[#0B1120] border-slate-200/80 dark:border-slate-800'
-                  }`}
-                >
-                  <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">Level {lvl}</span>
-                  {isWon ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold font-mono text-emerald-600 dark:text-emerald-400">
-                      <Check className="w-3 h-3 stroke-[3]" /> +10 pts
-                    </span>
-                  ) : (
-                    <span className="text-[11px] text-slate-400 font-mono">Incomplete</span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Part C: 10 Quiz Questions */}
-        <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold font-mono uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-2">
-              <Brain className="w-4 h-4 text-sky-500" />
-              <span>Quiz Questions Assessment ({Object.keys(quizAnswers).length} / 10 Answered • 30 pts max)</span>
-            </span>
-            <button
-              onClick={() => onNavigateToTab('QUIZ')}
-              className="text-xs text-[#2563EB] dark:text-[#3B82F6] hover:underline font-semibold cursor-pointer"
-            >
-              Take Quiz →
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((qId) => {
-              const rec = quizAnswers[qId];
-              let statusLabel = 'Unanswered (0)';
-              let style = 'bg-slate-50 dark:bg-[#0B1120] border-slate-200/80 dark:border-slate-800 text-slate-500';
-
-              if (rec) {
-                if (rec.isTimedOut) {
-                  statusLabel = 'Timeout (0 pts)';
-                  style = 'bg-amber-50/60 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 font-bold';
-                } else if (rec.isCorrect) {
-                  statusLabel = 'Correct (+3 pts)';
-                  style = 'bg-emerald-50/60 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-bold';
-                } else {
-                  statusLabel = 'Wrong (−2 pts)';
-                  style = 'bg-rose-50/60 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 font-bold';
-                }
-              }
-
-              return (
-                <div key={qId} className={`p-2.5 rounded-xl border flex flex-col items-center text-center gap-1 text-xs font-mono ${style}`}>
-                  <span className="font-bold">Q{qId}</span>
-                  <span className="text-[10px] leading-tight">{statusLabel}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3 mb-6">
-        <div className="flex items-center gap-1.5 overflow-x-auto py-1">
-          {(['ALL', 'FOUNDATION', 'TECHNIQUE', 'ANALYSIS', 'EXAMINATION'] as const).map((cat) => (
-            <button
-              key={cat}
-              onClick={() => {
-                soundManager.playTab();
-                setActiveFilter(cat);
-              }}
-              className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${activeFilter === cat
-                ? 'bg-[#2563EB] dark:bg-[#2563EB] text-white shadow-xs dark:shadow-none'
-                : 'bg-slate-100 dark:bg-[#0B1120] text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
-                }`}
-            >
-              {cat === 'ALL' ? 'All Modules' : cat.charAt(0) + cat.slice(1).toLowerCase()}
-            </button>
-          ))}
-        </div>
-
-        <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
-          Showing {filteredModules.length} of {modules.length} modules
-        </div>
-      </div>
-
-      {/* Module Ledger Cards List */}
-      <div className="space-y-3.5">
-        {filteredModules.map((m, idx) => {
-          const isDone = m.status === 'COMPLETED' || m.status === 'MASTERED';
-          const isInProgress = m.status === 'IN_PROGRESS';
-          const staggerClass = idx < 6 ? `stagger-${idx + 1}` : '';
-
-          return (
-            <div
-              key={m.id}
-              id={`progress-module-${m.id}`}
-              className={`bg-white dark:bg-[#111827] border rounded-2xl p-5 sm:p-6 transition-all duration-200 shadow-xs dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] reveal-on-scroll ${staggerClass} ${isDone
-                ? 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                : isInProgress
-                  ? 'border-blue-300 dark:border-blue-400/50 ring-1 ring-blue-200 dark:ring-blue-500/30'
-                  : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                }`}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                {/* Left metadata & title */}
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="text-xs font-bold font-mono px-2 py-0.5 bg-slate-100 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-md">
-                      {m.code}
-                    </span>
-                    <span className="text-xs font-semibold text-[#2563EB] dark:text-[#3B82F6] uppercase font-mono">
-                      {m.category}
-                    </span>
-                    {renderStatusBadge(m.status)}
-                  </div>
-
-                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-                    {m.title}
-                  </h2>
-
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                    {m.description}
-                  </p>
-
-                  <div className="mt-3 flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#0B1120] px-3 py-1.5 rounded-lg border border-slate-200/80 dark:border-slate-800 inline-block font-sans">
-                    <span className="font-bold text-slate-700 dark:text-slate-200">Criteria:</span>
-                    <span>{m.criteriaDescription}</span>
-                  </div>
-                </div>
-
-                {/* Right Action & Progress Meter */}
-                <div className="flex flex-col sm:items-end justify-between gap-3 shrink-0 sm:border-l sm:border-slate-100 dark:sm:border-slate-800 sm:pl-6">
-                  <div className="w-full sm:w-36 text-right">
-                    <div className="flex justify-between items-center text-xs font-semibold mb-1 text-slate-500 dark:text-slate-400">
-                      <span>Progress</span>
-                      <span className="text-slate-900 dark:text-white font-mono">{m.progressPercent}%</span>
-                    </div>
-                    <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${m.status === 'MASTERED'
-                          ? 'bg-amber-500'
-                          : m.status === 'COMPLETED'
-                            ? 'bg-emerald-600'
-                            : 'bg-[#2563EB] dark:bg-[#3B82F6]'
-                          }`}
-                        style={{ width: `${m.progressPercent}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    id={`btn-open-module-${m.id}`}
-                    onClick={() => handleModuleClick(m)}
-                    className={`px-4 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 cursor-pointer transition-all ${isDone
-                      ? 'btn-modern-secondary'
-                      : 'btn-modern-primary'
-                      }`}
-                  >
-                    <span>{isDone ? 'Review Module' : isInProgress ? 'Resume Activity' : 'Start Module'}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-
-
-      {/* 100% Completion Certificate Modal */}
-      <CompletionCelebrationModal
-        isOpen={showCertificateModal}
-        onClose={() => setShowCertificateModal(false)}
-        onNavigateToLab={() => onNavigateToTab('LAB')}
-        onNavigateToProgress={() => setShowCertificateModal(false)}
-      />
     </div>
   );
 };
