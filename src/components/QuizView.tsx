@@ -20,6 +20,7 @@ import {
   Clock,
   Timer,
   Play,
+  AlertCircle,
 } from 'lucide-react';
 import { progressManager } from '../utils/progressManager';
 import { pointsManager } from '../utils/pointsManager';
@@ -275,10 +276,15 @@ export const QuizView: React.FC<QuizViewProps> = ({
   const QUESTION_TIME_LIMIT = 30;
   const [timeLeft, setTimeLeft] = useState<number>(QUESTION_TIME_LIMIT);
   const [isQuizStarted, setIsQuizStarted] = useState<boolean>(false);
+  const [startQuizWarning, setStartQuizWarning] = useState<string | null>(null);
 
   const handleStartQuiz = useCallback(() => {
-    setIsQuizStarted(true);
-    soundManager.playClick();
+    setIsQuizStarted((prev) => {
+      if (prev) return prev;
+      soundManager.playClick();
+      return true;
+    });
+    setStartQuizWarning(null);
   }, []);
 
   // Current question helper
@@ -440,12 +446,24 @@ export const QuizView: React.FC<QuizViewProps> = ({
   // Handle student selecting an option (prevent selection if answered or timed out)
   const handleSelectOption = (optionIndex: number) => {
     if (isCurrentQuestionAnswered || isSubmitted) return;
+    if (!isQuizStarted) {
+      setStartQuizWarning('Please click Start Quiz first to begin the quiz.');
+      soundManager.playError();
+      setPendingSelection(optionIndex);
+      return;
+    }
+    setStartQuizWarning(null);
     soundManager.playQuizSelect();
     setPendingSelection(optionIndex);
   };
 
   // Handle confirming answer for current question (Records answer without revealing final result screen)
   const handleConfirmAnswer = () => {
+    if (!isQuizStarted) {
+      setStartQuizWarning('Please click Start Quiz first to begin the quiz.');
+      soundManager.playError();
+      return;
+    }
     if (pendingSelection === null || isCurrentQuestionAnswered) return;
 
     const q = currentQuestion;
@@ -479,6 +497,11 @@ export const QuizView: React.FC<QuizViewProps> = ({
 
   // Handle submitting the entire examination ONLY when user clicks "Complete & Review"
   const handleSubmitExamination = () => {
+    if (!isQuizStarted) {
+      setStartQuizWarning('Please click Start Quiz first to begin the quiz.');
+      soundManager.playError();
+      return;
+    }
     // If pending selection on current question is not saved yet, save it
     const updatedAnswers = { ...studentAnswers };
     if (pendingSelection !== null && !updatedAnswers[currentQuestion.id]) {
@@ -632,13 +655,17 @@ export const QuizView: React.FC<QuizViewProps> = ({
                   key={q.id}
                   id={`btn-quiz-jump-${q.id}`}
                   onClick={() => {
-                    soundManager.playNav();
                     if (isSubmitted) {
                       const el = document.getElementById(`quiz-review-card-${q.id}`);
                       if (el) {
                         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                       }
+                    } else if (!isQuizStarted) {
+                      setStartQuizWarning('Please click Start Quiz first to begin the quiz.');
+                      soundManager.playError();
+                      return;
                     } else {
+                      soundManager.playNav();
                       setCurrentQuestionIndex(idx);
                     }
                   }}
@@ -978,6 +1005,27 @@ export const QuizView: React.FC<QuizViewProps> = ({
               )}
             </div>
 
+            {/* Inactive State Warning Banner */}
+            {startQuizWarning && !isQuizStarted && (
+              <div
+                id="quiz-start-warning"
+                role="alert"
+                className="mb-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-semibold flex items-center justify-between gap-3 animate-fade-in shadow-xs"
+              >
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                  <span>{startQuizWarning}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleStartQuiz}
+                  className="px-2.5 py-1 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-lg text-xs font-bold font-mono shrink-0 cursor-pointer transition-all active:scale-95"
+                >
+                  Start Quiz
+                </button>
+              </div>
+            )}
+
             {/* Question Statement */}
             <p className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-6 leading-snug break-words">
               {currentQuestion.question}
@@ -1035,13 +1083,18 @@ export const QuizView: React.FC<QuizViewProps> = ({
             {/* Answer Confirmation / Next Button Bar */}
             <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
               <button
-                disabled={currentQuestionIndex === 0}
+                disabled={!isQuizStarted || currentQuestionIndex === 0}
                 onClick={() => {
+                  if (!isQuizStarted) {
+                    setStartQuizWarning('Please click Start Quiz first to begin the quiz.');
+                    soundManager.playError();
+                    return;
+                  }
                   soundManager.playNav();
                   setCurrentQuestionIndex((prev) => Math.max(0, prev - 1));
                 }}
                 className={`btn-modern-secondary px-4 py-2 text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                  currentQuestionIndex === 0 ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'cursor-pointer'
+                  !isQuizStarted || currentQuestionIndex === 0 ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'cursor-pointer'
                 }`}
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
@@ -1051,10 +1104,10 @@ export const QuizView: React.FC<QuizViewProps> = ({
               {!isCurrentQuestionAnswered ? (
                 <button
                   id="btn-confirm-answer"
-                  disabled={pendingSelection === null}
+                  disabled={isQuizStarted && pendingSelection === null}
                   onClick={handleConfirmAnswer}
                   className={`btn-modern-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all ${
-                    pendingSelection !== null ? 'cursor-pointer' : 'opacity-40 cursor-not-allowed pointer-events-none'
+                    !isQuizStarted || pendingSelection !== null ? 'cursor-pointer' : 'opacity-40 cursor-not-allowed pointer-events-none'
                   }`}
                 >
                   <Check className="w-4 h-4" />
@@ -1064,6 +1117,11 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 <button
                   id="btn-next-question"
                   onClick={() => {
+                    if (!isQuizStarted) {
+                      setStartQuizWarning('Please click Start Quiz first to begin the quiz.');
+                      soundManager.playError();
+                      return;
+                    }
                     soundManager.playClick();
                     setCurrentQuestionIndex((prev) => prev + 1);
                   }}
