@@ -1,7 +1,5 @@
 import { progressManager } from './progressManager';
-
-const POINTS_STORAGE_KEY = 'hash_quest_points_system_v2';
-const QUIZ_STORAGE_ANSWERS_KEY = 'hash_quest_quiz_answers_v3';
+import { userManager } from './userManager';
 
 export interface PointActivityEvent {
   id: string;
@@ -9,6 +7,11 @@ export interface PointActivityEvent {
   typeLabel: string;
   points: number;
   timestamp: number;
+  userId?: string;
+  topicId?: string;
+  activityId?: string;
+  activityType?: string;
+  completionStatus?: string;
 }
 
 export interface PointNotification {
@@ -30,10 +33,14 @@ export interface PointsState {
   hintUsesCount: number;
   guidedSolveUsesCount: number;
   totalPoints: number; // Real total, supports negative values, max positive 100
+  userId?: string;
+  topicId?: string;
 }
 
 interface StoredPointsData {
   version: 2;
+  userId?: string;
+  topicId?: string;
   quizPoints: number;
   processedQuizQuestionIds: number[];
   hintUsesCount: number;
@@ -43,6 +50,8 @@ interface StoredPointsData {
 
 const DEFAULT_STORED_DATA: StoredPointsData = {
   version: 2,
+  userId: 'user_alice',
+  topicId: 'hashing',
   quizPoints: 0,
   processedQuizQuestionIds: [],
   hintUsesCount: 0,
@@ -54,6 +63,7 @@ type PointsListener = (state: PointsState) => void;
 type NotificationListener = (notification: PointNotification) => void;
 
 class PointsManager {
+  private currentUserId: string;
   private data: StoredPointsData;
   private listeners: Set<PointsListener> = new Set();
   private notificationListeners: Set<NotificationListener> = new Set();
@@ -64,7 +74,8 @@ class PointsManager {
   private lastGuidedSolveTimestamp: number = 0;
 
   constructor() {
-    this.data = this.loadData();
+    this.currentUserId = userManager.getCurrentUserId();
+    this.data = this.loadData(this.currentUserId);
     this.initKnownCompletions();
 
     // Listen to progressManager updates (videos, levels completed, or resets)
@@ -72,6 +83,31 @@ class PointsManager {
       this.syncProgressActivities(true);
       this.notifyListeners();
     });
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('hash_user_changed', (e: Event) => {
+        const customEvent = e as CustomEvent;
+        const newUserId = customEvent.detail?.id || userManager.getCurrentUserId();
+        this.handleUserSwitch(newUserId);
+      });
+      (window as any).pointsManager = this;
+    }
+  }
+
+  public getCurrentUserId(): string {
+    return this.currentUserId;
+  }
+
+  public handleUserSwitch(newUserId: string) {
+    if (!newUserId) return;
+    this.currentUserId = newUserId;
+    this.knownCompletedVideos.clear();
+    this.knownCompletedLevels.clear();
+    this.lastHintTimestamp = 0;
+    this.lastGuidedSolveTimestamp = 0;
+    this.data = this.loadData(newUserId);
+    this.initKnownCompletions();
+    this.notifyListeners();
   }
 
   private initKnownCompletions() {
@@ -89,26 +125,44 @@ class PointsManager {
     this.syncProgressActivities(false);
   }
 
-  private loadData(): StoredPointsData {
-    if (typeof window === 'undefined') return { ...DEFAULT_STORED_DATA };
+  private loadData(userId: string = this.currentUserId): StoredPointsData {
+    const defaultData: StoredPointsData = {
+      ...DEFAULT_STORED_DATA,
+      userId,
+      topicId: 'hashing',
+    };
+
+    if (typeof window === 'undefined') return defaultData;
     try {
-      const stored = localStorage.getItem(POINTS_STORAGE_KEY);
+      const storageKey = userManager.getPointsKey(userId);
+      const stored = localStorage.getItem(storageKey);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed && parsed.version === 2) {
           return {
             version: 2,
+            userId,
+            topicId: 'hashing',
             quizPoints: typeof parsed.quizPoints === 'number' ? Math.min(30, parsed.quizPoints) : 0,
             processedQuizQuestionIds: Array.isArray(parsed.processedQuizQuestionIds) ? parsed.processedQuizQuestionIds : [],
             hintUsesCount: typeof parsed.hintUsesCount === 'number' && parsed.hintUsesCount >= 0 ? parsed.hintUsesCount : 0,
             guidedSolveUsesCount: typeof parsed.guidedSolveUsesCount === 'number' && parsed.guidedSolveUsesCount >= 0 ? parsed.guidedSolveUsesCount : 0,
-            activities: Array.isArray(parsed.activities) ? parsed.activities : [],
+            activities: Array.isArray(parsed.activities)
+              ? parsed.activities.map((a: any) => ({
+                  ...a,
+                  userId: a.userId || userId,
+                  topicId: a.topicId || 'hashing',
+                  activityId: a.activityId || a.id,
+                  activityType: a.activityType || 'ACTIVITY',
+                  completionStatus: a.completionStatus || (a.points >= 0 ? 'COMPLETED' : 'PENALTY'),
+                }))
+              : [],
           };
         }
       }
 
-      // Check for pre-existing quiz answers in localStorage and migrate
-      const existingAnswersRaw = localStorage.getItem(QUIZ_STORAGE_ANSWERS_KEY);
+      // Check for pre-existing quiz answers in user's quiz storage and migrate
+      const existingAnswersRaw = localStorage.getItem(userManager.getQuizAnswersKey(userId));
       if (existingAnswersRaw) {
         try {
           const parsedAnswers = JSON.parse(existingAnswersRaw);
@@ -126,6 +180,11 @@ class PointsManager {
                     typeLabel: 'QUIZ TIMEOUT',
                     points: 0,
                     timestamp: Date.now() - 60000,
+                    userId,
+                    topicId: 'hashing',
+                    activityId: `quiz-${rec.questionId}`,
+                    activityType: 'QUIZ',
+                    completionStatus: 'TIMED_OUT',
                   });
                 } else if (rec.isCorrect) {
                   initialQuizPts += 3;
@@ -135,6 +194,11 @@ class PointsManager {
                     typeLabel: 'QUIZ CORRECT',
                     points: 3,
                     timestamp: Date.now() - 60000,
+                    userId,
+                    topicId: 'hashing',
+                    activityId: `quiz-${rec.questionId}`,
+                    activityType: 'QUIZ',
+                    completionStatus: 'CORRECT',
                   });
                 } else {
                   initialQuizPts -= 2;
@@ -144,6 +208,11 @@ class PointsManager {
                     typeLabel: 'QUIZ INCORRECT',
                     points: -2,
                     timestamp: Date.now() - 60000,
+                    userId,
+                    topicId: 'hashing',
+                    activityId: `quiz-${rec.questionId}`,
+                    activityType: 'QUIZ',
+                    completionStatus: 'INCORRECT',
                   });
                 }
               }
@@ -151,13 +220,15 @@ class PointsManager {
             initialQuizPts = Math.min(30, initialQuizPts);
             const initialData: StoredPointsData = {
               version: 2,
+              userId,
+              topicId: 'hashing',
               quizPoints: initialQuizPts,
               processedQuizQuestionIds: processedIds,
               hintUsesCount: 0,
               guidedSolveUsesCount: 0,
               activities: initialActivities,
             };
-            localStorage.setItem(POINTS_STORAGE_KEY, JSON.stringify(initialData));
+            localStorage.setItem(storageKey, JSON.stringify(initialData));
             return initialData;
           }
         } catch {
@@ -165,16 +236,19 @@ class PointsManager {
         }
       }
 
-      return { ...DEFAULT_STORED_DATA };
+      return defaultData;
     } catch {
-      return { ...DEFAULT_STORED_DATA };
+      return defaultData;
     }
   }
 
   private saveData() {
     if (typeof window === 'undefined') return;
     try {
-      localStorage.setItem(POINTS_STORAGE_KEY, JSON.stringify(this.data));
+      this.data.userId = this.currentUserId;
+      this.data.topicId = 'hashing';
+      const storageKey = userManager.getPointsKey(this.currentUserId);
+      localStorage.setItem(storageKey, JSON.stringify(this.data));
     } catch {
       // Ignore storage errors
     }
@@ -204,6 +278,11 @@ class PointsManager {
                 typeLabel: 'GAME COMPLETED',
                 points: 10,
                 timestamp: Date.now(),
+                userId: this.currentUserId,
+                topicId: 'hashing',
+                activityId: `game-lvl-${lvl}`,
+                activityType: 'GAME',
+                completionStatus: 'COMPLETED',
               });
               hasChanges = true;
 
@@ -237,6 +316,11 @@ class PointsManager {
               typeLabel: 'VISUALIZATION COMPLETED',
               points: 10,
               timestamp: Date.now(),
+              userId: this.currentUserId,
+              topicId: 'hashing',
+              activityId: `video-${vid}`,
+              activityType: 'VISUALIZATION',
+              completionStatus: 'COMPLETED',
             });
             hasChanges = true;
 
@@ -344,6 +428,8 @@ class PointsManager {
       hintUsesCount: this.data.hintUsesCount,
       guidedSolveUsesCount: this.data.guidedSolveUsesCount,
       totalPoints,
+      userId: this.currentUserId,
+      topicId: 'hashing',
     };
   }
 
@@ -377,6 +463,11 @@ class PointsManager {
         typeLabel: isCorrect ? 'QUIZ CORRECT' : 'QUIZ INCORRECT',
         points: actualDelta,
         timestamp: Date.now(),
+        userId: this.currentUserId,
+        topicId: 'hashing',
+        activityId: `quiz-q-${questionId}`,
+        activityType: 'QUIZ',
+        completionStatus: isCorrect ? 'CORRECT' : 'INCORRECT',
       });
     }
 
@@ -422,6 +513,11 @@ class PointsManager {
       typeLabel: 'QUIZ TIMEOUT',
       points: 0,
       timestamp: Date.now(),
+      userId: this.currentUserId,
+      topicId: 'hashing',
+      activityId: `quiz-q-${questionId}`,
+      activityType: 'QUIZ',
+      completionStatus: 'TIMED_OUT',
     });
 
     this.saveData();
@@ -458,6 +554,11 @@ class PointsManager {
       typeLabel: 'HINT USED',
       points: -2,
       timestamp: Date.now(),
+      userId: this.currentUserId,
+      topicId: 'hashing',
+      activityId: `hint-${levelId || 'game'}`,
+      activityType: 'HINT',
+      completionStatus: 'PENALTY',
     });
     this.saveData();
     this.notifyListeners();
@@ -492,6 +593,11 @@ class PointsManager {
       typeLabel: 'GUIDED SOLVE USED',
       points: -4,
       timestamp: Date.now(),
+      userId: this.currentUserId,
+      topicId: 'hashing',
+      activityId: `guided-${levelId || 'game'}`,
+      activityType: 'GUIDED_SOLVE',
+      completionStatus: 'PENALTY',
     });
     this.saveData();
     this.notifyListeners();
@@ -513,6 +619,8 @@ class PointsManager {
   public resetAll() {
     this.data = {
       version: 2,
+      userId: this.currentUserId,
+      topicId: 'hashing',
       quizPoints: 0,
       processedQuizQuestionIds: [],
       hintUsesCount: 0,

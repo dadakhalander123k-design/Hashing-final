@@ -99,6 +99,8 @@ export interface ModuleRecord {
 
 export interface UserProgressState {
   version: number;
+  userId?: string;
+  topicId?: string;
   modules: Record<string, ModuleStatus>;
   moduleProgress: Record<string, number>; // 0 - 100 percentage for each
   completedTheoryChapters: string[]; // Set of completed theory chapter IDs, e.g. ['theory-01', 'theory-02']

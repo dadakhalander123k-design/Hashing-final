@@ -26,6 +26,7 @@ import { progressManager } from '../utils/progressManager';
 import { pointsManager } from '../utils/pointsManager';
 import { soundManager } from '../utils/audio';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { userManager } from '../utils/userManager';
 
 export interface QuizViewProps {
   onNavigateToTheory: (chapterId?: string) => void;
@@ -223,9 +224,6 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
   },
 ];
 
-const QUIZ_STORAGE_ANSWERS_KEY = 'hash_quest_quiz_answers_v3';
-const QUIZ_STORAGE_SUBMITTED_KEY = 'hash_quest_quiz_submitted_v3';
-
 export const QuizView: React.FC<QuizViewProps> = ({
   onNavigateToTheory,
   onNavigateToQuest,
@@ -234,10 +232,9 @@ export const QuizView: React.FC<QuizViewProps> = ({
 }) => {
   useScrollReveal();
 
-  // Load persisted student answers
-  const [studentAnswers, setStudentAnswers] = useState<Record<number, StudentAnswerRecord>>(() => {
+  const loadAnswersForUser = (userId?: string): Record<number, StudentAnswerRecord> => {
     try {
-      const stored = localStorage.getItem(QUIZ_STORAGE_ANSWERS_KEY);
+      const stored = localStorage.getItem(userManager.getQuizAnswersKey(userId));
       if (stored) {
         return JSON.parse(stored);
       }
@@ -245,19 +242,70 @@ export const QuizView: React.FC<QuizViewProps> = ({
       // fallback
     }
     return {};
-  });
+  };
 
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(() => {
+  const loadSubmittedForUser = (userId?: string): boolean => {
     try {
-      const storedSub = localStorage.getItem(QUIZ_STORAGE_SUBMITTED_KEY);
+      const pState = progressManager.getState();
+      if (!pState.quizSubmitted) {
+        return false;
+      }
+      const storedSub = localStorage.getItem(userManager.getQuizSubmittedKey(userId));
       if (storedSub !== null) {
         return storedSub === 'true';
       }
-      return progressManager.getState().quizSubmitted || false;
+      return Boolean(pState.quizSubmitted);
     } catch {
       return false;
     }
+  };
+
+  // Load persisted student answers for current user
+  const [studentAnswers, setStudentAnswers] = useState<Record<number, StudentAnswerRecord>>(() => {
+    return loadAnswersForUser();
   });
+
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(() => {
+    return loadSubmittedForUser();
+  });
+
+  // Subscribe to user changes to load user-specific quiz state cleanly
+  useEffect(() => {
+    const handleUserChanged = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const newUserId = customEvent.detail?.id || userManager.getCurrentUserId();
+      const freshAnswers = loadAnswersForUser(newUserId);
+      const freshSubmitted = loadSubmittedForUser(newUserId);
+
+      setStudentAnswers(freshAnswers);
+      setIsSubmitted(freshSubmitted);
+      setIsQuizStarted(false);
+      setStartQuizWarning(null);
+      setCurrentQuestionIndex(0);
+      setPendingSelection(null);
+    };
+
+    window.addEventListener('hash_user_changed', handleUserChanged);
+    return () => {
+      window.removeEventListener('hash_user_changed', handleUserChanged);
+    };
+  }, []);
+
+  // Subscribe to progressManager for reset synchronization
+  useEffect(() => {
+    const unsub = progressManager.subscribe((pState) => {
+      if (!pState.quizSubmitted && Object.keys(pState.quizScores || {}).length === 0) {
+        const currentAns = loadAnswersForUser();
+        if (Object.keys(currentAns).length === 0) {
+          setStudentAnswers({});
+          setIsSubmitted(false);
+          setIsQuizStarted(false);
+          setPendingSelection(null);
+        }
+      }
+    });
+    return unsub;
+  }, []);
 
   // Subscribe to pointsManager for live score display
   const [pointsState, setPointsState] = useState(() => pointsManager.getState());
@@ -346,9 +394,9 @@ export const QuizView: React.FC<QuizViewProps> = ({
   useEffect(() => {
     try {
       if (Object.keys(studentAnswers).length === 0) {
-        localStorage.removeItem(QUIZ_STORAGE_ANSWERS_KEY);
+        localStorage.removeItem(userManager.getQuizAnswersKey());
       } else {
-        localStorage.setItem(QUIZ_STORAGE_ANSWERS_KEY, JSON.stringify(studentAnswers));
+        localStorage.setItem(userManager.getQuizAnswersKey(), JSON.stringify(studentAnswers));
       }
     } catch {
       // Ignore storage errors
@@ -359,9 +407,9 @@ export const QuizView: React.FC<QuizViewProps> = ({
   useEffect(() => {
     try {
       if (isSubmitted) {
-        localStorage.setItem(QUIZ_STORAGE_SUBMITTED_KEY, 'true');
+        localStorage.setItem(userManager.getQuizSubmittedKey(), 'true');
       } else {
-        localStorage.removeItem(QUIZ_STORAGE_SUBMITTED_KEY);
+        localStorage.removeItem(userManager.getQuizSubmittedKey());
       }
     } catch {
       // Ignore storage errors
@@ -533,7 +581,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
 
     setIsSubmitted(true);
     try {
-      localStorage.setItem(QUIZ_STORAGE_SUBMITTED_KEY, 'true');
+      localStorage.setItem(userManager.getQuizSubmittedKey(), 'true');
     } catch {
       // Ignore storage errors
     }
