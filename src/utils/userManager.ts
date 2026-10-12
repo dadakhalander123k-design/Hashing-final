@@ -176,6 +176,16 @@ class UserManager {
     const id = (userId || this.getCurrentUserId()).trim().replace(/[^a-zA-Z0-9_-]/g, '_');
     return `hash_user_quiz_submitted_${id}`;
   }
+
+  public getQuizStartedKey(userId?: string): string {
+    const id = (userId || this.getCurrentUserId()).trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+    return `hash_user_quiz_started_${id}`;
+  }
+
+  public getQuizTimerKey(userId?: string): string {
+    const id = (userId || this.getCurrentUserId()).trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+    return `hash_user_quiz_timer_${id}`;
+  }
 }
 
 export const userManager = new UserManager();

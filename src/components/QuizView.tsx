@@ -260,6 +260,35 @@ export const QuizView: React.FC<QuizViewProps> = ({
     }
   };
 
+  const loadQuizStartedForUser = (userId?: string): boolean => {
+    try {
+      const stored = localStorage.getItem(userManager.getQuizStartedKey(userId));
+      if (stored === 'true') return true;
+      const ans = loadAnswersForUser(userId);
+      if (Object.keys(ans).length > 0) return true;
+    } catch {
+      // fallback
+    }
+    return false;
+  };
+
+  const loadActiveQuestionIndex = (userId?: string): number => {
+    try {
+      const storedTimer = localStorage.getItem(userManager.getQuizTimerKey(userId));
+      if (storedTimer) {
+        const parsed = JSON.parse(storedTimer);
+        if (typeof parsed.questionIndex === 'number' && parsed.questionIndex >= 0 && parsed.questionIndex < QUIZ_QUESTIONS.length) {
+          return parsed.questionIndex;
+        }
+      }
+    } catch {
+      // fallback
+    }
+    const answers = loadAnswersForUser(userId);
+    const firstUnanswered = QUIZ_QUESTIONS.findIndex((q) => answers[q.id] === undefined);
+    return firstUnanswered >= 0 ? firstUnanswered : 0;
+  };
+
   // Load persisted student answers for current user
   const [studentAnswers, setStudentAnswers] = useState<Record<number, StudentAnswerRecord>>(() => {
     return loadAnswersForUser();
@@ -269,6 +298,21 @@ export const QuizView: React.FC<QuizViewProps> = ({
     return loadSubmittedForUser();
   });
 
+  // Navigation within Quiz (0-indexed current question)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(() => {
+    return loadActiveQuestionIndex();
+  });
+  // Temporary selection before confirming/submitting the question
+  const [pendingSelection, setPendingSelection] = useState<number | null>(null);
+
+  // Per-question countdown timer (20 seconds per question)
+  const QUESTION_TIME_LIMIT = 20;
+  const [timeLeft, setTimeLeft] = useState<number>(QUESTION_TIME_LIMIT);
+  const [isQuizStarted, setIsQuizStarted] = useState<boolean>(() => {
+    return loadQuizStartedForUser();
+  });
+  const [startQuizWarning, setStartQuizWarning] = useState<string | null>(null);
+
   // Subscribe to user changes to load user-specific quiz state cleanly
   useEffect(() => {
     const handleUserChanged = (e: Event) => {
@@ -276,12 +320,14 @@ export const QuizView: React.FC<QuizViewProps> = ({
       const newUserId = customEvent.detail?.id || userManager.getCurrentUserId();
       const freshAnswers = loadAnswersForUser(newUserId);
       const freshSubmitted = loadSubmittedForUser(newUserId);
+      const freshStarted = loadQuizStartedForUser(newUserId);
+      const freshIndex = loadActiveQuestionIndex(newUserId);
 
       setStudentAnswers(freshAnswers);
       setIsSubmitted(freshSubmitted);
-      setIsQuizStarted(false);
+      setIsQuizStarted(freshStarted);
       setStartQuizWarning(null);
-      setCurrentQuestionIndex(0);
+      setCurrentQuestionIndex(freshIndex);
       setPendingSelection(null);
     };
 
@@ -301,11 +347,31 @@ export const QuizView: React.FC<QuizViewProps> = ({
           setIsSubmitted(false);
           setIsQuizStarted(false);
           setPendingSelection(null);
+          setCurrentQuestionIndex(0);
+          try {
+            localStorage.removeItem(userManager.getQuizStartedKey());
+            localStorage.removeItem(userManager.getQuizTimerKey());
+          } catch {
+            // Ignore
+          }
         }
       }
     });
     return unsub;
   }, []);
+
+  // Persist isQuizStarted to localStorage
+  useEffect(() => {
+    try {
+      if (isQuizStarted) {
+        localStorage.setItem(userManager.getQuizStartedKey(), 'true');
+      } else {
+        localStorage.removeItem(userManager.getQuizStartedKey());
+      }
+    } catch {
+      // Ignore
+    }
+  }, [isQuizStarted]);
 
   // Subscribe to pointsManager for live score display
   const [pointsState, setPointsState] = useState(() => pointsManager.getState());
@@ -315,24 +381,15 @@ export const QuizView: React.FC<QuizViewProps> = ({
     return unsub;
   }, []);
 
-  // Navigation within Quiz (0-indexed current question)
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-  // Temporary selection before confirming/submitting the question
-  const [pendingSelection, setPendingSelection] = useState<number | null>(null);
-
-  // Per-question countdown timer (20 seconds per question)
-  const QUESTION_TIME_LIMIT = 20;
-  const [timeLeft, setTimeLeft] = useState<number>(QUESTION_TIME_LIMIT);
-  const [isQuizStarted, setIsQuizStarted] = useState<boolean>(false);
-  const [startQuizWarning, setStartQuizWarning] = useState<string | null>(null);
-
   const handleStartQuiz = useCallback(() => {
-    setIsQuizStarted((prev) => {
-      if (prev) return prev;
-      soundManager.playClick();
-      return true;
-    });
+    setIsQuizStarted(true);
     setStartQuizWarning(null);
+    try {
+      localStorage.setItem(userManager.getQuizStartedKey(), 'true');
+    } catch {
+      // Ignore
+    }
+    soundManager.playClick();
   }, []);
 
   // Current question helper
@@ -352,33 +409,88 @@ export const QuizView: React.FC<QuizViewProps> = ({
       isCorrect: false,
       isTimedOut: true,
     };
+    setTimeLeft(0);
     setStudentAnswers((prev) => {
       if (prev[q.id]) return prev;
       return { ...prev, [q.id]: timeoutRecord };
     });
+    try {
+      localStorage.removeItem(userManager.getQuizTimerKey());
+    } catch {
+      // Ignore
+    }
     pointsManager.recordQuizTimeout(q.id);
     soundManager.playQuizWrong();
   }, [currentQuestion]);
 
-  // Countdown timer effect (only runs after user clicks Start Quiz)
+  // Countdown timer effect with real wall-clock tracking across tab switches and page navigations
   useEffect(() => {
     if (!isQuizStarted || isCurrentQuestionAnswered || isSubmitted) return;
 
-    setTimeLeft(QUESTION_TIME_LIMIT);
     const targetQId = currentQuestion.id;
+    const timerKey = userManager.getQuizTimerKey();
+
+    let deadline: number;
+    try {
+      const savedTimer = localStorage.getItem(timerKey);
+      if (savedTimer) {
+        const parsed = JSON.parse(savedTimer);
+        if (parsed.questionId === targetQId && typeof parsed.deadline === 'number') {
+          deadline = parsed.deadline;
+        } else {
+          deadline = Date.now() + QUESTION_TIME_LIMIT * 1000;
+          localStorage.setItem(
+            timerKey,
+            JSON.stringify({ questionId: targetQId, questionIndex: currentQuestionIndex, deadline })
+          );
+        }
+      } else {
+        deadline = Date.now() + QUESTION_TIME_LIMIT * 1000;
+        localStorage.setItem(
+          timerKey,
+          JSON.stringify({ questionId: targetQId, questionIndex: currentQuestionIndex, deadline })
+        );
+      }
+    } catch {
+      deadline = Date.now() + QUESTION_TIME_LIMIT * 1000;
+    }
+
+    const checkAndSyncTimer = (): boolean => {
+      const now = Date.now();
+      const remaining = Math.max(0, Math.ceil((deadline - now) / 1000));
+      setTimeLeft(remaining);
+
+      if (remaining <= 0) {
+        handleTimeout(targetQId);
+        return false;
+      }
+      return true;
+    };
+
+    const isRunning = checkAndSyncTimer();
+    if (!isRunning) return;
 
     const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          handleTimeout(targetQId);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+      const keepGoing = checkAndSyncTimer();
+      if (!keepGoing) {
+        clearInterval(interval);
+      }
+    }, 250);
 
-    return () => clearInterval(interval);
+    const handleVisibilityOrFocus = () => {
+      checkAndSyncTimer();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+    window.addEventListener('focus', handleVisibilityOrFocus);
+    window.addEventListener('pageshow', handleVisibilityOrFocus);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
+      window.removeEventListener('focus', handleVisibilityOrFocus);
+      window.removeEventListener('pageshow', handleVisibilityOrFocus);
+    };
   }, [isQuizStarted, currentQuestionIndex, isCurrentQuestionAnswered, isSubmitted, currentQuestion.id, handleTimeout]);
 
   // Synchronize selection with current question record
@@ -533,6 +645,11 @@ export const QuizView: React.FC<QuizViewProps> = ({
     };
 
     setStudentAnswers(updatedAnswers);
+    try {
+      localStorage.removeItem(userManager.getQuizTimerKey());
+    } catch {
+      // Ignore
+    }
     pointsManager.recordQuizAnswer(q.id, isCorrect);
 
     // Play appropriate interaction sound
@@ -582,6 +699,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
     setIsSubmitted(true);
     try {
       localStorage.setItem(userManager.getQuizSubmittedKey(), 'true');
+      localStorage.removeItem(userManager.getQuizTimerKey());
     } catch {
       // Ignore storage errors
     }
@@ -1004,12 +1122,22 @@ export const QuizView: React.FC<QuizViewProps> = ({
               </div>
 
               {isCurrentQuestionAnswered ? (
-                <div>
+                <div className="flex items-center gap-2">
                   {currentAnswerRecord?.isTimedOut ? (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 rounded-lg">
-                      <Clock className="w-3.5 h-3.5 text-amber-500" />
-                      <span>Timed Out (0 pts)</span>
-                    </span>
+                    <>
+                      <div
+                        id="quiz-question-timer-expired"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg font-mono text-xs font-bold border bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/60 dark:text-rose-400 dark:border-rose-800"
+                        aria-label="0 seconds remain - Timed Out"
+                      >
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>⏱ 0s remaining</span>
+                      </div>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 rounded-lg">
+                        <Clock className="w-3.5 h-3.5 text-amber-500" />
+                        <span>Timed Out (0 pts)</span>
+                      </span>
+                    </>
                   ) : currentAnswerRecord?.isCorrect ? (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 rounded-lg">
                       <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -1047,7 +1175,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                     aria-label={`Time remaining: ${timeLeft} seconds`}
                   >
                     <Clock className="w-3.5 h-3.5" />
-                    <span>Time: {timeLeft}s</span>
+                    <span>⏱ {timeLeft}s remaining</span>
                   </div>
                 </div>
               )}
